@@ -84,24 +84,22 @@ class CreateTenantRequest(BaseModel):
     auto_adapt: Optional[bool] = False
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def home():
+    portal_path = Path(__file__).parent / "portal.html"
+    if portal_path.exists():
+        return portal_path.read_text(encoding="utf-8")
+    return "<h1>Portal no encontrado</h1>"
+
+
+@app.get("/api/info")
+def api_info():
     return {
         "status": "online",
-        "service": "TravelSales.ai / AI Studio Gateway",
+        "service": "Klyven Studio / AI Chatbot Gateway",
         "creator_portal": "/portal",
         "embed_script": "/widget.js",
-        "demo_page": "/demo",
-        "endpoints": [
-            "/portal (GET) - Creador visual de Chatbots para cualquier negocio",
-            "/api/extract-brand (GET) - Auto-extractor de paleta de colores y logo",
-            "/api/chat (POST)",
-            "/api/tenant-config (GET)",
-            "/api/tenants (POST/GET)",
-            "/webhook/whatsapp (GET/POST)",
-            "/webhook/stripe (POST)",
-            "/widget.js (GET)"
-        ]
+        "demo_page": "/demo"
     }
 
 
