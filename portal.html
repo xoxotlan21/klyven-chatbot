@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klyven Studio | Panel de Configuración de Asistentes IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #E6EDF6;
+            --surface-card: rgba(255, 255, 255, 0.88);
+            --surface-card-solid: #FFFFFF;
+            --text-primary: #020C21;
+            --text-secondary: #59627E;
+            --btn-primary: #0F1B31;
+            --btn-primary-hover: #1b2d4f;
+            --accent-soft: #4A78B0;
+            --accent-light: rgba(74, 120, 176, 0.12);
+            --border-soft: rgba(74, 120, 176, 0.16);
+            --border-card: rgba(255, 255, 255, 0.8);
+            --shadow-card: 0 16px 40px rgba(10, 25, 50, 0.04);
+            --shadow-sm: 0 2px 8px rgba(10, 25, 50, 0.03);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-page);
+            background-image: 
+                radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.6) 0%, transparent 45%),
+                radial-gradient(circle at 88% 85%, rgba(200, 218, 238, 0.5) 0%, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 60px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CABECERA ESTILO LIQUID GLASS (KLYVEN STUDIO)                  */
+        /* ------------------------------------------------------------- */
+        header {
+            max-width: 1360px;
+            width: calc(100% - 48px);
+            margin: 20px auto 32px auto;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-card);
+            border-radius: 40px;
+            box-shadow: 0 8px 24px rgba(10, 25, 50, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .brand-text {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.4px;
+        }
+
+        .brand-text span {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .header-nav-pills {
+            display: flex;
+            background: rgba(230, 237, 246, 0.6);
+            padding: 4px;
+            border-radius: 24px;
+            gap: 4px;
+        }
+
+        .header-pill {
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .header-pill.active {
+            background: #FFFFFF;
+            color: var(--text-primary);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(10, 25, 50, 0.06);
+        }
+
+        .btn-header-cta {
+            background: var(--btn-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 24px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(15, 27, 49, 0.12);
+        }
+
+        .btn-header-cta:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CONTENEDOR PRINCIPAL Y TÍTULO                                 */
+        /* ------------------------------------------------------------- */
+        .page-header-title {
+            max-width: 1360px;
+            width: calc(100% - 48px);
+            margin: 0 auto 24px auto;
+        }
+
+        .page-header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.8px;
+            margin-bottom: 6px;
+        }
+
+        .page-header-title p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1360px;
+            width: calc(100% - 48px);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.25fr 0.85fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        @media (max-width: 1080px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ------------------------------------------------------------- */
+        /* PANEL IZQUIERDO: FORMULARIO Y CONFIGURACIÓN                   */
+        /* ------------------------------------------------------------- */
+        .panel {
+            background: var(--surface-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-card);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Barra de pestañas secundarias con iconos */
+        .section-nav-pills {
+            display: flex;
+            gap: 8px;
+            background: rgba(230, 237, 246, 0.7);
+            padding: 5px;
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+
+        .sec-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .sec-pill:hover {
+            color: var(--text-primary);
+        }
+
+        .sec-pill.active {
+            background: #E8F2FB;
+            color: #3870AE;
+            font-weight: 600;
+        }
+
+        /* Títulos de sección sobrios */
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .section-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            margin-top: -16px;
+            margin-bottom: 4px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* TARJETA DE ENTRENAMIENTO CON IA (DESTACADA Y SUTIL)          */
+        /* ------------------------------------------------------------- */
+        .magic-box {
+            background: rgba(240, 246, 255, 0.75);
+            border: 1px solid rgba(74, 120, 176, 0.25);
+            border-radius: 20px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .magic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .magic-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .magic-badge {
+            background: #FFFFFF;
+            color: var(--accent-soft);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(74, 120, 176, 0.2);
+        }
+
+        .magic-desc {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .magic-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-magic {
+            background: var(--btn-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.12);
+        }
+
+        .btn-magic:hover {
+            background: var(--btn-primary-hover);
+        }
+
+        #extract_status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: #FFFFFF;
+            border: 1px solid var(--border-soft);
+            padding: 10px 14px;
+            border-radius: 10px;
+            line-height: 1.45;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CAMPOS, SELECTORES Y FORMULARIOS                              */
+        /* ------------------------------------------------------------- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .magic-inputs {
+                flex-direction: column;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .field-hint {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: -2px;
+            margin-bottom: 2px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        select,
+        textarea {
+            width: 100%;
+            height: 48px;
+            background: #FFFFFF;
+            border: 1px solid #DCE5F0;
+            color: var(--text-primary);
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        textarea {
+            height: auto;
+            min-height: 84px;
+            padding: 12px 16px;
+            line-height: 1.45;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--accent-soft);
+            box-shadow: 0 0 0 3px rgba(74, 120, 176, 0.15);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #9AA4B8;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* SELECCIÓN DE TEMAS DEL CHAT (TARJETAS VISUALES IDÉNTICAS MOCK) */
+        /* ------------------------------------------------------------- */
+        .theme-cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .theme-cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .theme-card {
+            background: #FFFFFF;
+            border: 1.5px solid #DCE5F0;
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-card:hover {
+            border-color: #B8CCE4;
+            transform: translateY(-1px);
+        }
+
+        .theme-card.active {
+            border-color: var(--accent-soft);
+            background: #FFFFFF;
+            box-shadow: 0 6px 20px rgba(74, 120, 176, 0.12);
+        }
+
+        /* Miniatura visual del chat dentro de la tarjeta de tema */
+        .theme-preview-box {
+            height: 90px;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-theme-light-box {
+            background: #F1F5F9;
+            border: 1px solid #E2E8F0;
+        }
+
+        .preview-theme-dark-box {
+            background: #111827;
+            border: 1px solid #1F2937;
+        }
+
+        .preview-theme-glass-box {
+            background: rgba(220, 232, 245, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+
+        .mini-chat-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mini-avatar-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #0F1B31;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .mini-chat-line {
+            height: 6px;
+            border-radius: 3px;
+            background: #CBD5E1;
+            width: 50%;
+        }
+
+        .preview-theme-dark-box .mini-chat-line {
+            background: #374151;
+        }
+
+        .mini-bot-pill {
+            align-self: flex-end;
+            height: 16px;
+            width: 48px;
+            border-radius: 8px;
+            background: #0F1B31;
+        }
+
+        .preview-theme-dark-box .mini-bot-pill {
+            background: #3B82F6;
+        }
+
+        .theme-check-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent-soft);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .theme-card.active .theme-check-icon {
+            display: flex;
+        }
+
+        .theme-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .theme-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.35;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* SELECTORES DE COLOR Y ESTILO                                  */
+        /* ------------------------------------------------------------- */
+        .color-palette-cards {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #FFFFFF;
+            border: 1px solid #DCE5F0;
+            padding: 8px 14px;
+            border-radius: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .swatch-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .swatch-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .swatch-hex {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: monospace;
+        }
+
+        .swatch-label {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+
+        /* Opciones de botón (Radio pills) */
+        .toggle-pills-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .toggle-pill-card {
+            background: #FFFFFF;
+            border: 1.5px solid #DCE5F0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-pill-card:hover {
+            border-color: #B8CCE4;
+        }
+
+        .toggle-pill-card.active {
+            border-color: var(--accent-soft);
+            background: rgba(74, 120, 176, 0.05);
+            color: var(--text-primary);
+        }
+
+        .radio-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #CBD5E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-pill-card.active .radio-dot {
+            border-color: var(--accent-soft);
+            background: var(--accent-soft);
+        }
+
+        .toggle-pill-card.active .radio-dot::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #FFFFFF;
+        }
+
+        /* Avatar Picker */
+        .avatar-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .avatar-opt {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #DCE5F0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: #FFFFFF;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .avatar-opt:hover {
+            transform: scale(1.06);
+            border-color: var(--accent-soft);
+        }
+
+        .avatar-opt.selected {
+            border-color: var(--accent-soft);
+            background: rgba(74, 120, 176, 0.08);
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(74, 120, 176, 0.2);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* TABLA DE SERVICIOS Y PRECIOS                                  */
+        /* ------------------------------------------------------------- */
+        .service-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2.5fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        @media (max-width: 640px) {
+            .service-row {
+                grid-template-columns: 1fr;
+                background: #FFFFFF;
+                padding: 12px;
+                border-radius: 12px;
+                border: 1px solid #DCE5F0;
+            }
+        }
+
+        .btn-add {
+            background: #FFFFFF;
+            color: var(--text-primary);
+            border: 1.5px solid #DCE5F0;
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            width: fit-content;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-add:hover {
+            border-color: var(--accent-soft);
+            color: var(--accent-soft);
+        }
+
+        .btn-del {
+            background: #FEE2E2;
+            color: #DC2626;
+            border: none;
+            border-radius: 10px;
+            height: 48px;
+            width: 40px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-del:hover {
+            background: #FECACA;
+        }
+
+        /* Botón de Guardar Principal */
+        .btn-save-main {
+            background: var(--btn-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 15px 28px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(15, 27, 49, 0.15);
+            width: 100%;
+        }
+
+        .btn-save-main:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Código generado */
+        .code-box {
+            background: #FFFFFF;
+            border: 1.5px solid #DCE5F0;
+            border-radius: 16px;
+            padding: 20px;
+            display: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .code-content {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            color: #0369A1;
+            font-size: 0.86rem;
+            word-break: break-all;
+            background: #F0F6FC;
+            padding: 14px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #D0E2F4;
+        }
+
+        .btn-copy {
+            background: var(--btn-primary);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.86rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: var(--btn-primary-hover);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* COLUMNA DERECHA: VISTA PREVIA DEL CHATBOT                     */
+        /* ------------------------------------------------------------- */
+        .preview-pane {
+            position: sticky;
+            top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-self: start;
+        }
+
+        .preview-heading-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2px;
+        }
+
+        .preview-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.4px;
+        }
+
+        .preview-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .mock-window-card {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid #FFFFFF;
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(10, 25, 50, 0.08);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mock-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFFFFF;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .mock-header-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mock-avatar-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0F1B31;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 700;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.12);
+        }
+
+        .mock-avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mock-bot-name {
+            font-size: 0.96rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot-green {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10B981;
+        }
+
+        .mock-bot-sub {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .mock-dots {
+            color: #94A3B8;
+            font-size: 1.2rem;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+
+        /* Mensajes dentro del mock */
+        .mock-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #FAFBFD;
+        }
+
+        .mock-msg-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            max-width: 85%;
+        }
+
+        .mock-msg-row.bot-row {
+            align-self: flex-start;
+        }
+
+        .mock-msg-row.user-row {
+            align-self: flex-end;
+            justify-content: flex-end;
+        }
+
+        .mini-avatar-inline {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #0F1B31;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            margin-bottom: 2px;
+        }
+
+        .mini-avatar-inline img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mock-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.88rem;
+            line-height: 1.52;
+            word-wrap: break-word;
+        }
+
+        .mock-bubble strong,
+        .mock-bubble b {
+            font-weight: 700 !important;
+            color: inherit;
+        }
+
+        .mock-bubble em,
+        .mock-bubble i {
+            font-style: italic !important;
+        }
+
+        .mock-bubble code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        .mock-theme-dark .mock-bubble code {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .mock-bubble a {
+            color: inherit;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .mock-bubble-bot {
+            background: #FFFFFF;
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            border: 1px solid #EDF2F7;
+            box-shadow: 0 2px 6px rgba(10, 25, 50, 0.02);
+        }
+
+        .mock-bubble-user {
+            background: var(--btn-primary);
+            color: #FFFFFF;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(15, 27, 49, 0.12);
+        }
+
+        /* Chips sugeridos en la vista previa del mockup */
+        .mock-chips-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-left: 36px;
+            margin-top: -4px;
+            margin-bottom: 4px;
+        }
+
+        .mock-chip {
+            background: #FFFFFF;
+            border: 1px solid #DCE5F0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mock-chip:hover {
+            border-color: var(--accent-soft);
+            color: var(--text-primary);
+        }
+
+        /* Barra de entrada en mock */
+        .mock-input-bar {
+            padding: 14px 18px;
+            background: #FFFFFF;
+            border-top: 1px solid #F1F5F9;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #test_input {
+            flex: 1;
+            height: 44px;
+            background: #F4F7FB;
+            border: 1px solid #E2E8F0;
+            border-radius: 22px;
+            padding: 0 16px;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            outline: none;
+            box-shadow: none;
+        }
+
+        .btn-send-mock {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--btn-primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.15);
+        }
+
+        .btn-send-mock:hover {
+            transform: scale(1.05);
+            background: var(--btn-primary-hover);
+        }
+
+        /* Barra de botón flotante inferior idéntico al mockup */
+        .preview-bubble-container {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            padding: 4px 0 0 0;
+            transition: all 0.25s ease;
+        }
+
+        #mini_bubble_preview {
+            background: var(--btn-primary);
+            color: #FFFFFF;
+            padding: 12px 24px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 28px rgba(15, 27, 49, 0.22);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #mini_bubble_preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 34px rgba(15, 27, 49, 0.28);
+        }
+
+        #mini_bubble_preview.circle-mode {
+            width: 56px;
+            height: 56px;
+            padding: 0;
+            border-radius: 50%;
+            justify-content: center;
+        }
+
+        .mini-bubble-avatar-circle {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.16);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.88rem;
+            font-weight: 800;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .mini-bubble-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.24);
+        .mini-bubble-avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Temas aplicados en la vista previa */
+        .mock-theme-dark .mock-header { background: #0F172A; color: white; border-color: #1E293B; }
+        .mock-theme-dark .mock-avatar-box { background: #1E293B !important; border: 1px solid #334155 !important; }
+        .mock-theme-dark .mock-bot-name { color: white; }
+        .mock-theme-dark .mock-bot-sub { color: #94A3B8; }
+        .mock-theme-dark .mock-messages { background: #0B1120; }
+        .mock-theme-dark .mock-bubble-bot { background: #1E293B; color: #F8FAFC; border-color: #334155; }
+        .mock-theme-dark .mock-input-bar { background: #0F172A; border-color: #1E293B; }
+        .mock-theme-dark #test_input { background: #1E293B; border-color: #334155; color: white; }
+
+        .mock-theme-light .mock-avatar-box { background: #FFFFFF !important; border: 1px solid #DCE5F0 !important; }
+
+        .mock-theme-glass {
+            background: rgba(230, 237, 246, 0.75) !important;
+            backdrop-filter: blur(28px) !important;
+            border-color: rgba(255, 255, 255, 0.9) !important;
+        }
+        .mock-theme-glass .mock-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .mock-theme-glass .mock-avatar-box { background: #0F1B31 !important; }
+        .mock-theme-glass .mock-messages { background: transparent; }
+        .mock-theme-glass .mock-bubble-bot { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
+        .mock-theme-glass .mock-input-bar { background: rgba(255, 255, 255, 0.85); }
+
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================= -->
+    <!-- CABECERA FLOTANTE LIQUID GLASS                                -->
+    <!-- ============================================================= -->
+    <header>
+        <div class="brand-container">
+            <div class="brand-logo-icon">
+                <img src="/assets/logo-light.png" alt="Klyven Studio" class="brand-logo-img" onerror="this.src='https://klyvenstudio.com/assets/logo-Ze6ecQUw.png'" />
+            </div>
+            <div class="brand-text">Klyven <span>Studio</span></div>
+        </div>
+
+        <div class="header-nav-pills">
+            <div class="header-pill active">Mi asistente</div>
+            <div class="header-pill" onclick="alert('Configuración de cuenta Klyven Studio');">Configuración</div>
+        </div>
+
+        <button class="btn-header-cta" onclick="saveTenant()">
+            Guardar cambios ↗
+        </button>
+    </header>
+
+    <!-- ============================================================= -->
+    <!-- TÍTULO PRINCIPAL DE LA PÁGINA                                  -->
+    <!-- ============================================================= -->
+    <div class="page-header-title">
+        <h1>Configura tu asistente</h1>
+        <p>Una experiencia diseñada para tu negocio.</p>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- CONTENEDOR DE DOS COLUMNAS                                     -->
+    <!-- ============================================================= -->
+    <div class="container">
+
+        <!-- --------------------------------------------------------- -->
+        <!-- COLUMNA IZQUIERDA: CONFIGURACIÓN                           -->
+        <!-- --------------------------------------------------------- -->
+        <div class="panel">
+
+            <!-- Pestañas de navegación de sección -->
+            <div class="section-nav-pills">
+                <div class="sec-pill" onclick="scrollToSec('sec-negocio')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    Negocio
+                </div>
+                <div class="sec-pill active" onclick="scrollToSec('sec-apariencia')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+                    Apariencia
+                </div>
+                <div class="sec-pill" onclick="scrollToSec('sec-servicios')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Servicios
+                </div>
+                <div class="sec-pill" onclick="scrollToSec('sec-publicar')">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Publicar
+                </div>
+            </div>
+
+            <!-- BLOQUE DE ENTRENAMIENTO INTELIGENTE CON IA -->
+            <div class="magic-box" id="sec-ai-training">
+                <div class="magic-header">
+                    <div class="magic-title">
+                        Auto-entrenar IA con el enlace de tu web
+                    </div>
+                    <span class="magic-badge">1 Clic</span>
+                </div>
+                <p class="magic-desc">
+                    Ingresa el enlace de tu página web (o añade notas). La IA inspeccionará tu sitio y extraerá <b>servicios, unidades reales, precios y políticas</b> automáticamente para que tu bot no sea genérico.
+                </p>
+                <div class="magic-inputs">
+                    <input id="biz_url" type="text" placeholder="Ej: https://klyvenstudio.com o tuweb.com" value="https://klyvenstudio.com" />
+                    <button class="btn-magic" onclick="aiTrainFromWeb()">Analizar y entrenar IA</button>
+                    <button class="btn-magic" style="background: #FFFFFF; color: var(--btn-primary); border: 1px solid #DCE5F0;" onclick="extractBrandFromWeb()">Extraer colores</button>
+                </div>
+                <div>
+                    <textarea id="biz_notes_quick" rows="2" placeholder="Opcional: Si tienes notas extra o lista de precios rápida, pégala aquí (ej: 'Vans de 8 pax $80 USD, Suburban $150 USD, cancelaciones con 24h')..."></textarea>
+                </div>
+                <div id="extract_status" style="display: none;"></div>
+            </div>
+
+            <!-- SECCIÓN 1: DATOS DEL NEGOCIO Y MONEDA -->
+            <div id="sec-negocio" class="form-group">
+                <div class="section-title">Datos de tu negocio</div>
+                <p class="section-desc">Identidad de la empresa y moneda en la que cotizará la IA.</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="biz_name">Nombre del Negocio</label>
+                    <input id="biz_name" type="text" value="Klyven Studio" oninput="updatePreview()" />
+                </div>
+                <div class="form-group">
+                    <label for="biz_id">ID Único (Para la Web)</label>
+                    <input id="biz_id" type="text" value="KLYVEN-STUDIO" />
+                </div>
+                <div class="form-group">
+                    <label for="biz_industry">Giro / Industria</label>
+                    <select id="biz_industry">
+                        <option value="Diseño Web y Marketing">Diseño Web y Marketing</option>
+                        <option value="Salud y Odontología">Salud y Odontología</option>
+                        <option value="Restaurantes y Alimentos">Restaurantes y Alimentos</option>
+                        <option value="Bienes Raíces e Inmobiliaria">Bienes Raíces e Inmobiliaria</option>
+                        <option value="Servicios Legales y Fiscales">Servicios Legales y Fiscales</option>
+                        <option value="Turismo y Transporte">Turismo y Transporte</option>
+                        <option value="Comercio y E-commerce">Comercio y E-commerce</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="biz_currency">Moneda de Cobro</label>
+                    <select id="biz_currency">
+                        <option value="USD" selected>USD ($ Dólares)</option>
+                        <option value="MXN">MXN ($ Pesos Mexicanos)</option>
+                        <option value="EUR">EUR (€ Euros)</option>
+                        <option value="COP">COP ($ Pesos)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: TEMA DEL CHAT Y APARIENCIA (IDÉNTICO A MOCKUP) -->
+            <div id="sec-apariencia" class="form-group">
+                <div class="section-title">Tema del chat</div>
+                <p class="section-desc">Elige el estilo visual de tu asistente.</p>
+            </div>
+
+            <!-- TARJETAS DE TEMA: CLARO / OSCURO / CRISTAL -->
+            <div class="theme-cards-container" id="theme_group">
+                <!-- Tema Claro -->
+                <div class="theme-card" id="card_theme_light" onclick="setTheme('light')">
+                    <div class="theme-check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="theme-preview-box preview-theme-light-box">
+                        <div class="mini-chat-header">
+                            <div class="mini-avatar-dot" style="background:#FFFFFF; border:1px solid #DCE5F0;"><img src="/assets/logo-light.png" alt="Logo Claro" style="width:11px;height:11px;object-fit:contain;" /></div>
+                            <div class="mini-chat-line"></div>
+                        </div>
+                        <div class="mini-bot-pill" style="background:#0F1B31;"></div>
+                    </div>
+                    <div>
+                        <div class="theme-title">Claro</div>
+                        <div class="theme-subtitle">Apariencia limpia y minimalista.</div>
+                    </div>
+                </div>
+
+                <!-- Tema Oscuro -->
+                <div class="theme-card" id="card_theme_dark" onclick="setTheme('dark')">
+                    <div class="theme-check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="theme-preview-box preview-theme-dark-box">
+                        <div class="mini-chat-header">
+                            <div class="mini-avatar-dot" style="background:#1E293B;"><img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Logo Oscuro" style="width:11px;height:11px;object-fit:contain;" /></div>
+                            <div class="mini-chat-line" style="background:#374151;"></div>
+                        </div>
+                        <div class="mini-bot-pill" style="background:#3B82F6;"></div>
+                    </div>
+                    <div>
+                        <div class="theme-title">Oscuro</div>
+                        <div class="theme-subtitle">Ideal para sitios con fondo oscuro.</div>
+                    </div>
+                </div>
+
+                <!-- Tema Cristal (Activo por defecto) -->
+                <div class="theme-card active" id="card_theme_glass" onclick="setTheme('glass')">
+                    <div class="theme-check-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div class="theme-preview-box preview-theme-glass-box">
+                        <div class="mini-chat-header">
+                            <div class="mini-avatar-dot" style="background:#0F1B31;"><img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Logo Cristal" style="width:11px;height:11px;object-fit:contain;" /></div>
+                            <div class="mini-chat-line"></div>
+                        </div>
+                        <div class="mini-bot-pill" style="background:#0F1B31;"></div>
+                    </div>
+                    <div>
+                        <div class="theme-title">Cristal</div>
+                        <div class="theme-subtitle">Efecto de cristal moderno y elegante.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLORES -->
+            <div class="form-group" style="margin-top: 6px;">
+                <label>Colores</label>
+                <p class="field-hint">Personaliza los colores principales de tu asistente.</p>
+                <div class="color-palette-cards">
+                    <div class="color-swatch-item">
+                        <div class="swatch-circle" style="background: #E6EDF6;"></div>
+                        <div class="swatch-info">
+                            <span class="swatch-hex">#E6EDF6</span>
+                            <span class="swatch-label">Fondo principal</span>
+                        </div>
+                    </div>
+
+                    <div class="color-swatch-item">
+                        <div class="swatch-circle" style="background: #FFFFFF;"></div>
+                        <div class="swatch-info">
+                            <span class="swatch-hex">#FFFFFF</span>
+                            <span class="swatch-label">Superficie</span>
+                        </div>
+                    </div>
+
+                    <div class="color-swatch-item" style="cursor: pointer;" onclick="document.getElementById('brand_color').click()">
+                        <div class="swatch-circle" id="swatch_brand_display" style="background: #0F1B31;"></div>
+                        <div class="swatch-info">
+                            <span class="swatch-hex" id="color_hex_label">#0F1B31</span>
+                            <span class="swatch-label">Botones y acentos</span>
+                        </div>
+                        <input id="brand_color" type="color" value="#0F1B31" onchange="updatePreview()" style="opacity: 0; width: 0; height: 0; position: absolute;" />
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;">
+                        <input id="auto_adapt_check" type="checkbox" style="width: 16px; height: 16px; accent-color: var(--btn-primary);" onchange="updatePreview()" />
+                        <span>Adaptar colores automáticamente al sitio web donde se instale (Modo Camaleón)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- NOMBRE DEL ASISTENTE Y MENSAJE DE BIENVENIDA -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="bot_name">Nombre del asistente</label>
+                    <span class="field-hint">Este nombre se mostrará en el chat.</span>
+                    <input id="bot_name" type="text" value="Klyven Assistant" oninput="updatePreview()" />
+                </div>
+                <div class="form-group">
+                    <label for="bot_welcome">Mensaje de bienvenida</label>
+                    <span class="field-hint">Es el primer mensaje que verá el usuario.</span>
+                    <input id="bot_welcome" type="text" value="Hola, ¿qué tienes en mente para tu web?" oninput="updatePreview()" />
+                </div>
+            </div>
+
+            <!-- POSICIÓN Y FORMA DEL BOTÓN -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Posición del botón</label>
+                    <span class="field-hint">Dónde se mostrará el botón flotante.</span>
+                    <div class="toggle-pills-row" id="pos_group">
+                        <div class="toggle-pill-card" id="pos_left_card" onclick="setPosition('bottom-left')">
+                            <div class="radio-dot"></div>
+                            <span>Izquierda</span>
+                        </div>
+                        <div class="toggle-pill-card active" id="pos_right_card" onclick="setPosition('bottom-right')">
+                            <div class="radio-dot"></div>
+                            <span>Derecha</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Forma del botón</label>
+                    <span class="field-hint">Elige cómo se verá el botón flotante.</span>
+                    <div class="toggle-pills-row" id="bubble_group">
+                        <div class="toggle-pill-card" id="shape_circle_card" onclick="setBubbleStyle('circle')">
+                            <div class="radio-dot"></div>
+                            <div style="display:inline-flex; align-items:center; gap:8px;">
+                                <span style="width:24px; height:24px; border-radius:50%; background:#0F1B31; display:inline-flex; align-items:center; justify-content:center; padding:4px;">
+                                    <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;" />
+                                </span>
+                                <span>Circular</span>
+                            </div>
+                        </div>
+                        <div class="toggle-pill-card active" id="shape_pill_card" onclick="setBubbleStyle('pill')">
+                            <div class="radio-dot"></div>
+                            <div style="display:inline-flex; align-items:center; gap:8px; background:#0F1B31; color:white; padding:4px 12px; border-radius:18px; font-size:11px; font-weight:600;">
+                                <span style="width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,0.18); display:inline-flex; align-items:center; justify-content:center; padding:3px;">
+                                    <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;" />
+                                </span>
+                                <span style="width:1px; height:10px; background:rgba(255,255,255,0.25);"></span>
+                                <span>Hablemos de tu web</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="bubble_text">Texto del Botón Flotante (Si es Pastilla)</label>
+                <input id="bubble_text" type="text" value="Hablemos de tu web" oninput="updatePreview()" />
+            </div>
+
+            <!-- AVATAR Y FOTO -->
+            <div class="form-group">
+                <label>Avatar / Foto del Asistente</label>
+                <span class="field-hint">Elige un identificador o introduce la URL de tu imagen o logotipo.</span>
+                <div class="avatar-picker" id="avatar_picker">
+                    <div class="avatar-opt selected" onclick="setAvatar('K')" title="Logo Oficial Klyven" style="display:flex;align-items:center;justify-content:center;padding:6px;">
+                        <img src="/assets/logo-light.png" alt="Logo Klyven" style="width:20px;height:20px;object-fit:contain;" onerror="this.src='https://klyvenstudio.com/assets/logo-Ze6ecQUw.png'" />
+                    </div>
+                    <div class="avatar-opt" onclick="setAvatar('A')">A</div>
+                    <div class="avatar-opt" onclick="setAvatar('S')">S</div>
+                    <div class="avatar-opt" onclick="setAvatar('B')">B</div>
+                    <div class="avatar-opt" onclick="setAvatar('C')">C</div>
+                    <div class="avatar-opt" onclick="setAvatar('AI')">AI</div>
+                </div>
+                <input id="bot_avatar_url" type="text" placeholder="O pega la URL directa de tu logo o foto..." style="margin-top: 8px;" oninput="updatePreview()" />
+            </div>
+
+            <!-- SECCIÓN 3: ENTRENAMIENTO Y SERVICIOS REALES -->
+            <div id="sec-servicios" class="form-group">
+                <div class="section-title">Catálogo y precios reales</div>
+                <p class="section-desc">Entrenamiento determinista: la IA solo cotizará los servicios y precios aquí definidos.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="biz_desc">Descripción del Negocio</label>
+                <span class="field-hint">Propuesta de valor detallada y servicios principales.</span>
+                <textarea id="biz_desc" rows="3">Estudio de diseño web independiente enfocado en crear sitios web distintivos, de alto rendimiento y orientados a la conversión. Combinan estrategia, diseño visual, mensajería y desarrollo para ayudar a empresas a mejorar su presencia digital.</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Servicios, Paquetes y Precios:</label>
+                <div id="services_container">
+                    <div class="service-row">
+                        <input type="text" class="srv-name" value="Landing Page" placeholder="Servicio" />
+                        <input type="number" class="srv-price" value="450" placeholder="Precio" />
+                        <input type="text" class="srv-desc" value="Página de alta conversión, copy persuasivo, responsive 100%" placeholder="Detalles / Qué incluye" />
+                        <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    </div>
+                    <div class="service-row">
+                        <input type="text" class="srv-name" value="Business Website" placeholder="Servicio" />
+                        <input type="number" class="srv-price" value="850" placeholder="Precio" />
+                        <input type="text" class="srv-desc" value="Sitio web corporativo hasta 5 secciones, CMS, SEO" placeholder="Detalles / Qué incluye" />
+                        <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    </div>
+                    <div class="service-row">
+                        <input type="text" class="srv-name" value="Website Redesign" placeholder="Servicio" />
+                        <input type="number" class="srv-price" value="700" placeholder="Precio" />
+                        <input type="text" class="srv-desc" value="Auditoría UX y rediseño completo de identidad digital" placeholder="Detalles / Qué incluye" />
+                        <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                    </div>
+                </div>
+                <button class="btn-add" onclick="addServiceRow()">+ Agregar Otro Servicio</button>
+            </div>
+
+            <div class="form-group">
+                <label for="biz_faqs">Políticas, Horarios y Tiempos de Entrega</label>
+                <textarea id="biz_faqs" rows="2">Entrega en 5 a 14 días hábiles según alcance. Revisiones ilimitadas en UI/UX. Anticipo del 50% al iniciar y saldo al liquidar.</textarea>
+            </div>
+
+            <!-- SECCIÓN 4: GUARDAR Y PUBLICAR -->
+            <div id="sec-publicar" class="form-group">
+                <button class="btn-save-main" onclick="saveTenant()">
+                    Guardar y publicar asistente en la nube
+                </button>
+            </div>
+
+            <!-- BLOQUE DE CÓDIGO GENERADO TRAS GUARDAR -->
+            <div id="code_box" class="code-box">
+                <div style="font-weight: 700; color: #0F1B31; font-size: 1rem;">Asistente personalizado y guardado con éxito</div>
+                <p style="font-size: 0.86rem; color: var(--text-secondary); margin: 6px 0;">
+                    Pega esta única línea de código en tu página web antes del cierre de &lt;/body&gt;:
+                </p>
+                <div class="code-content" id="code_script"></div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn-copy" onclick="copyCode()">Copiar código</button>
+                    <a id="btn_demo_link" href="#" target="_blank" class="btn-copy" style="background: #FFFFFF; color: var(--btn-primary); border: 1px solid #DCE5F0; text-decoration: none;">Probar en página web real</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- --------------------------------------------------------- -->
+        <!-- COLUMNA DERECHA: VISTA PREVIA IDÉNTICA AL MOCKUP          -->
+        <!-- --------------------------------------------------------- -->
+        <div class="preview-pane">
+            <div class="preview-heading-row">
+                <div>
+                    <div class="preview-title">Vista previa</div>
+                    <div class="preview-subtitle">Así se verá tu asistente en tu sitio web.</div>
+                </div>
+                <span id="preview_pos_badge" style="font-size: 0.75rem; background: #FFFFFF; border: 1px solid #DCE5F0; color: var(--text-secondary); padding: 3px 10px; border-radius: 12px; font-weight: 600;">Derecha</span>
+            </div>
+
+            <!-- TARJETA DEL CHATBOT -->
+            <div class="mock-window-card mock-theme-glass" id="mock_screen">
+                <!-- Cabecera del mock -->
+                <div class="mock-header" id="preview_header">
+                    <div class="mock-header-identity">
+                        <div class="mock-avatar-box" id="preview_avatar">K</div>
+                        <div>
+                            <div class="mock-bot-name">
+                                <span id="preview_title">Klyven Assistant</span>
+                                <span class="status-dot-green"></span>
+                                <span style="font-size:0.75rem; font-weight:500; color:#10B981;">En línea</span>
+                            </div>
+                            <div class="mock-bot-sub" id="preview_sub_title">Klyven Studio</div>
+                        </div>
+                    </div>
+                    <div class="mock-dots">•••</div>
+                </div>
+
+                <!-- Mensajes interactivos -->
+                <div class="mock-messages" id="preview_messages">
+                    <!-- Mensaje Bot 1 -->
+                    <div class="mock-msg-row bot-row">
+                        <div class="mini-avatar-inline" id="preview_avatar_mini1">K</div>
+                        <div class="mock-bubble mock-bubble-bot" id="preview_welcome_msg">
+                            Hola, soy el asistente de Klyven Studio. ¿Cómo podemos ayudarte con tu página web?
+                        </div>
+                    </div>
+
+                    <!-- Chips interactivos de ejemplo -->
+                    <div class="mock-chips-row">
+                        <div class="mock-chip" onclick="quickAsk('Crear mi página')">Crear mi página</div>
+                        <div class="mock-chip" onclick="quickAsk('Quiero rediseñar mi web')">Rediseñar mi web</div>
+                        <div class="mock-chip" onclick="quickAsk('Ver paquetes')">Ver paquetes</div>
+                    </div>
+
+                    <!-- Mensaje Usuario -->
+                    <div class="mock-msg-row user-row">
+                        <div class="mock-bubble mock-bubble-user">
+                            Quiero rediseñar mi web
+                        </div>
+                    </div>
+
+                    <!-- Mensaje Bot 2 -->
+                    <div class="mock-msg-row bot-row">
+                        <div class="mini-avatar-inline" id="preview_avatar_mini2">K</div>
+                        <div class="mock-bubble mock-bubble-bot">
+                            Cuéntame sobre tu negocio y comparte el enlace de tu página actual.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de entrada de texto interactiva -->
+                <div class="mock-input-bar">
+                    <input id="test_input" type="text" placeholder="Cuéntanos sobre tu proyecto..." onkeypress="if(event.key==='Enter') sendTestMessage()" />
+                    <button class="btn-send-mock" onclick="sendTestMessage()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- VISTA PREVIA DEL BOTÓN FLOTANTE INFERIOR -->
+            <div class="preview-bubble-container" id="preview_bubble_container">
+                <div id="mini_bubble_preview">
+                    <div class="mini-bubble-avatar-circle" id="mini_avatar_preview">K</div>
+                    <span class="mini-bubble-divider" id="mini_bubble_divider"></span>
+                    <span id="mini_text_preview">Hablemos de tu web</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- LÓGICA DE CONTROL Y FUNCIONALIDADES INTEGRADAS                 -->
+    <!-- ============================================================= -->
+    <script>
+        let currentTheme = 'glass';
+        let currentBubbleStyle = 'pill';
+        let currentPosition = 'bottom-right';
+        let currentAvatar = 'K';
+
+        function scrollToSec(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            document.querySelectorAll('#theme_group .theme-card').forEach(btn => btn.classList.remove('active'));
+            
+            const activeCard = document.getElementById('card_theme_' + theme);
+            if (activeCard) activeCard.classList.add('active');
+            
+            const screen = document.getElementById('mock_screen');
+            screen.className = 'mock-window-card mock-theme-' + theme;
+            updatePreview();
+        }
+
+        function setBubbleStyle(style) {
+            currentBubbleStyle = style;
+            const cCircle = document.getElementById('shape_circle_card');
+            const cPill = document.getElementById('shape_pill_card');
+            if (cCircle) cCircle.classList.toggle('active', style === 'circle');
+            if (cPill) cPill.classList.toggle('active', style === 'pill');
+            updatePreview();
+        }
+
+        function setPosition(pos) {
+            currentPosition = pos;
+            const cLeft = document.getElementById('pos_left_card');
+            const cRight = document.getElementById('pos_right_card');
+            if (cLeft) cLeft.classList.toggle('active', pos === 'bottom-left');
+            if (cRight) cRight.classList.toggle('active', pos === 'bottom-right');
+            
+            const badge = document.getElementById('preview_pos_badge');
+            if (badge) badge.innerText = pos === 'bottom-right' ? 'Derecha' : 'Izquierda';
+
+            const container = document.getElementById('preview_bubble_container');
+            if (container) {
+                container.style.justifyContent = pos === 'bottom-left' ? 'flex-start' : 'flex-end';
+            }
+            updatePreview();
+        }
+
+        function setAvatar(av) {
+            currentAvatar = av;
+            document.querySelectorAll('.avatar-opt').forEach(el => el.classList.remove('selected'));
+            if (event && event.target) event.target.classList.add('selected');
+            document.getElementById('bot_avatar_url').value = '';
+            updatePreview();
+        }
+
+        function addServiceRow() {
+            const container = document.getElementById('services_container');
+            const row = document.createElement('div');
+            row.className = 'service-row';
+            row.innerHTML = `
+                <input type="text" class="srv-name" placeholder="Servicio" />
+                <input type="number" class="srv-price" placeholder="Precio" />
+                <input type="text" class="srv-desc" placeholder="Detalles / Qué incluye" />
+                <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            `;
+            container.appendChild(row);
+        }
+
+        function delRow(btn) {
+            btn.parentElement.remove();
+        }
+
+        function getAvatarHtml(forMini = false) {
+            const avatarUrl = document.getElementById('bot_avatar_url').value.trim();
+            if (avatarUrl) {
+                return `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;" />`;
+            }
+            if (currentAvatar === 'K' || currentAvatar === 'klyven') {
+                const darkLogo = 'https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png';
+                const lightLogo = '/assets/logo-light.png';
+                const logoSrc = (currentTheme === 'light' && !forMini) ? lightLogo : darkLogo;
+                return `<img src="${logoSrc}" alt="Logo Klyven" style="width:100%;height:100%;object-fit:contain;padding:4px;" onerror="this.src='${darkLogo}'" />`;
+            }
+            return currentAvatar;
+        }
+
+        function formatRichText(raw) {
+            if (!raw) return '';
+            let str = String(raw);
+
+            // 1. Separar listas numeradas o bullets pegados en una sola línea (ej: "...: 1. **Plan** ... 2. **Plan**")
+            str = str.replace(/([^\n])\s+(\d+\.\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
+            str = str.replace(/([^\n])\s+([\-\*]\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
+
+            // 2. Encabezados markdown
+            str = str.replace(/^###\s+(.*?)$/gm, '<div style="font-weight:700;font-size:1.02em;margin:6px 0 2px 0;">$1</div>');
+            str = str.replace(/^##\s+(.*?)$/gm, '<div style="font-weight:700;font-size:1.06em;margin:6px 0 2px 0;">$1</div>');
+            str = str.replace(/^#\s+(.*?)$/gm, '<div style="font-weight:800;font-size:1.1em;margin:8px 0 3px 0;">$1</div>');
+
+            // 3. Negrita + Cursiva
+            str = str.replace(/\*\*\*(.*?)\*\*\*/g, (m, p) => '<strong><em>' + p + '</em></strong>');
+
+            // 4. Negrita: **texto** o __texto__
+            str = str.replace(/\*\*(.*?)\*\*/g, (m, p) => '<strong>' + p + '</strong>');
+            str = str.replace(/__(.*?)__/g, (m, p) => '<strong>' + p + '</strong>');
+
+            // 5. Cursiva: *texto* o _texto_
+            str = str.replace(/(^|[^\*])\*(?!\*)([^\*]+)\*(?!\*)/g, (m, p1, p2) => p1 + '<em>' + p2 + '</em>');
+            str = str.replace(/(^|[^_])_(?!_)([^_]+)_(?!_)/g, (m, p1, p2) => p1 + '<em>' + p2 + '</em>');
+
+            // 6. Tachado: ~~texto~~
+            str = str.replace(/~~(.*?)~~/g, (m, p) => '<del>' + p + '</del>');
+
+            // 7. Código: `code`
+            str = str.replace(/\`([^\`]+)\`/g, (m, p) => '<code>' + p + '</code>');
+
+            // 8. Enlaces: [text](url)
+            str = str.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (m, p1, p2) => '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer">' + p1 + '</a>');
+
+            // 9. Saltos de línea elegantes y separación de párrafos
+            str = str.replace(/\n\n+/g, '<div style="height:8px;"></div>');
+            str = str.replace(/\n/g, '<br>');
+
+            return str;
+        }
+
+        function updatePreview() {
+            const bizName = document.getElementById('biz_name').value || 'Tu Negocio';
+            const botName = document.getElementById('bot_name').value || 'Asistente';
+            const color = document.getElementById('brand_color').value || '#0F1B31';
+            const welcome = document.getElementById('bot_welcome').value;
+            const bubbleText = document.getElementById('bubble_text').value || 'Hablemos de tu web';
+
+            document.getElementById('color_hex_label').innerText = color.toUpperCase();
+            document.getElementById('swatch_brand_display').style.background = color;
+
+            const prevTitle = document.getElementById('preview_title');
+            if (prevTitle) prevTitle.innerText = botName;
+            
+            const prevSub = document.getElementById('preview_sub_title');
+            if (prevSub) prevSub.innerText = bizName;
+
+            const prevWelcome = document.getElementById('preview_welcome_msg');
+            if (prevWelcome) prevWelcome.innerHTML = formatRichText(welcome);
+
+            // Avatares con soporte inteligente de logo (claro y oscuro)
+            const avEl = document.getElementById('preview_avatar');
+            const avMini1 = document.getElementById('preview_avatar_mini1');
+            const avMini2 = document.getElementById('preview_avatar_mini2');
+            const miniAv = document.getElementById('mini_avatar_preview');
+            const miniBubble = document.getElementById('mini_bubble_preview');
+            const miniText = document.getElementById('mini_text_preview');
+            const miniDivider = document.getElementById('mini_bubble_divider');
+
+            miniBubble.style.background = color;
+
+            const avMain = getAvatarHtml(currentTheme === 'dark' || currentTheme === 'glass');
+            const avMini = getAvatarHtml(true);
+
+            if (avEl) avEl.innerHTML = avMain;
+            if (avMini1) avMini1.innerHTML = avMini;
+            if (avMini2) avMini2.innerHTML = avMini;
+            if (miniAv) miniAv.innerHTML = avMini;
+
+            if (currentBubbleStyle === 'pill') {
+                miniBubble.classList.remove('circle-mode');
+                miniText.innerText = bubbleText;
+                miniText.style.display = 'inline-block';
+                if (miniDivider) miniDivider.style.display = 'inline-block';
+            } else {
+                miniBubble.classList.add('circle-mode');
+                miniText.style.display = 'none';
+                if (miniDivider) miniDivider.style.display = 'none';
+            }
+
+            const container = document.getElementById('preview_bubble_container');
+            if (container) {
+                container.style.justifyContent = currentPosition === 'bottom-left' ? 'flex-start' : 'flex-end';
+            }
+        }
+
+        async function extractBrandFromWeb() {
+            const url = document.getElementById('biz_url').value.trim();
+            if (!url) return alert('Por favor escribe la URL de tu página web.');
+
+            const status = document.getElementById('extract_status');
+            status.style.display = 'block';
+            status.innerText = 'Analizando sitio web y extrayendo paleta de colores...';
+
+            try {
+                const resp = await fetch(`/api/extract-brand?url=${encodeURIComponent(url)}`);
+                const data = await resp.json();
+
+                if (data.business_name && data.business_name !== 'Mi Negocio') {
+                    document.getElementById('biz_name').value = data.business_name;
+                    document.getElementById('biz_id').value = data.business_name.toUpperCase().replace(/[^A-Z0-9]/g, '-').substring(0, 15);
+                }
+                if (data.dominant_color) {
+                    document.getElementById('brand_color').value = data.dominant_color;
+                }
+                if (data.logo_url) {
+                    document.getElementById('bot_avatar_url').value = data.logo_url;
+                }
+
+                status.innerHTML = `<b>Colores y logo extraídos con éxito.</b> Color detectado: <span style="color:${data.dominant_color}; font-weight:bold;">${data.dominant_color}</span>`;
+                updatePreview();
+            } catch (e) {
+                status.innerText = 'No se pudo inspeccionar directamente, pero puedes configurar los colores manualmente.';
+            }
+        }
+
+        async function aiTrainFromWeb() {
+            const url = document.getElementById('biz_url').value.trim();
+            const notes = document.getElementById('biz_notes_quick').value.trim();
+            if (!url && !notes) return alert('Por favor ingresa la URL de tu sitio web o notas de tu negocio.');
+
+            const status = document.getElementById('extract_status');
+            status.style.display = 'block';
+            status.innerHTML = '<b>Google Gemini está analizando tu web...</b> Extrayendo catálogo, unidades, precios reales y políticas.';
+
+            // 1. Extraer marca y colores
+            if (url) {
+                try {
+                    const bResp = await fetch(`/api/extract-brand?url=${encodeURIComponent(url)}`);
+                    const bData = await bResp.json();
+                    if (bData.dominant_color) document.getElementById('brand_color').value = bData.dominant_color;
+                    if (bData.logo_url) document.getElementById('bot_avatar_url').value = bData.logo_url;
+                } catch(e) {}
+            }
+
+            // 2. Extraer catálogo completo con IA
+            try {
+                const resp = await fetch('/api/ai-analyze-site', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url, custom_notes: notes })
+                });
+                const res = await resp.json();
+
+                if (res.status === 'success' && res.data) {
+                    const d = res.data;
+                    if (d.business_name) document.getElementById('biz_name').value = d.business_name;
+                    if (d.tenant_id) document.getElementById('biz_id').value = d.tenant_id.toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+                    if (d.industry) {
+                        const indSelect = document.getElementById('biz_industry');
+                        indSelect.value = d.industry;
+                        if (indSelect.value !== d.industry) {
+                            const opt = document.createElement('option');
+                            opt.value = d.industry;
+                            opt.innerText = d.industry;
+                            opt.selected = true;
+                            indSelect.appendChild(opt);
+                        }
+                    }
+                    if (d.currency) document.getElementById('biz_currency').value = d.currency;
+                    if (d.business_description) document.getElementById('biz_desc').value = d.business_description;
+                    if (d.bot_name) document.getElementById('bot_name').value = d.bot_name;
+                    if (d.welcome_message) document.getElementById('bot_welcome').value = d.welcome_message;
+                    if (d.faqs) document.getElementById('biz_faqs').value = d.faqs;
+
+                    // Llenar tabla de servicios con los reales
+                    if (d.services && d.services.length > 0) {
+                        const container = document.getElementById('services_container');
+                        container.innerHTML = '';
+                        d.services.forEach(s => {
+                            const row = document.createElement('div');
+                            row.className = 'service-row';
+                            row.innerHTML = `
+                                <input type="text" class="srv-name" value="${s.name || ''}" placeholder="Servicio" />
+                                <input type="number" class="srv-price" value="${s.price || 0}" placeholder="Precio" />
+                                <input type="text" class="srv-desc" value="${s.description || ''}" placeholder="Detalles / Qué incluye" />
+                                <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                            `;
+                            container.appendChild(row);
+                        });
+                    }
+
+                    status.innerHTML = `<b>Entrenamiento completo.</b> IA extrajo <b>${d.services ? d.services.length : 0} servicios/unidades reales</b> con sus precios y políticas. Puedes editarlos y guardar.`;
+                    updatePreview();
+
+                    // Auto-guardar inmediatamente para que el backend tenga los datos activos
+                    await saveTenant(true);
+
+                    // Nueva sesión limpia para el test de chat con la nueva web analizada
+                    previewSessionId = 'preview_' + Date.now();
+                } else {
+                    status.innerHTML = 'No se pudo procesar automáticamente. Puedes llenar los campos manualmente.';
+                }
+            } catch(e) {
+                status.innerHTML = 'Error en conexión con IA: ' + e.message;
+            }
+        }
+
+        let previewSessionId = 'preview_' + Date.now();
+
+        async function saveTenant(silent = false) {
+            const bizName = document.getElementById('biz_name').value.trim();
+            const bizId = document.getElementById('biz_id').value.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+            const industry = document.getElementById('biz_industry').value;
+            const currency = document.getElementById('biz_currency').value;
+            const botName = document.getElementById('bot_name').value.trim();
+            const color = document.getElementById('brand_color').value;
+            const avatarUrl = document.getElementById('bot_avatar_url').value.trim();
+            const welcome = document.getElementById('bot_welcome').value.trim();
+            const desc = document.getElementById('biz_desc').value.trim();
+            const faqs = document.getElementById('biz_faqs').value.trim();
+            const bubbleText = document.getElementById('bubble_text').value.trim();
+            const autoAdapt = document.getElementById('auto_adapt_check').checked;
+
+            const services = [];
+            document.querySelectorAll('.service-row').forEach(row => {
+                const name = row.querySelector('.srv-name').value.trim();
+                const price = parseFloat(row.querySelector('.srv-price').value || 0);
+                const description = row.querySelector('.srv-desc').value.trim();
+                if (name) {
+                    services.push({ name, price, description });
+                }
+            });
+
+            const payload = {
+                tenant_id: bizId,
+                business_name: bizName,
+                industry: industry,
+                currency: currency,
+                bot_name: botName,
+                bot_avatar: avatarUrl || currentAvatar,
+                brand_color: color,
+                theme_mode: currentTheme,
+                bubble_style: currentBubbleStyle,
+                bubble_text: bubbleText,
+                position: currentPosition,
+                welcome_message: welcome,
+                business_description: desc,
+                services: services,
+                faqs: faqs,
+                auto_adapt: autoAdapt
+            };
+
+            try {
+                const resp = await fetch('/api/tenants', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const res = await resp.json();
+
+                const scriptTag = `<script src="${window.location.origin}/widget.js" data-tenant="${bizId}"><\/script>`;
+                document.getElementById('code_script').innerText = scriptTag;
+                document.getElementById('code_box').style.display = 'block';
+                document.getElementById('btn_demo_link').href = `/demo?tenant=${bizId}`;
+                if (!silent) {
+                    alert(`¡Chatbot para "${bizName}" guardado y publicado con éxito!`);
+                }
+            } catch (e) {
+                if (!silent) {
+                    alert('Error al guardar: ' + e.message);
+                }
+            }
+        }
+
+        function copyCode() {
+            const text = document.getElementById('code_script').innerText;
+            navigator.clipboard.writeText(text);
+            alert('¡Código copiado al portapapeles! Pégalo en tu web.');
+        }
+
+        function quickAsk(msg) {
+            document.getElementById('test_input').value = msg;
+            sendTestMessage();
+        }
+
+        async function sendTestMessage() {
+            const input = document.getElementById('test_input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const box = document.getElementById('preview_messages');
+            
+            // Render usuario
+            const uRow = document.createElement('div');
+            uRow.className = 'mock-msg-row user-row';
+            uRow.innerHTML = `<div class="mock-bubble mock-bubble-user">${formatRichText(msg)}</div>`;
+            box.appendChild(uRow);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            // Loading bot
+            const lRow = document.createElement('div');
+            lRow.className = 'mock-msg-row bot-row';
+            lRow.innerHTML = `
+                <div class="mini-avatar-inline">${getAvatarHtml(true)}</div>
+                <div class="mock-bubble mock-bubble-bot">Escribiendo...</div>
+            `;
+            box.appendChild(lRow);
+            box.scrollTop = box.scrollHeight;
+
+            const bizId = document.getElementById('biz_id').value.trim().toUpperCase() || 'KLYVEN-STUDIO';
+
+            const services = [];
+            document.querySelectorAll('.service-row').forEach(row => {
+                const name = row.querySelector('.srv-name').value.trim();
+                const price = parseFloat(row.querySelector('.srv-price').value || 0);
+                const description = row.querySelector('.srv-desc').value.trim();
+                if (name) services.push({ name, price, description });
+            });
+
+            const previewConfig = {
+                business_name: document.getElementById('biz_name').value.trim() || 'Klyven Studio',
+                industry: document.getElementById('biz_industry').value,
+                currency: document.getElementById('biz_currency').value || 'USD',
+                business_description: document.getElementById('biz_desc').value.trim(),
+                services: services,
+                faqs: document.getElementById('biz_faqs').value.trim(),
+                bot_name: document.getElementById('bot_name').value.trim() || 'Asistente',
+                welcome_message: document.getElementById('bot_welcome').value.trim(),
+                brand_color: document.getElementById('brand_color').value || '#0F1B31'
+            };
+
+            try {
+                const resp = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tenant_id: bizId,
+                        message: msg,
+                        session_id: previewSessionId,
+                        preview_config: previewConfig
+                    })
+                });
+                const data = await resp.json();
+                box.removeChild(lRow);
+
+                const bRow = document.createElement('div');
+                bRow.className = 'mock-msg-row bot-row';
+                bRow.innerHTML = `
+                    <div class="mini-avatar-inline">${getAvatarHtml(true)}</div>
+                    <div class="mock-bubble mock-bubble-bot">${formatRichText(data.reply)}</div>
+                `;
+                box.appendChild(bRow);
+                box.scrollTop = box.scrollHeight;
+            } catch (e) {
+                box.removeChild(lRow);
+                const errRow = document.createElement('div');
+                errRow.className = 'mock-msg-row bot-row';
+                errRow.innerHTML = `
+                    <div class="mini-avatar-inline">${getAvatarHtml(true)}</div>
+                    <div class="mock-bubble mock-bubble-bot">Error al procesar: ${e.message}</div>
+                `;
+                box.appendChild(errRow);
+            }
+        }
+
+        updatePreview();
+    </script>
+</body>
+</html>

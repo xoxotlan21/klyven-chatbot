@@ -1,0 +1,32 @@
+# Render Blueprint: Despliegue en la Nube con HTTPS Automático
+services:
+  # Servicio 1: API Gateway & Widget (FastAPI)
+  - type: web
+    name: klyven-ai-gateway
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        value: travelsales_secret_verify_token
+      - key: PYTHON_VERSION
+        value: 3.11.8
+
+  # Servicio 2: Dashboard Administrativo (Streamlit)
+  - type: web
+    name: klyven-ai-dashboard
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.8
+
