@@ -294,6 +294,7 @@ Tu objetivo es analizar profundamente de qué trata el negocio para que el Chatb
 6. Políticas, horarios de atención, garantías y ubicación mencionadas.
 7. Nombre sugerido para el Asistente y un Mensaje de Bienvenida cordial y orientado a vender.
 8. Color de marca dominante / característico en hexadecimal (#HEX), como el color de los botones principales o logo.
+9. Texto breve para el botón flotante (máximo 4 palabras, ej: '¿Podemos ayudarte?', 'Conoce nuestros planes', 'Chatea con nosotros').
 
 Responde ÚNICAMENTE en JSON válido con este esquema exacto:
 {{
@@ -305,6 +306,7 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
   "brand_color": "#HEX_COLOR",
   "bot_name": "Nombre del Asistente",
   "welcome_message": "¡Hola! Bienvenido a... ¿en qué te podemos apoyar hoy?",
+  "bubble_text": "¿Podemos ayudarte?",
   "services": [
     {{
       "name": "Nombre del Servicio o Unidad",
@@ -362,7 +364,7 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
                             "brand_color": final_color,
                             "theme_mode": "glass",
                             "bubble_style": "pill",
-                            "bubble_text": "Hablemos de tu web",
+                            "bubble_text": parsed.get("bubble_text") or "¿Podemos ayudarte?",
                             "position": "bottom-right"
                         }
                     )

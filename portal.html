@@ -2235,27 +2235,10 @@
                         </div>
 
                         <!-- Chips sugeridos para pruebas rápidas -->
-                        <div class="mock-chips-container">
+                        <div class="mock-chips-container" id="preview_chips">
                             <div class="mock-chip-btn" onclick="quickAsk('¿Qué servicios ofrecen?')">¿Qué servicios ofrecen?</div>
                             <div class="mock-chip-btn" onclick="quickAsk('¿Cuáles son los precios?')">Precios y paquetes</div>
                             <div class="mock-chip-btn" onclick="quickAsk('¿Cuáles son los tiempos de entrega?')">Tiempos de entrega</div>
-                        </div>
-
-                        <!-- Mensaje de prueba simulado de usuario -->
-                        <div class="mock-msg-row user-row">
-                            <div class="mock-bubble mock-bubble-user">
-                                ¿Qué servicios ofrecen?
-                            </div>
-                        </div>
-
-                        <!-- Respuesta simulada del bot -->
-                        <div class="mock-msg-row bot-row">
-                            <div class="mini-avatar-inline" id="preview_avatar_mini2">
-                                <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Avatar" onerror="this.src='/assets/logo-light.png'" />
-                            </div>
-                            <div class="mock-bubble mock-bubble-bot">
-                                Ofrecemos Landing Pages de alta conversión, Sitios Corporativos y Rediseño de identidad digital. ¿Sobre cuál te gustaría cotizar?
-                            </div>
                         </div>
                     </div>
 
@@ -2575,6 +2558,72 @@
             return str;
         }
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getCurrentServicesList() {
+            const list = [];
+            document.querySelectorAll('.service-row').forEach(row => {
+                const name = row.querySelector('.srv-name')?.value?.trim();
+                const price = parseFloat(row.querySelector('.srv-price')?.value || 0);
+                const description = row.querySelector('.srv-desc')?.value?.trim() || '';
+                if (name) list.push({ name, price, description });
+            });
+            return list;
+        }
+
+        function renderPreviewChat(welcomeMessage, services) {
+            const box = document.getElementById('preview_messages');
+            if (!box) return;
+
+            const welcome = welcomeMessage || document.getElementById('bot_welcome')?.value?.trim() || 'Hola, ¿en qué te puedo ayudar hoy?';
+            const srvs = (services !== undefined && services !== null) ? services : getCurrentServicesList();
+
+            let chips = [];
+            if (srvs && srvs.length > 0) {
+                if (srvs[0] && srvs[0].name) {
+                    chips.push(`¿Qué incluye ${srvs[0].name}?`);
+                }
+                if (srvs.length > 1 && srvs[1] && srvs[1].name) {
+                    chips.push(`¿Cuánto cuesta ${srvs[1].name}?`);
+                } else if (srvs[0] && srvs[0].price) {
+                    chips.push(`Precio de ${srvs[0].name}`);
+                } else {
+                    chips.push('¿Cuáles son los precios?');
+                }
+                chips.push('¿Cuáles son sus políticas y formas de pago?');
+            } else {
+                chips = ['¿Qué servicios ofrecen?', '¿Cuáles son los precios?', '¿Cómo puedo contratar?'];
+            }
+
+            const chipsHtml = `
+                <div class="mock-chips-container" id="preview_chips">
+                    ${chips.map(c => `<div class="mock-chip-btn" onclick="quickAsk('${c.replace(/'/g, "\\'")}')">${escapeHtml(c)}</div>`).join('')}
+                </div>
+            `;
+
+            box.innerHTML = `
+                <!-- Mensaje bienvenida del bot -->
+                <div class="mock-msg-row bot-row">
+                    <div class="mini-avatar-inline" id="preview_avatar_mini1">
+                        ${getAvatarHtml(true)}
+                    </div>
+                    <div class="mock-bubble mock-bubble-bot" id="preview_welcome_msg">
+                        ${formatRichText(welcome)}
+                    </div>
+                </div>
+                ${chipsHtml}
+            `;
+            box.scrollTop = 0;
+        }
+
         // -----------------------------------------------------------------
         // ACTUALIZACIÓN DE VISTA PREVIA EN TIEMPO REAL
         // -----------------------------------------------------------------
@@ -2744,6 +2793,10 @@
                     if (d.business_description) document.getElementById('biz_desc').value = d.business_description;
                     if (d.bot_name) document.getElementById('bot_name').value = d.bot_name;
                     if (d.welcome_message) document.getElementById('bot_welcome').value = d.welcome_message;
+                    if (d.bubble_text) {
+                        const bInput = document.getElementById('bubble_text');
+                        if (bInput) bInput.value = d.bubble_text;
+                    }
                     if (d.faqs) document.getElementById('biz_faqs').value = d.faqs;
 
                     if (d.services && d.services.length > 0) {
@@ -2765,12 +2818,15 @@
                         });
                     }
 
+                    // Resetear y limpiar el chat de prueba inmediatamente con el mensaje y chips del nuevo negocio
+                    previewSessionId = 'preview_' + Date.now();
+                    renderPreviewChat(d.welcome_message, d.services);
+
                     status.className = 'extract-status-box';
                     status.innerHTML = `<span><b>Análisis completado.</b> La IA extrajo <b>${d.services ? d.services.length : 0} servicios reales</b> con sus precios y políticas.</span>`;
                     updatePreview();
 
                     await saveTenant(true);
-                    previewSessionId = 'preview_' + Date.now();
                 } else {
                     status.className = 'extract-status-box error';
                     status.innerHTML = '<span>No se pudo procesar automáticamente. Puedes llenar los campos manualmente.</span>';
