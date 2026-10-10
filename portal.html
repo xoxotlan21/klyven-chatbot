@@ -923,6 +923,153 @@
             border-color: rgba(255, 255, 255, 0.6) !important;
         }
 
+        /* -----------------------------------------------------------------
+           TARJETA INTERACTIVA DE CAPTURA DE LEADS EN EL CHAT
+        ----------------------------------------------------------------- */
+        .chat-lead-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+            width: 100%;
+            max-width: 340px;
+            margin: 6px 0 2px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mock-theme-dark .chat-lead-card {
+            background: #1E293B !important;
+            border-color: #334155 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .chat-lead-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-lead-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .chat-lead-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .mock-theme-dark .chat-lead-title {
+            color: #F8FAFC !important;
+        }
+
+        .chat-lead-sub {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+
+        .mock-theme-dark .chat-lead-sub {
+            color: #94A3B8 !important;
+        }
+
+        .chat-lead-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-lead-input {
+            width: 100%;
+            height: 36px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0 10px;
+            font-size: 0.82rem;
+            outline: none;
+            background: #FFFFFF;
+            color: var(--text-primary);
+            transition: border-color 0.15s ease;
+        }
+
+        .mock-theme-dark .chat-lead-input {
+            background: #0F172A !important;
+            border-color: #334155 !important;
+            color: #FFFFFF !important;
+        }
+
+        .chat-lead-input:focus {
+            border-color: #2563EB;
+        }
+
+        textarea.chat-lead-input {
+            height: auto;
+            padding: 6px 10px;
+            resize: none;
+        }
+
+        .chat-lead-submit {
+            height: 36px;
+            border: none;
+            border-radius: 10px;
+            background: var(--brand-dynamic, #0F1B31);
+            color: #FFFFFF;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .chat-lead-submit:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .chat-lead-success {
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-lead-success-icon {
+            font-size: 24px;
+        }
+
+        .chat-lead-success-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #10B981;
+        }
+
+        .chat-lead-success-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .mock-theme-dark .chat-lead-success-desc {
+            color: #94A3B8 !important;
+        }
+
         .card-actions-footer {
             display: flex;
             align-items: center;
@@ -2954,6 +3101,46 @@
                         </div>
                     </div>
 
+                    <!-- Tarjeta: Enlace Directo & Código QR para Redes Sociales y Tarjetas de Presentación (100% Funcional) -->
+                    <div class="card">
+                        <div class="card-header-row">
+                            <div class="card-icon-badge" style="background: rgba(99, 102, 241, 0.1); color: #6366F1;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                            </div>
+                            <div class="card-header-titles">
+                                <h3>Enlace Directo & Código QR (Para Redes Sociales y Tarjetas)</h3>
+                                <p>Comparte tu chatbot sin necesidad de tener página web. Ideal para tu biografía de Instagram, TikTok, WhatsApp o imprimir en volantes.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 180px; gap: 20px; align-items: center; margin-top: 14px; background: #F8FAFC; border: 1px solid var(--border-subtle); padding: 16px; border-radius: 14px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">URL Pública de tu Chatbot</label>
+                                <div class="url-action-bar" style="margin-top: 0;">
+                                    <input id="direct_chat_url_input" type="text" readonly value="https://klyven-chatbot.onrender.com/chat/KLYVEN-STUDIO" style="background: #FFFFFF;" />
+                                    <button class="btn-analyze" onclick="copyDirectChatLink()">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        <span>Copiar</span>
+                                    </button>
+                                </div>
+                                <div style="display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap;">
+                                    <a id="btn_open_chat_direct" href="/chat/KLYVEN-STUDIO" target="_blank" class="btn-secondary" style="text-decoration: none; font-size: 0.82rem; padding: 7px 12px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                        <span>Abrir página completa</span>
+                                    </a>
+                                    <a id="btn_download_qr" href="/api/qr/KLYVEN-STUDIO?download=1" download="qr_klyven.png" class="btn-topbar-save" style="font-size: 0.82rem; padding: 7px 14px; text-decoration: none;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                        <span>Descargar QR (PNG)</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 10px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                                <img id="qr_code_image" src="/api/qr/KLYVEN-STUDIO" alt="Código QR" style="width: 125px; height: 125px; display: block; border-radius: 6px;" />
+                                <span style="font-size: 10px; font-weight: 700; color: #64748B; margin-top: 6px; letter-spacing: 0.5px;">ESCANEAR CON CÁMARA</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tarjeta: Comprobador de instalación en vivo (Live Status Ping) - 100% Funcional -->
                     <div class="card">
                         <div class="card-header-row">
@@ -3331,6 +3518,7 @@
             }
 
             if (sectionName === 'instalacion') {
+                updateInstallationLinks();
                 const bUrl = document.getElementById('biz_url')?.value?.trim();
                 const vInput = document.getElementById('verify_site_url');
                 if (bUrl && vInput && !vInput.value) {
@@ -3935,10 +4123,120 @@
             return str;
         }
 
+        function renderLeadFormHtml(jsonStr) {
+            try {
+                const data = JSON.parse(jsonStr.trim());
+                const title = data.title || 'Cotización Inmediata';
+                const subtitle = data.subtitle || 'Déjanos tus datos y un especialista te contactará a la brevedad.';
+                const service = data.service_interest || '';
+                const formId = 'lead_form_' + Math.random().toString(36).substring(2, 9);
+
+                return `
+                    <div class="chat-lead-card" id="${formId}">
+                        <div class="chat-lead-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            ${title}
+                        </div>
+                        <p class="chat-lead-subtitle">${subtitle}</p>
+                        ${service ? `<div style="font-size:0.75rem;font-weight:700;color:var(--brand-color,#4F46E5);margin-bottom:8px;background:rgba(79,70,229,0.08);padding:4px 8px;border-radius:6px;">Interés: ${service}</div>` : ''}
+                        
+                        <div class="chat-lead-body" id="${formId}_fields">
+                            <input type="text" class="chat-lead-input" id="${formId}_name" placeholder="Tu Nombre o Empresa *" required />
+                            <input type="tel" class="chat-lead-input" id="${formId}_phone" placeholder="WhatsApp o Teléfono (10 dígitos) *" required />
+                            <input type="text" class="chat-lead-input" id="${formId}_notes" placeholder="Detalles o preguntas adicionales (opcional)" />
+                            <button type="button" class="chat-lead-submit" onclick="submitPreviewChatLead('${formId}', '${service.replace(/'/g, "\\'")}')">
+                                Enviar Solicitud de Cotización
+                            </button>
+                        </div>
+                        <div class="chat-lead-success" id="${formId}_success" style="display:none;"></div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Error parseando lead_form JSON:', e);
+                return '';
+            }
+        }
+
+        async function submitPreviewChatLead(formId, serviceInterest) {
+            const nameEl = document.getElementById(formId + '_name');
+            const phoneEl = document.getElementById(formId + '_phone');
+            const notesEl = document.getElementById(formId + '_notes');
+            const fieldsEl = document.getElementById(formId + '_fields');
+            const successEl = document.getElementById(formId + '_success');
+
+            const name = nameEl?.value?.trim();
+            const phone = phoneEl?.value?.trim();
+            const notes = notesEl?.value?.trim() || '';
+
+            if (!name) {
+                alert('Por favor ingresa tu nombre.');
+                nameEl?.focus();
+                return;
+            }
+            if (!phone || phone.length < 7) {
+                alert('Por favor ingresa un número de teléfono o WhatsApp válido.');
+                phoneEl?.focus();
+                return;
+            }
+
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+
+            try {
+                const btn = fieldsEl.querySelector('button');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = 'Enviando...';
+                }
+
+                const res = await fetch('/api/leads/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tenant_id: bizId,
+                        name: name,
+                        phone: phone,
+                        notes: (serviceInterest ? `[Interés: ${serviceInterest}] ` : '') + notes,
+                        session_id: previewSessionId || 'preview-lead'
+                    })
+                });
+
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    fieldsEl.style.display = 'none';
+                    successEl.style.display = 'block';
+                    successEl.innerHTML = `
+                        <div style="font-weight:700;font-size:0.85rem;margin-bottom:2px;">¡Solicitud enviada con éxito!</div>
+                        <div style="font-size:0.75rem;opacity:0.9;">${data.message || 'Nos pondremos en contacto contigo a la brevedad.'}</div>
+                    `;
+                    updateHomeOverview();
+                } else {
+                    alert('Error al enviar: ' + (data.detail || 'Ocurrió un error.'));
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = 'Enviar Solicitud de Cotización';
+                    }
+                }
+            } catch (err) {
+                alert('Error al enviar lead: ' + err.message);
+                const btn = fieldsEl?.querySelector('button');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Enviar Solicitud de Cotización';
+                }
+            }
+        }
+
         function renderBotMessageHtml(raw, avatarHtml) {
             if (!avatarHtml) avatarHtml = getAvatarHtml(true);
             let str = String(raw || '');
             let carouselHtml = '';
+            let leadFormHtml = '';
+
+            const lMatch = str.match(/:::lead_form\s*([\s\S]*?)\s*:::/);
+            if (lMatch) {
+                leadFormHtml = renderLeadFormHtml(lMatch[1]);
+                str = str.replace(/:::lead_form\s*([\s\S]*?)\s*:::/g, '').trim();
+            }
 
             const cMatch = str.match(/:::carousel\s*([\s\S]*?)\s*:::/);
             if (cMatch) {
@@ -3948,13 +4246,14 @@
 
             const textBubbleHtml = str ? `<div class="mock-bubble mock-bubble-bot">${formatRichText(str)}</div>` : '';
 
-            if (carouselHtml) {
+            if (carouselHtml || leadFormHtml) {
                 return `
                     <div class="mock-msg-row bot-row has-carousel">
                         <div class="mini-avatar-inline">${avatarHtml}</div>
                         <div class="mock-msg-content-col">
                             ${textBubbleHtml}
                             ${carouselHtml}
+                            ${leadFormHtml}
                         </div>
                     </div>
                 `;
@@ -4337,12 +4636,7 @@
                 });
                 const res = await resp.json();
 
-                const scriptTag = `<script src="${window.location.origin}/widget.js" data-tenant="${bizId}"><\/script>`;
-                const codeEl = document.getElementById('code_script');
-                if (codeEl) codeEl.innerText = scriptTag;
-
-                const demoBtn = document.getElementById('btn_demo_link');
-                if (demoBtn) demoBtn.href = `/demo?tenant=${bizId}`;
+                updateInstallationLinks(bizId);
 
                 const badge = document.getElementById('badge_status_label');
                 if (badge) badge.innerText = 'Publicado';
@@ -4365,6 +4659,42 @@
                     alert('Error al guardar: ' + e.message);
                 }
             }
+        }
+
+        function updateInstallationLinks(bizId) {
+            if (!bizId) {
+                bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            }
+            const origin = window.location.origin;
+            const directUrl = `${origin}/chat/${encodeURIComponent(bizId)}`;
+            const qrUrl = `/api/qr/${encodeURIComponent(bizId)}`;
+            const qrDownload = `/api/qr/${encodeURIComponent(bizId)}?download=1`;
+
+            const inputEl = document.getElementById('direct_chat_url_input');
+            if (inputEl) inputEl.value = directUrl;
+
+            const openBtn = document.getElementById('btn_open_chat_direct');
+            if (openBtn) openBtn.href = directUrl;
+
+            const qrImg = document.getElementById('qr_code_image');
+            if (qrImg) qrImg.src = qrUrl;
+
+            const dlBtn = document.getElementById('btn_download_qr');
+            if (dlBtn) dlBtn.href = qrDownload;
+
+            const scriptTag = `<script src="${origin}/widget.js" data-tenant="${bizId}"><\/script>`;
+            const codeEl = document.getElementById('code_script');
+            if (codeEl) codeEl.innerText = scriptTag;
+
+            const demoBtn = document.getElementById('btn_demo_link');
+            if (demoBtn) demoBtn.href = `/demo?tenant=${bizId}`;
+        }
+
+        function copyDirectChatLink() {
+            const input = document.getElementById('direct_chat_url_input');
+            if (!input) return;
+            navigator.clipboard.writeText(input.value);
+            alert('¡Enlace copiado al portapapeles! Ya puedes compartir tu chatbot en Instagram, TikTok o WhatsApp.');
         }
 
         function copyCode() {
@@ -4752,6 +5082,7 @@
             } catch(e) {}
             updatePreview();
             updateHomeOverview();
+            updateInstallationLinks();
         }
 
         // Inicializar vista previa, datos y resumen al cargar

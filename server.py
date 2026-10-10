@@ -855,6 +855,71 @@ def api_export_leads_csv(tenant_id: str = "KLYVEN-STUDIO"):
     )
 
 
+class LeadSubmitRequest(BaseModel):
+    tenant_id: str
+    customer_name: Optional[str] = None
+    name: Optional[str] = None
+    contact_info: Optional[str] = None
+    phone: Optional[str] = None
+    service_interest: Optional[str] = "Consulta General"
+    notes: Optional[str] = ""
+    session_id: Optional[str] = None
+
+
+@app.post("/api/leads/submit")
+def api_submit_lead(payload: LeadSubmitRequest):
+    """Guarda un prospecto desde el formulario interactivo en el chat y despacha el webhook."""
+    t_id = (payload.tenant_id or "KLYVEN-STUDIO").upper().replace(" ", "-")
+    c_name = (payload.customer_name or payload.name or "Prospecto").strip()
+    c_contact = (payload.contact_info or payload.phone or "Sin contacto").strip()
+    s_interest = (payload.service_interest or "Consulta General").strip()
+    c_notes = (payload.notes or "").strip()
+
+    lead_id = save_lead(
+        tenant_id=t_id,
+        session_id=payload.session_id or f"sess_{t_id}_{int(time.time())}",
+        customer_name=c_name,
+        contact_info=c_contact,
+        service_interest=s_interest,
+        notes=c_notes
+    )
+    
+    lead_data = {
+        "lead_id": lead_id,
+        "session_id": payload.session_id or "",
+        "customer_name": c_name,
+        "contact_info": c_contact,
+        "service_interest": s_interest,
+        "notes": c_notes,
+        "created_at": datetime.now().isoformat()
+    }
+    
+    # Despachar webhook configurado del tenant
+    dispatch_lead_webhook(tenant_id=t_id, lead_data=lead_data)
+    
+    # También registrar en CRM interno y alertar al dueño
+    try:
+        from services.crm_service import record_lead
+        from services.notification_service import send_owner_alert
+        record_lead(t_id, s_interest, 0.0, "USD", notes=f"Formulario en chat: {c_contact} ({c_name})")
+        send_owner_alert("NUEVO_LEAD_FORMULARIO", t_id, {
+            "name": c_name,
+            "contact": c_contact,
+            "service": s_interest,
+            "notes": c_notes
+        })
+    except Exception:
+        pass
+        
+    return {
+        "status": "success",
+        "lead_id": lead_id,
+        "customer_name": c_name,
+        "service_interest": s_interest,
+        "message": f"¡Gracias {c_name}! Hemos registrado tu solicitud. Un asesor se comunicará contigo de inmediato."
+    }
+
+
 # ==============================================================================
 # 4. CARGA REAL DE DOCUMENTOS Y CATÁLOGOS (PDF / TXT)
 # ==============================================================================
@@ -977,6 +1042,55 @@ def klyven_demo_page():
     if klyven_path.exists():
         return klyven_path.read_text(encoding="utf-8")
     return "<h1>Klyven Studio Demo</h1>"
+
+
+@app.get("/chat/{tenant_id}", response_class=HTMLResponse)
+def standalone_chat_page(tenant_id: str):
+    """Página de chat independiente y responsive a pantalla completa para redes sociales y QR."""
+    chat_path = Path(__file__).parent / "chat.html"
+    if chat_path.exists():
+        html = chat_path.read_text(encoding="utf-8")
+        clean_t = tenant_id.upper().replace(" ", "-")
+        html = html.replace('data-tenant="KLYVEN-STUDIO"', f'data-tenant="{clean_t}"')
+        return html
+    return "<h1>Página de chat no encontrada</h1>"
+
+
+@app.get("/api/qr/{tenant_id}")
+def api_generate_qr(tenant_id: str, request: Request, download: Optional[bool] = False):
+    """Genera una imagen PNG de código QR apuntando a la URL directa del chatbot para el tenant."""
+    import qrcode
+    import io
+    
+    t_id = tenant_id.upper().replace(" ", "-")
+    host_header = request.headers.get("host") or "localhost:8000"
+    scheme = "https" if "https" in str(request.url) or "onrender.com" in host_header else request.url.scheme
+    chat_url = f"{scheme}://{host_header}/chat/{t_id}"
+    
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=3,
+    )
+    qr.add_data(chat_url)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="#0F1B31", back_color="#FFFFFF")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    
+    disposition = f"attachment; filename=qr_{t_id}.png" if download else f"inline; filename=qr_{t_id}.png"
+    return Response(
+        content=buf.getvalue(),
+        media_type="image/png",
+        headers={
+            "Content-Disposition": disposition,
+            "Cache-Control": "public, max-age=1800"
+        }
+    )
+
 
 
 # ==============================================================================
@@ -1248,6 +1362,22 @@ def api_chat(payload: ChatRequest):
         if carousel_cards:
             carousel_json = json.dumps(carousel_cards, ensure_ascii=False)
             cliente_msg += f"\n\n:::carousel\n{carousel_json}\n:::"
+
+    # 8. Inyección de Formulario Interactivo de Lead si el usuario solicita cotización o contratación
+    lead_triggers = ["me interesa", "cotizar", "cotización", "cotizacion", "contratar", "adquirir", "solicitar cotización", "presupuesto", "hablar con alguien", "dejar mis datos", "quiero contratar"]
+    low_u_msg = payload.message.lower()
+    if any(trig in low_u_msg for trig in lead_triggers) and ":::lead_form" not in cliente_msg:
+        matched_service = ""
+        if "me interesa " in low_u_msg:
+            matched_service = payload.message[low_u_msg.find("me interesa ") + 12:].strip()
+        elif datos_operativos.get("id_sku_seleccionado"):
+            matched_service = str(datos_operativos.get("id_sku_seleccionado"))
+            
+        form_payload = {
+            "service": matched_service or "Consulta General",
+            "title": f"Cotizar {matched_service}" if matched_service else "Solicitar Cotización Inmediata"
+        }
+        cliente_msg += f"\n\n:::lead_form\n{json.dumps(form_payload, ensure_ascii=False)}\n:::"
 
     return {
         "reply": cliente_msg,

@@ -523,6 +523,96 @@
                 color: #1D4ED8 !important;
                 text-decoration: underline !important;
             }
+
+            /* Formulario de Captura de Leads Directo en Chat */
+            .chat-lead-card {
+                background: #FFFFFF !important;
+                border: 1.5px solid #E2E8F0 !important;
+                border-radius: 14px !important;
+                padding: 14px 16px !important;
+                margin: 10px 0 !important;
+                max-width: 90% !important;
+                box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+                font-family: inherit !important;
+            }
+            .ts-theme-dark .chat-lead-card {
+                background: #1E293B !important;
+                border-color: #334155 !important;
+            }
+            .chat-lead-badge {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 5px !important;
+                font-size: 11px !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                color: #2563EB !important;
+                margin-bottom: 4px !important;
+            }
+            .chat-lead-subtitle {
+                font-size: 12px !important;
+                color: #64748B !important;
+                margin: 0 0 10px 0 !important;
+                line-height: 1.35 !important;
+            }
+            .ts-theme-dark .chat-lead-subtitle {
+                color: #94A3B8 !important;
+            }
+            .chat-lead-body {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            .chat-lead-input {
+                width: 100% !important;
+                padding: 8px 12px !important;
+                border-radius: 8px !important;
+                border: 1px solid #CBD5E1 !important;
+                font-size: 13px !important;
+                box-sizing: border-box !important;
+                background: #F8FAFC !important;
+                color: #0F172A !important;
+                font-family: inherit !important;
+                outline: none !important;
+            }
+            .ts-theme-dark .chat-lead-input {
+                background: #0F172A !important;
+                border-color: #334155 !important;
+                color: #F8FAFC !important;
+            }
+            .chat-lead-input:focus {
+                border-color: #2563EB !important;
+                background: #FFFFFF !important;
+            }
+            .chat-lead-submit {
+                background: #2563EB !important;
+                color: #FFFFFF !important;
+                border: none !important;
+                border-radius: 8px !important;
+                padding: 9px 14px !important;
+                font-weight: 600 !important;
+                font-size: 13px !important;
+                cursor: pointer !important;
+                transition: opacity 0.2s ease !important;
+                margin-top: 2px !important;
+                text-align: center !important;
+            }
+            .chat-lead-submit:hover {
+                opacity: 0.9 !important;
+            }
+            .chat-lead-success {
+                background: rgba(16, 185, 129, 0.12) !important;
+                border: 1px solid rgba(16, 185, 129, 0.3) !important;
+                color: #047857 !important;
+                border-radius: 8px !important;
+                padding: 10px !important;
+                font-size: 12px !important;
+                text-align: center !important;
+            }
+            .ts-theme-dark .chat-lead-success {
+                color: #34D399 !important;
+            }
         `;
         document.head.appendChild(style);
 
@@ -851,6 +941,40 @@
             }
         }
 
+        function renderLeadFormWidgetHtml(jsonStr) {
+            try {
+                const data = JSON.parse(jsonStr.trim());
+                const title = data.title || 'Cotización Inmediata';
+                const subtitle = data.subtitle || 'Déjanos tus datos y un especialista te contactará a la brevedad.';
+                const service = data.service_interest || '';
+                const formId = 'ts_lead_' + Math.random().toString(36).substring(2, 9);
+
+                return `
+                    <div class="chat-lead-card" id="${formId}">
+                        <div class="chat-lead-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            ${title}
+                        </div>
+                        <p class="chat-lead-subtitle">${subtitle}</p>
+                        ${service ? `<div style="font-size:11px;font-weight:700;color:${activeBrandColor || '#2563EB'};margin-bottom:8px;background:rgba(37,99,235,0.08);padding:3px 8px;border-radius:6px;">Interés: ${service}</div>` : ''}
+                        
+                        <div class="chat-lead-body" id="${formId}_fields">
+                            <input type="text" class="chat-lead-input" id="${formId}_name" placeholder="Tu Nombre o Empresa *" required />
+                            <input type="tel" class="chat-lead-input" id="${formId}_phone" placeholder="WhatsApp o Teléfono (10 dígitos) *" required />
+                            <input type="text" class="chat-lead-input" id="${formId}_notes" placeholder="Detalles o requerimientos (opcional)" />
+                            <button type="button" class="chat-lead-submit" style="background:${activeBrandColor || '#2563EB'} !important;" onclick="window.__tsSubmitLead ? window.__tsSubmitLead('${formId}', '${service.replace(/'/g, "\\'")}') : null">
+                                Enviar Solicitud de Cotización
+                            </button>
+                        </div>
+                        <div class="chat-lead-success" id="${formId}_success" style="display:none;"></div>
+                    </div>
+                `;
+            } catch (e) {
+                console.error('Error parseando lead_form JSON en widget:', e);
+                return '';
+            }
+        }
+
         function formatRichText(raw) {
             if (!raw) return '';
             let str = String(raw);
@@ -858,6 +982,9 @@
             // Reemplazo limpio si existiera carrusel
             str = str.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, (match, jsonStr) => {
                 return renderCarouselHtml(jsonStr);
+            });
+            str = str.replace(/:::lead_form\s*([\s\S]*?)\s*:::/g, (match, jsonStr) => {
+                return renderLeadFormWidgetHtml(jsonStr);
             });
 
             str = str.replace(/([^\n])\s+(\d+\.\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
@@ -931,29 +1058,41 @@
                 const data = await resp.json();
                 msgBox.removeChild(typingEl);
 
-                const replyStr = String(data.reply || '');
-                const cMatch = replyStr.match(/:::carousel\s*([\s\S]*?)\s*:::/);
+                let replyStr = String(data.reply || '');
+                let leadFormHtml = '';
+                let carouselHtml = '';
 
+                const lMatch = replyStr.match(/:::lead_form\s*([\s\S]*?)\s*:::/);
+                if (lMatch) {
+                    leadFormHtml = renderLeadFormWidgetHtml(lMatch[1]);
+                    replyStr = replyStr.replace(/:::lead_form\s*([\s\S]*?)\s*:::/g, '').trim();
+                }
+
+                const cMatch = replyStr.match(/:::carousel\s*([\s\S]*?)\s*:::/);
                 if (cMatch) {
-                    const textBefore = replyStr.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, '').trim();
-                    if (textBefore) {
-                        const botEl = document.createElement('div');
-                        botEl.className = 'ts-msg ts-msg-bot';
-                        botEl.innerHTML = formatRichText(textBefore);
-                        msgBox.appendChild(botEl);
-                    }
-                    const carouselHtml = renderCarouselHtml(cMatch[1]);
-                    if (carouselHtml) {
-                        const cDiv = document.createElement('div');
-                        cDiv.className = 'chat-carousel-wrapper';
-                        cDiv.innerHTML = carouselHtml;
-                        msgBox.appendChild(cDiv);
-                    }
-                } else {
+                    carouselHtml = renderCarouselHtml(cMatch[1]);
+                    replyStr = replyStr.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, '').trim();
+                }
+
+                if (replyStr) {
                     const botEl = document.createElement('div');
                     botEl.className = 'ts-msg ts-msg-bot';
-                    botEl.innerHTML = formatRichText(data.reply);
+                    botEl.innerHTML = formatRichText(replyStr);
                     msgBox.appendChild(botEl);
+                }
+
+                if (carouselHtml) {
+                    const cDiv = document.createElement('div');
+                    cDiv.className = 'chat-carousel-wrapper';
+                    cDiv.innerHTML = carouselHtml;
+                    msgBox.appendChild(cDiv);
+                }
+
+                if (leadFormHtml) {
+                    const lDiv = document.createElement('div');
+                    lDiv.innerHTML = leadFormHtml;
+                    const cardEl = lDiv.firstElementChild || lDiv;
+                    msgBox.appendChild(cardEl);
                 }
 
                 if (data.checkout_url) {
@@ -975,6 +1114,74 @@
                 msgBox.appendChild(errEl);
             }
         }
+
+        window.__tsSubmitLead = async function(formId, serviceInterest) {
+            const nameEl = document.getElementById(formId + '_name');
+            const phoneEl = document.getElementById(formId + '_phone');
+            const notesEl = document.getElementById(formId + '_notes');
+            const fieldsEl = document.getElementById(formId + '_fields');
+            const successEl = document.getElementById(formId + '_success');
+
+            const name = nameEl?.value?.trim();
+            const phone = phoneEl?.value?.trim();
+            const notes = notesEl?.value?.trim() || '';
+
+            if (!name) {
+                alert('Por favor ingresa tu nombre.');
+                nameEl?.focus();
+                return;
+            }
+            if (!phone || phone.length < 7) {
+                alert('Por favor ingresa un número de teléfono o WhatsApp válido.');
+                phoneEl?.focus();
+                return;
+            }
+
+            const btn = fieldsEl ? fieldsEl.querySelector('button') : null;
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Enviando...';
+            }
+
+            try {
+                let sessionId = localStorage.getItem('ts_session_' + tenantId) || 'widget-lead';
+                const res = await fetch(`${apiBase}/api/leads/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tenant_id: tenantId,
+                        name: name,
+                        phone: phone,
+                        notes: (serviceInterest ? `[Interés: ${serviceInterest}] ` : '') + notes,
+                        session_id: sessionId
+                    })
+                });
+
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    if (fieldsEl) fieldsEl.style.display = 'none';
+                    if (successEl) {
+                        successEl.style.display = 'block';
+                        successEl.innerHTML = `
+                            <div style="font-weight:700;font-size:12px;margin-bottom:2px;">¡Solicitud enviada con éxito!</div>
+                            <div style="font-size:11px;opacity:0.9;">${data.message || 'Nos pondremos en contacto contigo a la brevedad.'}</div>
+                        `;
+                    }
+                } else {
+                    alert('Error al enviar: ' + (data.detail || 'Ocurrió un error.'));
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = 'Enviar Solicitud de Cotización';
+                    }
+                }
+            } catch (err) {
+                alert('Error al enviar solicitud: ' + err.message);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Enviar Solicitud de Cotización';
+                }
+            }
+        };
 
         window.__tsQuickAsk = function(query) {
             if (input && query) {
