@@ -1946,7 +1946,7 @@
             <div class="sidebar-brand">
                 <div class="sidebar-brand-logo">
                     <!-- Logotipo auténtico de Klyven Studio -->
-                    <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Klyven Studio" onerror="this.src='/assets/logo-light.png'" />
+                    <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Klyven Studio" onerror="this.src='/assets/logo-main.png'" />
                 </div>
                 <div class="sidebar-brand-text">
                     <h1>Klyven Studio</h1>
@@ -2746,7 +2746,7 @@
                             <span class="field-desc">Selecciona el logotipo oficial de Klyven o ingresa la URL de tu imagen de marca.</span>
                             <div class="avatar-options-row" id="avatar_picker" style="margin-top: 6px;">
                                 <div class="avatar-circle-opt selected" onclick="setAvatar('K')" title="Logo Klyven">
-                                    <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Logo Klyven" onerror="this.src='/assets/logo-light.png'" />
+                                    <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Logo Klyven" onerror="this.src='/assets/logo-main.png'" />
                                 </div>
                                 <div class="avatar-circle-opt" onclick="setAvatar('A')">A</div>
                                 <div class="avatar-circle-opt" onclick="setAvatar('S')">S</div>
@@ -3203,7 +3203,7 @@
                     <div class="mock-header" id="preview_header">
                         <div class="mock-header-profile">
                             <div class="mock-avatar-container" id="preview_avatar">
-                                <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Avatar" onerror="this.src='/assets/logo-light.png'" />
+                                <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Avatar" onerror="this.src='/assets/logo-main.png'" />
                             </div>
                             <div>
                                 <div class="mock-bot-name">
@@ -3222,7 +3222,7 @@
                         <!-- Mensaje bienvenida del bot -->
                         <div class="mock-msg-row bot-row">
                             <div class="mini-avatar-inline" id="preview_avatar_mini1">
-                                <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Avatar" onerror="this.src='/assets/logo-light.png'" />
+                                <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Avatar" onerror="this.src='/assets/logo-main.png'" />
                             </div>
                             <div class="mock-bubble mock-bubble-bot" id="preview_welcome_msg">
                                 Hola, ¿en qué te puedo ayudar hoy?
@@ -3254,7 +3254,7 @@
                     </div>
                     <div class="mini-bubble-widget" id="mini_bubble_preview">
                         <div class="mini-bubble-widget-avatar" id="mini_avatar_preview">
-                            <img src="https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" alt="Avatar" onerror="this.src='/assets/logo-light.png'" />
+                            <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Avatar" onerror="this.src='/assets/logo-main.png'" />
                         </div>
                         <span class="mini-bubble-widget-divider" id="mini_bubble_divider"></span>
                         <span class="mini-bubble-widget-text" id="mini_text_preview">Hablemos de tu web</span>
@@ -3763,10 +3763,12 @@
                 return `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;" />`;
             }
             if (currentAvatar === 'K' || currentAvatar === 'klyven') {
-                const darkLogo = 'https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png';
-                const lightLogo = '/assets/logo-light.png';
-                const logoSrc = (currentTheme === 'light' && !forMini) ? lightLogo : darkLogo;
-                return `<img src="${logoSrc}" alt="Logo Klyven" style="width:100%;height:100%;object-fit:contain;padding:3px;" onerror="this.src='${darkLogo}'" />`;
+                const whiteLogo = 'https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png';
+                const blackLogo = 'https://klyvenstudio.com/assets/logo-Ze6ecQUw.png';
+                const isDark = (currentTheme === 'dark');
+                const logoSrc = isDark ? whiteLogo : blackLogo;
+                const fallback = isDark ? '/assets/logo-dark.png' : '/assets/logo-main.png';
+                return `<img src="${logoSrc}" alt="Logo Klyven" style="width:100%;height:100%;object-fit:contain;padding:2px;" onerror="this.src='${fallback}'" />`;
             }
             return currentAvatar;
         }
