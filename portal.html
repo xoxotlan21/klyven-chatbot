@@ -2093,6 +2093,354 @@
             .service-drag-handle {
                 display: none;
             }
+        /* ------------------------------------------------------------- */
+        /* SELECTOR DE NEGOCIO & PERFIL DE USUARIO EN SIDEBAR            */
+        /* ------------------------------------------------------------- */
+        .tenant-switcher-container {
+            margin: 4px 0 14px 0;
+            padding: 8px 10px;
+            background: #F8FAFC;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+        }
+
+        .tenant-switcher-label {
+            font-size: 0.64rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .tenant-switcher-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-steel);
+        }
+
+        .tenant-switcher-select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 2px 0;
+        }
+
+        .sidebar-profile-card {
+            margin-top: auto;
+            padding: 12px;
+            background: #F8FAFC;
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0F1B31 0%, #2563EB 100%);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 6px rgba(15, 27, 49, 0.2);
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-plan-badge {
+            font-size: 0.62rem;
+            font-weight: 800;
+            background: #10B981;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 10px;
+            letter-spacing: 0.4px;
+        }
+
+        .profile-email {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-actions-row {
+            display: flex;
+            gap: 6px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 8px;
+        }
+
+        .profile-action-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: #FFFFFF;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .profile-action-btn:hover {
+            background: #F1F5F9;
+            color: var(--text-primary);
+            border-color: #CBD5E1;
+        }
+
+        .profile-action-btn.logout:hover {
+            background: #FEF2F2;
+            color: #DC2626;
+            border-color: #FCA5A5;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* SUBTABS BAR GENERAL (CONVERSACIONES, AGENDA, SOPORTE)         */
+        /* ------------------------------------------------------------- */
+        .subtabs-bar {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 4px;
+            margin-bottom: 16px;
+        }
+
+        .subtab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .subtab-btn:hover {
+            background: #F1F5F9;
+            color: var(--text-primary);
+        }
+
+        .subtab-btn.active {
+            background: #0F1B31;
+            color: #FFFFFF;
+        }
+
+        .subtab-count-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 10px;
+            background: #F59E0B;
+            color: white;
+        }
+
+        .subtab-btn.active .subtab-count-badge {
+            background: #EF4444;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* TARJETAS DE PREGUNTAS SIN RESOLVER                            */
+        /* ------------------------------------------------------------- */
+        .unresolved-item-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+        }
+
+        .unresolved-item-card:hover {
+            border-color: #94A3B8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .unresolved-badge-pending {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: #FEF3C7;
+            color: #B45309;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .unresolved-badge-resolved {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: #DCFCE7;
+            color: #15803D;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* AGENDA Y RESERVAS ESTILOS                                     */
+        /* ------------------------------------------------------------- */
+        .booking-industry-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            background: #FFFFFF;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .booking-industry-pill.active {
+            background: #0F1B31;
+            color: white;
+            border-color: #0F1B31;
+        }
+
+        .booking-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+
+        .booking-card:hover {
+            border-color: #94A3B8;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+        }
+
+        .booking-status-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .status-pendiente { background: #FEF3C7; color: #B45309; }
+        .status-confirmada { background: #DCFCE7; color: #15803D; }
+        .status-completada { background: #E0F2FE; color: #0369A1; }
+        .status-cancelada { background: #FEE2E2; color: #B91C1C; }
+
+        /* ------------------------------------------------------------- */
+        /* MODAL OVERLAY ELEGANTE                                        */
+        /* ------------------------------------------------------------- */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 27, 49, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 16px;
+        }
+
+        .custom-modal-window {
+            background: #FFFFFF;
+            border-radius: 20px;
+            max-width: 540px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalFadeIn 0.2s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header-bar {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer-bar {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #F8FAFC;
         }
     </style>
 </head>
@@ -2115,7 +2463,19 @@
                 </div>
             </div>
 
-            <nav>
+            <!-- SELECTOR DE NEGOCIO (RESOLVIENDO CONFUSIÓN DE 'MI NEGOCIO') -->
+            <div class="tenant-switcher-container">
+                <span class="tenant-switcher-label">EMPRESA ACTIVA</span>
+                <div class="tenant-switcher-box">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    <select id="tenant_switcher" class="tenant-switcher-select" onchange="onSwitchTenantSelected(this.value)">
+                        <option value="KLYVEN-STUDIO">Klyven Studio</option>
+                        <option value="TRM">Traslados Riviera Maya</option>
+                    </select>
+                </div>
+            </div>
+
+            <nav style="flex: 1; overflow-y: auto; padding-right: 2px;">
                 <ul class="sidebar-nav-list">
                     <li>
                         <button class="sidebar-nav-btn active" data-sec="inicio" onclick="switchSection('inicio')">
@@ -2148,15 +2508,17 @@
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn" data-sec="instalacion" onclick="switchSection('instalacion')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                            <span>Instalación</span>
+                        <button class="sidebar-nav-btn" data-sec="agenda" onclick="switchSection('agenda')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            <span>Agenda y reservas</span>
+                            <span id="sidebar_bookings_badge" style="margin-left:auto; background:#3B82F6; color:white; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px;">3</span>
                         </button>
                     </li>
                     <li>
                         <button class="sidebar-nav-btn" data-sec="conversaciones" onclick="switchSection('conversaciones')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                             <span>Conversaciones</span>
+                            <span id="sidebar_unresolved_badge" style="margin-left:auto; background:#F59E0B; color:white; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px; display:inline-block;" title="Preguntas sin resolver">2</span>
                         </button>
                     </li>
                     <li>
@@ -2167,29 +2529,60 @@
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn" data-sec="plan" onclick="switchSection('plan')">
+                        <button class="sidebar-nav-btn" data-sec="estadisticas" onclick="switchSection('estadisticas')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            <span>Estadísticas</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="integraciones" onclick="switchSection('integraciones')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                            <span>Integraciones</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="instalacion" onclick="switchSection('instalacion')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                            <span>Instalación</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="ayuda" onclick="switchSection('ayuda')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            <span>Ayuda y soporte</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="plan" onclick="switchSection('plan')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
                             <span>Uso del plan</span>
                         </button>
                     </li>
                 </ul>
             </nav>
 
-            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 4px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
-                <button class="sidebar-sub-link" onclick="switchSection('negocio')">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                        <span>Mi negocio</span>
+            <!-- PERFIL DE USUARIO AL PIE (SIN 'MI NEGOCIO' DUPLICADO) -->
+            <div class="sidebar-profile-card">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="profile-avatar">A</div>
+                    <div class="profile-info">
+                        <div class="profile-name-row">
+                            <span class="profile-name">Andrew</span>
+                            <span class="profile-plan-badge">PLAN PRO</span>
+                        </div>
+                        <span class="profile-email">andrew@klyvenstudio.com</span>
                     </div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </button>
-                <button class="sidebar-sub-link" onclick="switchSection('comportamiento')">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                        <span>Ajustes</span>
-                    </div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </button>
+                </div>
+                <div class="profile-actions-row">
+                    <button class="profile-action-btn" onclick="openBillingModal()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                        <span>Facturación</span>
+                    </button>
+                    <button class="profile-action-btn logout" onclick="handleLogout()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span>Salir</span>
+                    </button>
+                </div>
             </div>
         </aside>
 
@@ -3265,38 +3658,132 @@
             </div>
 
             <!-- ----------------------------------------------------- -->
-            <!-- SECCIÓN: CONVERSACIONES                               -->
+            <!-- SECCIÓN: CONVERSACIONES + PREGUNTAS SIN RESOLVER      -->
             <!-- ----------------------------------------------------- -->
             <div id="section_conversaciones" class="content-section" style="display: none;">
-                <div class="section-header">
-                    <h2>Conversaciones de clientes</h2>
-                    <p>Historial de consultas e interacciones de usuarios en tu página web.</p>
+                <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h2>Conversaciones y Aprendizaje del Bot</h2>
+                        <p>Historial de chats en vivo y detección automática de información faltante en tu catálogo.</p>
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin-top: 14px;">
-                    <!-- Lista de sesiones -->
-                    <div class="card" style="padding: 16px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                            <strong style="font-size:0.9rem; color:var(--text-primary);">Sesiones</strong>
-                            <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="loadConversations()">Actualizar</button>
-                        </div>
-                        <div id="conversations_list" style="display:flex; flex-direction:column; gap:8px; max-height:450px; overflow-y:auto;">
-                            <!-- Cargado dinámicamente -->
-                        </div>
-                    </div>
+                <!-- Sub-pestañas: Todas las conversaciones vs Preguntas sin resolver -->
+                <div class="subtabs-bar" style="margin-top: 14px;">
+                    <button class="subtab-btn active" id="btn_subtab_all_convs" onclick="switchConvSubTab('all')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        <span>Todas las conversaciones</span>
+                    </button>
+                    <button class="subtab-btn" id="btn_subtab_unresolved" onclick="switchConvSubTab('unresolved')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <span>Preguntas sin resolver</span>
+                        <span class="subtab-count-badge" id="unresolved_count_badge">2</span>
+                    </button>
+                </div>
 
-                    <!-- Mensajes de la sesión seleccionada -->
-                    <div class="card" style="padding: 18px; display:flex; flex-direction:column;">
-                        <div style="border-bottom:1px solid var(--border-subtle); padding-bottom:10px; margin-bottom:12px;">
-                            <strong style="font-size:0.95rem; color:var(--text-primary);">Transcripción de la conversación</strong>
-                            <div style="font-size:0.78rem; color:var(--text-secondary);">Mensajes directos entre el cliente y el asistente IA.</div>
+                <!-- SUBTAB 1: TODAS LAS CONVERSACIONES -->
+                <div id="subtab_all_convs_content">
+                    <div style="display: grid; grid-template-columns: 290px 1fr; gap: 16px;">
+                        <!-- Lista de sesiones -->
+                        <div class="card" style="padding: 16px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                <strong style="font-size:0.9rem; color:var(--text-primary);">Sesiones</strong>
+                                <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="loadConversations()">Actualizar</button>
+                            </div>
+                            <div id="conversations_list" style="display:flex; flex-direction:column; gap:8px; max-height:450px; overflow-y:auto;">
+                                <!-- Cargado dinámicamente -->
+                            </div>
                         </div>
-                        <div id="conv_messages_detail" style="flex:1; max-height:400px; overflow-y:auto; padding:8px 4px;">
-                            <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                                Selecciona una conversación a la izquierda para inspeccionar los mensajes.
+
+                        <!-- Mensajes de la sesión seleccionada -->
+                        <div class="card" style="padding: 18px; display:flex; flex-direction:column;">
+                            <div style="border-bottom:1px solid var(--border-subtle); padding-bottom:10px; margin-bottom:12px;">
+                                <strong style="font-size:0.95rem; color:var(--text-primary);">Transcripción de la conversación</strong>
+                                <div style="font-size:0.78rem; color:var(--text-secondary);">Mensajes directos entre el cliente y el asistente IA.</div>
+                            </div>
+                            <div id="conv_messages_detail" style="flex:1; max-height:400px; overflow-y:auto; padding:8px 4px;">
+                                <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                                    Selecciona una conversación a la izquierda para inspeccionar los mensajes.
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- SUBTAB 2: PREGUNTAS SIN RESOLVER (KNOWLEDGE GAPS) -->
+                <div id="subtab_unresolved_content" style="display: none;">
+                    <div class="card" style="padding: 18px 20px; margin-bottom: 16px; background: linear-gradient(135deg, #FEF3C7 0%, #FFFFFF 100%); border-color: #FCD34D;">
+                        <div style="display: flex; gap: 14px; align-items: flex-start;">
+                            <div style="width: 38px; height: 38px; border-radius: 50%; background: #F59E0B; color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 0.96rem; color: #92400E; margin-bottom: 3px;">Detección inteligente de preguntas sin resolver</h3>
+                                <p style="font-size: 0.82rem; color: #78350F; line-height: 1.45;">
+                                    Aquí se listan automáticamente las consultas de clientes donde el bot no tuvo información suficiente.
+                                    Pulsa <b>"➕ Añadir a Conocimiento"</b> para guardar la respuesta oficial en 1 clic y entrenar a tu IA al instante.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="booking-industry-pill active" id="unres_filter_all" onclick="filterUnresolved('all')">Todas</button>
+                            <button class="booking-industry-pill" id="unres_filter_pending" onclick="filterUnresolved('pending')">Pendientes</button>
+                            <button class="booking-industry-pill" id="unres_filter_resolved" onclick="filterUnresolved('resolved')">Resueltas y aprendidas</button>
+                        </div>
+                        <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadUnresolvedQuestions()">
+                            Actualizar lista
+                        </button>
+                    </div>
+
+                    <div id="unresolved_questions_list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Cargado dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: AGENDA Y RESERVAS (ADAPTABLE POR GIRO)       -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_agenda" class="content-section" style="display: none;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2>Agenda y Reservas Operativas</h2>
+                        <p>Control de citas, traslados, unidades y profesionales adaptado al giro del negocio.</p>
+                    </div>
+                    <button class="btn-topbar-save" onclick="openNewBookingModal()" style="display: flex; align-items: center; gap: 6px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Nueva Reserva</span>
+                    </button>
+                </div>
+
+                <!-- Giro selector -->
+                <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="booking-industry-pill active" id="pill_ind_all" onclick="setBookingIndustryFilter('all')">🏢 General / Todo</button>
+                    <button class="booking-industry-pill" id="pill_ind_clinica" onclick="setBookingIndustryFilter('clinica_salon')">🩺 Clínica / Salón</button>
+                    <button class="booking-industry-pill" id="pill_ind_transporte" onclick="setBookingIndustryFilter('transporte')">🚐 Transporte Ejecutivo</button>
+                    <button class="booking-industry-pill" id="pill_ind_renta" onclick="setBookingIndustryFilter('renta_autos')">🚗 Renta de Autos</button>
+                    <button class="booking-industry-pill" id="pill_ind_tours" onclick="setBookingIndustryFilter('tours')">🗺️ Tours & Guías</button>
+                </div>
+
+                <!-- Filtros por estado -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <button class="subtab-btn active" id="btn_bk_all" onclick="filterBookingsByStatus('TODAS')">Todas (<span id="count_bk_all">3</span>)</button>
+                        <button class="subtab-btn" id="btn_bk_pending" onclick="filterBookingsByStatus('PENDIENTE')">Pendientes (<span id="count_bk_pending">1</span>)</button>
+                        <button class="subtab-btn" id="btn_bk_confirmed" onclick="filterBookingsByStatus('CONFIRMADA')">Confirmadas (<span id="count_bk_confirmed">1</span>)</button>
+                        <button class="subtab-btn" id="btn_bk_completed" onclick="filterBookingsByStatus('COMPLETADA')">Completadas (<span id="count_bk_completed">1</span>)</button>
+                    </div>
+                    <span style="font-size: 0.78rem; color: var(--text-secondary);">
+                        Organizado por fecha de servicio
+                    </span>
+                </div>
+
+                <!-- Grid de Reservas -->
+                <div id="bookings_cards_container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-top: 16px;">
+                    <!-- Cargado dinámicamente -->
                 </div>
             </div>
 
@@ -3431,6 +3918,372 @@
                 </div>
             </div>
 
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: ESTADÍSTICAS Y ANALÍTICA                     -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_estadisticas" class="content-section" style="display: none;">
+                <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h2>Estadísticas y Analítica Comercial</h2>
+                        <p>Métricas de conversión, prospectos captados y dudas más frecuentes de tus visitantes.</p>
+                    </div>
+                    <div style="display: flex; background: #F1F5F9; padding: 3px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <button class="subtab-btn active" id="stat_period_7d" onclick="setStatsPeriod('7d')" style="padding: 5px 12px; font-size: 0.78rem;">7 días</button>
+                        <button class="subtab-btn" id="stat_period_30d" onclick="setStatsPeriod('30d')" style="padding: 5px 12px; font-size: 0.78rem;">30 días</button>
+                        <button class="subtab-btn" id="stat_period_all" onclick="setStatsPeriod('all')" style="padding: 5px 12px; font-size: 0.78rem;">Todo el tiempo</button>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 14px;">
+                    <div class="card" style="padding: 16px;">
+                        <span style="font-size: 0.76rem; color: var(--text-secondary); font-weight: 500;">Conversaciones Atendidas</span>
+                        <div id="stat_kpi_convs" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin: 6px 0 2px 0;">30</div>
+                        <span style="font-size: 0.72rem; color: #10B981; font-weight: 600;">+24% vs periodo previo</span>
+                    </div>
+                    <div class="card" style="padding: 16px;">
+                        <span style="font-size: 0.76rem; color: var(--text-secondary); font-weight: 500;">Prospectos (Leads) Captados</span>
+                        <div id="stat_kpi_leads" style="font-size: 1.6rem; font-weight: 800; color: #0284C7; margin: 6px 0 2px 0;">11</div>
+                        <span style="font-size: 0.72rem; color: var(--text-secondary);">Contactos listos para cierre</span>
+                    </div>
+                    <div class="card" style="padding: 16px;">
+                        <span style="font-size: 0.76rem; color: var(--text-secondary); font-weight: 500;">Tasa de Conversión</span>
+                        <div id="stat_kpi_rate" style="font-size: 1.6rem; font-weight: 800; color: #10B981; margin: 6px 0 2px 0;">36.7%</div>
+                        <span style="font-size: 0.72rem; color: #10B981; font-weight: 600;">Excelente desempeño</span>
+                    </div>
+                    <div class="card" style="padding: 16px;">
+                        <span style="font-size: 0.76rem; color: var(--text-secondary); font-weight: 500;">Resolución Autónoma IA</span>
+                        <div id="stat_kpi_res_rate" style="font-size: 1.6rem; font-weight: 800; color: #7C3AED; margin: 6px 0 2px 0;">92.5%</div>
+                        <span style="font-size: 0.72rem; color: var(--text-secondary);">Consultas sin fricción</span>
+                    </div>
+                </div>
+
+                <!-- Gráfica de actividad diaria + Top preguntas -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                    <!-- Línea de actividad -->
+                    <div class="card" style="padding: 18px;">
+                        <div class="card-header-row" style="margin-bottom: 12px;">
+                            <strong style="font-size: 0.92rem; color: var(--text-primary);">Actividad de consultas por día</strong>
+                            <span style="font-size: 0.74rem; color: var(--text-secondary);">Volumen de chats</span>
+                        </div>
+                        <div id="stats_activity_bars" style="display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; height: 160px; padding-top: 20px; border-bottom: 1px solid var(--border-subtle);">
+                            <!-- Barras generadas por JS -->
+                        </div>
+                    </div>
+
+                    <!-- Top 5 Preguntas Más Frecuentes -->
+                    <div class="card" style="padding: 18px;">
+                        <div class="card-header-row" style="margin-bottom: 12px;">
+                            <strong style="font-size: 0.92rem; color: var(--text-primary);">Top Preguntas Frecuentes</strong>
+                            <span style="font-size: 0.74rem; color: var(--text-secondary);">Frecuencia</span>
+                        </div>
+                        <div id="stats_top_questions_list" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Preguntas cargadas dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: INTEGRACIONES                                -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_integraciones" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Integraciones y Conexiones</h2>
+                    <p>Conecta tu chatbot con tus herramientas de comunicación, calendarios y CRM preferidos.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 14px;">
+                    <!-- WhatsApp -->
+                    <div class="card" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: #DCFCE7; color: #16A34A; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                </div>
+                                <span class="booking-status-tag status-confirmada">Activo</span>
+                            </div>
+                            <strong style="font-size: 0.95rem; color: var(--text-primary); display: block;">WhatsApp Business Directo</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Permite que los usuarios de tu web salten con 1 clic a conversar contigo por WhatsApp con su cotización pre-armada.</p>
+                        </div>
+                        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.78rem; color: var(--text-muted);">Enlace wa.me</span>
+                            <button class="btn-secondary" style="font-size: 0.76rem; padding: 5px 10px;" onclick="switchSection('negocio')">Configurar teléfono</button>
+                        </div>
+                    </div>
+
+                    <!-- Calendly / Calendario -->
+                    <div class="card" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: #EEF2FF; color: #4F46E5; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                </div>
+                                <span class="booking-status-tag status-confirmada">Activo</span>
+                            </div>
+                            <strong style="font-size: 0.95rem; color: var(--text-primary); display: block;">Calendly / Google Calendar</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">El bot ofrece agendar videollamadas o citas directamente mostrando tu enlace de disponibilidad.</p>
+                        </div>
+                        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.78rem; color: var(--text-muted);">Citas automáticas</span>
+                            <button class="btn-secondary" style="font-size: 0.76rem; padding: 5px 10px;" onclick="switchSection('comportamiento')">Ajustar link</button>
+                        </div>
+                    </div>
+
+                    <!-- Webhooks CRM -->
+                    <div class="card" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                </div>
+                                <span class="booking-status-tag status-confirmada">Conectado</span>
+                            </div>
+                            <strong style="font-size: 0.95rem; color: var(--text-primary); display: block;">Webhooks CRM (Make / Zapier / Slack)</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Envía automáticamente cada nuevo prospecto a tu CRM, canal de Discord, Slack o flujo automatizado.</p>
+                        </div>
+                        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.78rem; color: var(--text-muted);">Alertas instantáneas</span>
+                            <button class="btn-secondary" style="font-size: 0.76rem; padding: 5px 10px;" onclick="switchSection('leads')">Configurar</button>
+                        </div>
+                    </div>
+
+                    <!-- Stripe Pagos -->
+                    <div class="card" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: #F1F5F9; color: #0F1B31; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                </div>
+                                <span class="booking-status-tag status-completada">Listo</span>
+                            </div>
+                            <strong style="font-size: 0.95rem; color: var(--text-primary); display: block;">Stripe Checkout & Anticipos</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Genera sesiones de cobro de Stripe con tarjeta cuando un usuario confirme la contratación.</p>
+                        </div>
+                        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.78rem; color: var(--text-muted);">Pasarela activa</span>
+                            <button class="btn-secondary" style="font-size: 0.76rem; padding: 5px 10px;" onclick="switchSection('conocimiento')">Ver catálogo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: AYUDA Y SOPORTE                              -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_ayuda" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Centro de Ayuda y Soporte</h2>
+                    <p>Guías paso a paso, tutoriales de integración y contacto directo con Andrew.</p>
+                </div>
+
+                <!-- Tarjeta destacada de contacto directo -->
+                <div class="card" style="margin-top: 14px; padding: 22px; background: linear-gradient(135deg, #0F1B31 0%, #1E3A8A 100%); color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div style="display: flex; gap: 14px; align-items: center;">
+                            <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; color: #0F1B31; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.3rem;">
+                                A
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1.1rem; color: white; margin-bottom: 3px;">¿Necesitas ayuda con tu chatbot o una integración especial?</h3>
+                                <p style="font-size: 0.84rem; color: #BFDBFE;">Habla directamente con Andrew por WhatsApp. Soporte técnico 1 a 1 y asesoría personalizada.</p>
+                            </div>
+                        </div>
+                        <a href="https://wa.me/5219981234567?text=Hola%20Andrew,%20necesito%20soporte%20con%20mi%20chatbot%20de%20Klyven%20Studio" target="_blank" style="text-decoration: none; background: #25D366; color: white; padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.3);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            <span>Chatear por WhatsApp con Andrew</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Guías de instalación por plataforma con tabs -->
+                <div class="card" style="margin-top: 16px; padding: 22px;">
+                    <div class="card-header-row" style="margin-bottom: 12px;">
+                        <div class="card-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        </div>
+                        <div class="card-header-titles">
+                            <h3>Guía de Instalación Rápida por Plataforma</h3>
+                            <p>Selecciona tu CMS o gestor de contenido para ver los pasos exactos.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">
+                        <button class="booking-industry-pill active" id="help_tab_html" onclick="switchHelpGuide('html')">HTML / Web Estática</button>
+                        <button class="booking-industry-pill" id="help_tab_wp" onclick="switchHelpGuide('wp')">WordPress / WooCommerce</button>
+                        <button class="booking-industry-pill" id="help_tab_shopify" onclick="switchHelpGuide('shopify')">Shopify</button>
+                        <button class="booking-industry-pill" id="help_tab_wix" onclick="switchHelpGuide('wix')">Wix / Squarespace</button>
+                    </div>
+
+                    <div id="help_guide_content" style="background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+                        <!-- Contenido dinámico de guía -->
+                    </div>
+                </div>
+
+                <!-- Preguntas Frecuentes de la Plataforma -->
+                <div class="card" style="margin-top: 16px; padding: 22px;">
+                    <h3 style="font-size: 0.96rem; color: var(--text-primary); margin-bottom: 12px;">Preguntas Frecuentes (FAQ)</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="padding: 12px 14px; background: #F8FAFC; border-radius: 10px; border: 1px solid var(--border-subtle);">
+                            <strong style="font-size: 0.88rem; color: var(--text-primary);">¿El chatbot atiende las 24 horas aunque mi negocio esté cerrado?</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Sí, tu chatbot responde de forma inmediata 24/7, resuelve dudas del catálogo y guarda los prospectos en SQLite para que los atiendas al día siguiente.</p>
+                        </div>
+                        <div style="padding: 12px 14px; background: #F8FAFC; border-radius: 10px; border: 1px solid var(--border-subtle);">
+                            <strong style="font-size: 0.88rem; color: var(--text-primary);">¿Cómo aprende el bot información nueva?</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Puedes ingresar en <b>"Conocimiento"</b> o ir a <b>"Conversaciones > Preguntas sin resolver"</b> y pulsar <b>"Añadir a Conocimiento"</b>. El bot memorizará la respuesta inmediatamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- MODALES FLOTANTES OPERATIVOS                                  -->
+            <!-- ============================================================= -->
+
+            <!-- 1. Modal: Añadir Pregunta a Conocimiento en 1 Clic -->
+            <div id="modal_add_knowledge" class="custom-modal-overlay" style="display: none;">
+                <div class="custom-modal-window">
+                    <div class="modal-header-bar">
+                        <strong style="font-size: 0.96rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #2563EB;">➕</span> Añadir Respuesta al Conocimiento del Bot
+                        </strong>
+                        <button style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" onclick="closeKnowledgeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body-content">
+                        <input type="hidden" id="modal_unres_id" value="" />
+                        <div>
+                            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">PREGUNTA DEL CLIENTE</label>
+                            <input type="text" id="modal_unres_q" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.86rem; background: #F8FAFC; font-weight: 600;" readonly />
+                        </div>
+                        <div>
+                            <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-primary); display: block; margin-bottom: 4px;">RESPUESTA OFICIAL QUE DEBE DAR LA IA *</label>
+                            <textarea id="modal_unres_a" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.86rem; font-family: inherit; resize: vertical;" placeholder="Ej: Sí, contamos con servicio de mantenimiento y cobertura los fines de semana..."></textarea>
+                            <span style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; display: block;">Esta respuesta se guardará en la base de datos y se inyectará en las FAQs del bot de inmediato.</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar">
+                        <button class="btn-secondary" style="padding: 8px 14px; font-size: 0.82rem;" onclick="closeKnowledgeModal()">Cancelar</button>
+                        <button class="btn-topbar-save" style="padding: 8px 16px; font-size: 0.82rem;" onclick="submitResolveQuestion()">Guardar y entrenar IA</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Modal: Nueva Reserva -->
+            <div id="modal_new_booking" class="custom-modal-overlay" style="display: none;">
+                <div class="custom-modal-window">
+                    <div class="modal-header-bar">
+                        <strong style="font-size: 0.96rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #3B82F6;">📅</span> Nueva Reserva / Cita
+                        </strong>
+                        <button style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" onclick="closeNewBookingModal()">&times;</button>
+                    </div>
+                    <div class="modal-body-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">NOMBRE DEL CLIENTE *</label>
+                                <input type="text" id="nbk_name" placeholder="Ej. Roberto Gómez" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">WHATSAPP / TELÉFONO *</label>
+                                <input type="tel" id="nbk_contact" placeholder="+52 55 1234 5678" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">SERVICIO / UNIDAD *</label>
+                                <input type="text" id="nbk_service" placeholder="Ej. Suburban VIP o Consulta" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">RECURSO ASIGNADO</label>
+                                <input type="text" id="nbk_resource" placeholder="Chofer, Doctor o Guía" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">FECHA *</label>
+                                <input type="date" id="nbk_date" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">HORA *</label>
+                                <input type="time" id="nbk_time" value="10:00" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">ORIGEN (SI APLICA)</label>
+                                <input type="text" id="nbk_origin" placeholder="Aeropuerto Cancún" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                            <div>
+                                <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">DESTINO (SI APLICA)</label>
+                                <input type="text" id="nbk_dest" placeholder="Hotel Zona Hotelera" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">NOTAS ADICIONALES</label>
+                            <input type="text" id="nbk_notes" placeholder="Pasajeros, equipaje, requerimientos especiales..." style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border-subtle); font-size: 0.84rem;" />
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar">
+                        <button class="btn-secondary" style="padding: 8px 14px; font-size: 0.82rem;" onclick="closeNewBookingModal()">Cancelar</button>
+                        <button class="btn-topbar-save" style="padding: 8px 16px; font-size: 0.82rem;" onclick="submitNewBooking()">Registrar Reserva</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Modal: Facturación y Suscripción -->
+            <div id="modal_facturacion" class="custom-modal-overlay" style="display: none;">
+                <div class="custom-modal-window">
+                    <div class="modal-header-bar">
+                        <strong style="font-size: 0.96rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #10B981;">💳</span> Facturación y Suscripción
+                        </strong>
+                        <button style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);" onclick="closeBillingModal()">&times;</button>
+                    </div>
+                    <div class="modal-body-content">
+                        <div style="padding: 14px; background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">PLAN ACTUAL</span>
+                                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">Klyven Studio Pro</div>
+                                <span style="font-size: 0.76rem; color: #10B981; font-weight: 600;">Suscripción activa • $49 USD / mes</span>
+                            </div>
+                            <span class="booking-status-tag status-confirmada">Activo</span>
+                        </div>
+
+                        <div style="padding: 14px; border: 1px solid var(--border-subtle); border-radius: 12px;">
+                            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">MÉTODO DE PAGO</div>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="background: #0F1B31; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 800;">VISA</span>
+                                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">•••• •••• •••• 4242</span>
+                                </div>
+                                <span style="font-size: 0.76rem; color: var(--text-muted);">Vence 12/28</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">HISTORIAL DE RECIBOS</div>
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #F8FAFC; border-radius: 8px; font-size: 0.8rem;">
+                                    <span>Recibo #INV-2026-001 (10 Oct 2026)</span>
+                                    <strong style="color: #10B981;">$49.00 USD Pagado</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #F8FAFC; border-radius: 8px; font-size: 0.8rem;">
+                                    <span>Recibo #INV-2026-000 (10 Sep 2026)</span>
+                                    <strong style="color: #10B981;">$49.00 USD Pagado</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar">
+                        <button class="btn-topbar-save" style="padding: 8px 16px; font-size: 0.82rem;" onclick="closeBillingModal()">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="code_box" style="display: none;"></div>
 
         </main>
@@ -3551,16 +4404,24 @@
         // CAMBIO DE SECCIÓN EN LA NAVEGACIÓN LATERAL
         // -----------------------------------------------------------------
         function switchSection(sectionName) {
-            const sections = ['inicio', 'negocio', 'conocimiento', 'apariencia', 'comportamiento', 'instalacion', 'conversaciones', 'leads', 'plan'];
+            const sections = [
+                'inicio', 'negocio', 'conocimiento', 'apariencia',
+                'comportamiento', 'agenda', 'conversaciones', 'leads',
+                'estadisticas', 'integraciones', 'instalacion', 'ayuda', 'plan'
+            ];
             const titles = {
                 'inicio': 'Inicio',
                 'negocio': 'Negocio',
                 'conocimiento': 'Conocimiento',
                 'apariencia': 'Apariencia',
                 'comportamiento': 'Comportamiento',
-                'instalacion': 'Instalación',
+                'agenda': 'Agenda y reservas',
                 'conversaciones': 'Conversaciones',
                 'leads': 'Prospectos',
+                'estadisticas': 'Estadísticas',
+                'integraciones': 'Integraciones',
+                'instalacion': 'Instalación',
+                'ayuda': 'Ayuda y soporte',
                 'plan': 'Uso del plan'
             };
 
@@ -3575,18 +4436,31 @@
             });
 
             const bc = document.getElementById('breadcrumb_current');
-            if (bc) bc.innerText = titles[sectionName] || 'Conocimiento';
+            if (bc) bc.innerText = titles[sectionName] || 'Inicio';
 
             if (sectionName === 'inicio') {
                 updateHomeOverview();
             }
 
+            if (sectionName === 'agenda') {
+                loadBookings();
+            }
+
             if (sectionName === 'conversaciones') {
                 loadConversations();
+                loadUnresolvedQuestions();
             }
 
             if (sectionName === 'leads') {
                 loadLeads();
+            }
+
+            if (sectionName === 'estadisticas') {
+                loadStats(currentStatsPeriod || '7d');
+            }
+
+            if (sectionName === 'ayuda') {
+                switchHelpGuide('html');
             }
 
             if (sectionName === 'instalacion') {
@@ -3856,6 +4730,567 @@
                 }
             } catch(e) {
                 detailEl.innerHTML = '<div style="padding: 20px; color: #EF4444; text-align: center; font-size: 0.82rem;">Error al cargar mensajes.</div>';
+            }
+        }
+
+        // =================================================================
+        // SUBPESTAÑAS DE CONVERSACIONES (TODAS VS PREGUNTAS SIN RESOLVER)
+        // =================================================================
+        function switchConvSubTab(tabName) {
+            const btnAll = document.getElementById('btn_subtab_all_convs');
+            const btnUnres = document.getElementById('btn_subtab_unresolved');
+            const contentAll = document.getElementById('subtab_all_convs_content');
+            const contentUnres = document.getElementById('subtab_unresolved_content');
+
+            if (tabName === 'all') {
+                if (btnAll) btnAll.classList.add('active');
+                if (btnUnres) btnUnres.classList.remove('active');
+                if (contentAll) contentAll.style.display = 'block';
+                if (contentUnres) contentUnres.style.display = 'none';
+                loadConversations();
+            } else {
+                if (btnAll) btnAll.classList.remove('active');
+                if (btnUnres) btnUnres.classList.add('active');
+                if (contentAll) contentAll.style.display = 'none';
+                if (contentUnres) contentUnres.style.display = 'block';
+                loadUnresolvedQuestions();
+            }
+        }
+
+        // =================================================================
+        // FUNCIONALIDAD: PREGUNTAS SIN RESOLVER (KNOWLEDGE GAPS EN 1-CLIC)
+        // =================================================================
+        let unresolvedQuestionsData = [];
+        let currentUnresolvedFilter = 'all';
+
+        async function loadUnresolvedQuestions() {
+            const listEl = document.getElementById('unresolved_questions_list');
+            if (!listEl) return;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            listEl.innerHTML = '<div style="padding: 24px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">Cargando preguntas sin resolver...</div>';
+
+            try {
+                const resp = await fetch(`/api/unresolved-questions?tenant_id=${encodeURIComponent(bizId)}`);
+                const data = await resp.json();
+                unresolvedQuestionsData = data.questions || [];
+
+                const pendingCount = unresolvedQuestionsData.filter(q => !q.resolved).length;
+                const countBadge = document.getElementById('unresolved_count_badge');
+                const sideBadge = document.getElementById('sidebar_unresolved_badge');
+                if (countBadge) countBadge.innerText = pendingCount;
+                if (sideBadge) {
+                    sideBadge.innerText = pendingCount;
+                    sideBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+                }
+
+                renderUnresolvedQuestions();
+            } catch(e) {
+                listEl.innerHTML = '<div style="padding: 20px; color: #EF4444; text-align: center; font-size: 0.85rem;">Error al cargar preguntas sin resolver.</div>';
+            }
+        }
+
+        function filterUnresolved(type) {
+            currentUnresolvedFilter = type;
+            document.getElementById('unres_filter_all')?.classList.toggle('active', type === 'all');
+            document.getElementById('unres_filter_pending')?.classList.toggle('active', type === 'pending');
+            document.getElementById('unres_filter_resolved')?.classList.toggle('active', type === 'resolved');
+            renderUnresolvedQuestions();
+        }
+
+        function renderUnresolvedQuestions() {
+            const listEl = document.getElementById('unresolved_questions_list');
+            if (!listEl) return;
+
+            let items = unresolvedQuestionsData;
+            if (currentUnresolvedFilter === 'pending') {
+                items = items.filter(q => !q.resolved);
+            } else if (currentUnresolvedFilter === 'resolved') {
+                items = items.filter(q => Boolean(q.resolved));
+            }
+
+            if (items.length === 0) {
+                listEl.innerHTML = `
+                    <div style="padding: 30px; text-align: center; color: var(--text-secondary); background: #FFFFFF; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No hay preguntas en esta categoría</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Todas las consultas de tus usuarios tienen respuesta o fueron añadidas al conocimiento.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = items.map(q => {
+                const isResolved = Boolean(q.resolved);
+                const dateStr = q.created_at ? new Date(q.created_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Reciente';
+                return `
+                    <div class="unresolved-item-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                            <div>
+                                <span class="${isResolved ? 'unresolved-badge-resolved' : 'unresolved-badge-pending'}">
+                                    ${isResolved ? '✅ Resuelta y Aprendida' : '⚠️ Información Faltante'}
+                                </span>
+                                <h4 style="font-size: 0.94rem; color: var(--text-primary); margin-top: 6px; font-weight: 700;">
+                                    "${escapeHtml(q.question_text)}"
+                                </h4>
+                            </div>
+                            <span style="font-size: 0.74rem; color: var(--text-muted); white-space: nowrap;">${dateStr}</span>
+                        </div>
+
+                        <div style="background: #F8FAFC; border-radius: 8px; padding: 10px 12px; border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45;">
+                            <strong style="color: var(--text-primary);">Respuesta que dio el bot:</strong> ${escapeHtml(q.bot_response || 'No dispongo de información sobre este tema.')}
+                        </div>
+
+                        ${isResolved && q.added_answer ? `
+                            <div style="background: #F0FDF4; border-radius: 8px; padding: 10px 12px; border: 1px solid #BBF7D0; font-size: 0.8rem; color: #166534; line-height: 1.45;">
+                                <strong style="color: #15803D;">✅ Respuesta oficial guardada en Conocimiento:</strong> ${escapeHtml(q.added_answer)}
+                            </div>
+                        ` : ''}
+
+                        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
+                            <button class="btn-topbar-save" style="padding: 6px 14px; font-size: 0.8rem; background: ${isResolved ? '#475569' : '#2563EB'};" onclick="openResolveModal(${q.question_id}, '${escapeHtml(q.question_text).replace(/'/g, "\\'")}')">
+                                ${isResolved ? '✏️ Actualizar respuesta' : '➕ Añadir a Conocimiento'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openResolveModal(qId, qText) {
+            document.getElementById('modal_unres_id').value = qId;
+            document.getElementById('modal_unres_q').value = qText;
+            document.getElementById('modal_unres_a').value = '';
+            document.getElementById('modal_add_knowledge').style.display = 'flex';
+            document.getElementById('modal_unres_a').focus();
+        }
+
+        function closeKnowledgeModal() {
+            document.getElementById('modal_add_knowledge').style.display = 'none';
+        }
+
+        async function submitResolveQuestion() {
+            const qId = parseInt(document.getElementById('modal_unres_id').value);
+            const answer = document.getElementById('modal_unres_a').value.trim();
+            const qText = document.getElementById('modal_unres_q').value.trim();
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+
+            if (!answer) {
+                return alert('Por favor escribe la respuesta oficial que el bot debe dar a los clientes.');
+            }
+
+            try {
+                const resp = await fetch('/api/unresolved-questions/resolve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question_id: qId,
+                        tenant_id: bizId,
+                        answer: answer
+                    })
+                });
+                const res = await resp.json();
+
+                if (res.status === 'success') {
+                    const faqsEl = document.getElementById('biz_faqs');
+                    if (faqsEl) {
+                        const currentFaqs = faqsEl.value.trim();
+                        faqsEl.value = currentFaqs + `\n\nQ: ${qText}\nA: ${answer}`;
+                    }
+
+                    closeKnowledgeModal();
+                    await loadUnresolvedQuestions();
+                    alert('¡Respuesta guardada con éxito! La IA aprendió la información y responderá automáticamente en tu web.');
+                } else {
+                    alert('Error: ' + (res.message || 'No se pudo guardar la respuesta.'));
+                }
+            } catch(e) {
+                alert('Error al conectar con el servidor: ' + e.message);
+            }
+        }
+
+        // =================================================================
+        // FUNCIONALIDAD: AGENDA Y RESERVAS (ADAPTABLE POR GIRO)
+        // =================================================================
+        let bookingsData = [];
+        let currentBookingStatus = 'TODAS';
+        let currentBookingIndustry = 'all';
+
+        async function loadBookings() {
+            const cont = document.getElementById('bookings_cards_container');
+            if (!cont) return;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            cont.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-secondary); grid-column: 1/-1;">Cargando reservas...</div>';
+
+            try {
+                const resp = await fetch(`/api/bookings?tenant_id=${encodeURIComponent(bizId)}`);
+                const data = await resp.json();
+                bookingsData = data.bookings || [];
+
+                const total = bookingsData.length;
+                const pending = bookingsData.filter(b => b.status === 'PENDIENTE').length;
+                const confirmed = bookingsData.filter(b => b.status === 'CONFIRMADA').length;
+                const completed = bookingsData.filter(b => b.status === 'COMPLETADA').length;
+
+                const cAll = document.getElementById('count_bk_all');
+                const cPending = document.getElementById('count_bk_pending');
+                const cConfirmed = document.getElementById('count_bk_confirmed');
+                const cCompleted = document.getElementById('count_bk_completed');
+                if (cAll) cAll.innerText = total;
+                if (cPending) cPending.innerText = pending;
+                if (cConfirmed) cConfirmed.innerText = confirmed;
+                if (cCompleted) cCompleted.innerText = completed;
+
+                const sideBadge = document.getElementById('sidebar_bookings_badge');
+                if (sideBadge) sideBadge.innerText = total;
+
+                renderBookings();
+            } catch(e) {
+                cont.innerHTML = '<div style="padding: 24px; color: #EF4444; text-align: center; grid-column: 1/-1;">Error al cargar reservas.</div>';
+            }
+        }
+
+        function setBookingIndustryFilter(ind) {
+            currentBookingIndustry = ind;
+            ['all', 'clinica', 'transporte', 'renta', 'tours'].forEach(k => {
+                const pill = document.getElementById('pill_ind_' + k);
+                if (pill) {
+                    const matches = (ind === 'all' && k === 'all') || (ind.includes(k));
+                    pill.classList.toggle('active', matches);
+                }
+            });
+            renderBookings();
+        }
+
+        function filterBookingsByStatus(status) {
+            currentBookingStatus = status;
+            document.getElementById('btn_bk_all')?.classList.toggle('active', status === 'TODAS');
+            document.getElementById('btn_bk_pending')?.classList.toggle('active', status === 'PENDIENTE');
+            document.getElementById('btn_bk_confirmed')?.classList.toggle('active', status === 'CONFIRMADA');
+            document.getElementById('btn_bk_completed')?.classList.toggle('active', status === 'COMPLETADA');
+            renderBookings();
+        }
+
+        function renderBookings() {
+            const cont = document.getElementById('bookings_cards_container');
+            if (!cont) return;
+
+            let items = bookingsData;
+            if (currentBookingStatus !== 'TODAS') {
+                items = items.filter(b => b.status === currentBookingStatus);
+            }
+            if (currentBookingIndustry !== 'all') {
+                items = items.filter(b => (b.business_type || '').includes(currentBookingIndustry.replace('_salon', '').replace('_autos', '')));
+            }
+
+            if (items.length === 0) {
+                cont.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: var(--text-secondary); background: #FFFFFF; border-radius: 14px; border: 1px solid var(--border-subtle); grid-column: 1/-1;">
+                        <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No hay reservas en este filtro</div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted);">Puedes registrar una nueva reserva manual usando el botón superior o generarla a través del chatbot.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            cont.innerHTML = items.map(b => {
+                const statusClass = 'status-' + (b.status ? b.status.toLowerCase() : 'pendiente');
+                const cleanPhone = (b.customer_contact || '').replace(/[^0-9]/g, '');
+                const waLink = cleanPhone ? `https://wa.me/${cleanPhone}` : '';
+
+                return `
+                    <div class="booking-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="booking-status-tag ${statusClass}">${escapeHtml(b.status || 'PENDIENTE')}</span>
+                                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">#${escapeHtml(b.booking_id)}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <strong style="font-size: 0.9rem; color: var(--text-primary);">${escapeHtml(b.booking_date || '')}</strong>
+                                <div style="font-size: 0.78rem; color: var(--accent-steel); font-weight: 600;">🕒 ${escapeHtml(b.booking_time || '')}</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 style="font-size: 0.96rem; font-weight: 700; color: var(--text-primary); margin-bottom: 3px;">
+                                ${escapeHtml(b.customer_name || 'Cliente')}
+                            </h4>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                ${waLink ? `<a href="${waLink}" target="_blank" style="color:#15803D; font-weight:600; text-decoration:none;">💬 ${escapeHtml(b.customer_contact)}</a>` : escapeHtml(b.customer_contact || 'Sin teléfono')}
+                            </div>
+                        </div>
+
+                        <div style="padding: 10px 12px; background: #F8FAFC; border-radius: 10px; border: 1px solid var(--border-subtle); font-size: 0.82rem; display: flex; flex-direction: column; gap: 4px;">
+                            <div><strong style="color:var(--text-primary);">Servicio:</strong> ${escapeHtml(b.service_name || '')}</div>
+                            ${b.resource_assigned ? `<div><strong style="color:var(--text-primary);">Asignado a:</strong> ${escapeHtml(b.resource_assigned)}</div>` : ''}
+                            ${b.origin ? `<div><strong style="color:var(--text-primary);">Ruta:</strong> ${escapeHtml(b.origin)} ➔ ${escapeHtml(b.destination || '')}</div>` : ''}
+                            ${b.notes ? `<div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">📝 ${escapeHtml(b.notes)}</div>` : ''}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+                            <div>
+                                <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">MONTO TOTAL</span>
+                                <strong style="font-size: 0.92rem; color: var(--text-primary);">$${(b.total_amount || 0).toFixed(0)} ${escapeHtml(b.currency || 'USD')}</strong>
+                            </div>
+                            <div style="display: flex; gap: 6px;">
+                                ${b.status !== 'CONFIRMADA' ? `<button class="btn-secondary" style="padding:4px 8px; font-size:0.74rem; background:#DCFCE7; color:#15803D; border-color:#BBF7D0;" onclick="changeBookingStatus('${b.booking_id}', 'CONFIRMADA')">Confirmar</button>` : ''}
+                                ${b.status !== 'COMPLETADA' ? `<button class="btn-secondary" style="padding:4px 8px; font-size:0.74rem; background:#E0F2FE; color:#0369A1; border-color:#BAE6FD;" onclick="changeBookingStatus('${b.booking_id}', 'COMPLETADA')">Completar</button>` : ''}
+                                ${b.status !== 'CANCELADA' ? `<button class="btn-secondary" style="padding:4px 8px; font-size:0.74rem; background:#FEE2E2; color:#B91C1C; border-color:#FECACA;" onclick="changeBookingStatus('${b.booking_id}', 'CANCELADA')">Cancelar</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function changeBookingStatus(bookingId, status) {
+            try {
+                const resp = await fetch(`/api/bookings/${encodeURIComponent(bookingId)}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status })
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadBookings();
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        function openNewBookingModal() {
+            document.getElementById('nbk_date').value = new Date().toISOString().substring(0, 10);
+            document.getElementById('modal_new_booking').style.display = 'flex';
+        }
+
+        function closeNewBookingModal() {
+            document.getElementById('modal_new_booking').style.display = 'none';
+        }
+
+        async function submitNewBooking() {
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            const name = document.getElementById('nbk_name').value.trim();
+            const contact = document.getElementById('nbk_contact').value.trim();
+            const service = document.getElementById('nbk_service').value.trim();
+            const resource = document.getElementById('nbk_resource').value.trim();
+            const date = document.getElementById('nbk_date').value;
+            const time = document.getElementById('nbk_time').value;
+            const origin = document.getElementById('nbk_origin').value.trim();
+            const dest = document.getElementById('nbk_dest').value.trim();
+            const notes = document.getElementById('nbk_notes').value.trim();
+
+            if (!name || !contact || !service || !date) {
+                return alert('Por favor llena los campos requeridos (*)');
+            }
+
+            try {
+                const resp = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        tenant_id: bizId,
+                        customer_name: name,
+                        customer_contact: contact,
+                        service_name: service,
+                        resource_assigned: resource,
+                        booking_date: date,
+                        booking_time: time,
+                        origin: origin,
+                        destination: dest,
+                        notes: notes,
+                        business_type: currentBookingIndustry !== 'all' ? currentBookingIndustry : 'general'
+                    })
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    closeNewBookingModal();
+                    await loadBookings();
+                    alert('¡Reserva registrada con éxito!');
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // =================================================================
+        // FUNCIONALIDAD: ESTADÍSTICAS Y ANALÍTICA
+        // =================================================================
+        let currentStatsPeriod = '7d';
+
+        async function loadStats(period = '7d') {
+            currentStatsPeriod = period;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+
+            try {
+                const resp = await fetch(`/api/stats?tenant_id=${encodeURIComponent(bizId)}&period=${period}`);
+                const data = await resp.json();
+                const st = data.stats || {};
+
+                const kConvs = document.getElementById('stat_kpi_convs');
+                const kLeads = document.getElementById('stat_kpi_leads');
+                const kRate = document.getElementById('stat_kpi_rate');
+                const kResRate = document.getElementById('stat_kpi_res_rate');
+                if (kConvs) kConvs.innerText = st.total_conversations || 0;
+                if (kLeads) kLeads.innerText = st.total_leads || 0;
+                if (kRate) kRate.innerText = (st.conversion_rate || 0) + '%';
+                if (kResRate) kResRate.innerText = (st.resolution_rate || 92.5) + '%';
+
+                const barsCont = document.getElementById('stats_activity_bars');
+                if (barsCont && st.activity_timeline) {
+                    const maxVal = Math.max(...st.activity_timeline.map(d => d.count), 5);
+                    barsCont.innerHTML = st.activity_timeline.map(d => {
+                        const heightPct = Math.round((d.count / maxVal) * 100);
+                        const shortDate = d.date.substring(5);
+                        return `
+                            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;">
+                                <span style="font-size:0.7rem; font-weight:700; color:var(--text-primary);">${d.count}</span>
+                                <div style="width:100%; max-width:28px; background:linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%); height:${heightPct}%; border-radius:6px 6px 0 0; min-height:8px;"></div>
+                                <span style="font-size:0.68rem; color:var(--text-muted);">${shortDate}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                const topList = document.getElementById('stats_top_questions_list');
+                if (topList && st.top_questions) {
+                    topList.innerHTML = st.top_questions.map((item, idx) => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#F8FAFC; border-radius:8px; border:1px solid var(--border-subtle);">
+                            <span style="font-size:0.8rem; color:var(--text-primary); font-weight:500;"><b>${idx + 1}.</b> ${escapeHtml(item.query)}</span>
+                            <span style="background:#EEF2FF; color:#4F46E5; font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:10px;">${item.count} veces</span>
+                        </div>
+                    `).join('');
+                }
+            } catch(e) {}
+        }
+
+        function setStatsPeriod(p) {
+            document.getElementById('stat_period_7d')?.classList.toggle('active', p === '7d');
+            document.getElementById('stat_period_30d')?.classList.toggle('active', p === '30d');
+            document.getElementById('stat_period_all')?.classList.toggle('active', p === 'all');
+            loadStats(p);
+        }
+
+        // =================================================================
+        // FUNCIONALIDAD: AYUDA Y SOPORTE (GUÍAS DE INSTALACIÓN)
+        // =================================================================
+        function switchHelpGuide(platform) {
+            ['html', 'wp', 'shopify', 'wix'].forEach(p => {
+                document.getElementById('help_tab_' + p)?.classList.toggle('active', p === platform);
+            });
+
+            const cont = document.getElementById('help_guide_content');
+            if (!cont) return;
+
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            const origin = window.location.origin;
+            const scriptCode = `<script src="${origin}/widget.js" data-tenant="${bizId}"><\/script>`;
+
+            if (platform === 'html') {
+                cont.innerHTML = `
+                    <h4 style="font-size:0.92rem; color:var(--text-primary); margin-bottom:6px;">Instalación en HTML / Sitios Web Estáticos</h4>
+                    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:10px;">Pega la siguiente etiqueta antes de la etiqueta de cierre <code>&lt;/body&gt;</code> en tu plantilla principal:</p>
+                    <div style="background:#0F1B31; color:#38BDF8; padding:12px; border-radius:8px; font-family:monospace; font-size:0.82rem; word-break:break-all;">
+                        ${escapeHtml(scriptCode)}
+                    </div>
+                    <button class="btn-topbar-save" style="margin-top:10px; padding:6px 12px; font-size:0.78rem;" onclick="copyCode()">Copiar Código</button>
+                `;
+            } else if (platform === 'wp') {
+                cont.innerHTML = `
+                    <h4 style="font-size:0.92rem; color:var(--text-primary); margin-bottom:6px;">Instalación en WordPress y WooCommerce</h4>
+                    <ol style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6; margin-left:18px; margin-bottom:10px;">
+                        <li>En tu panel de WordPress, ve a <b>Plugins > Añadir nuevo</b>.</li>
+                        <li>Busca e instala el plugin gratuito <b>WPCode</b> (o "Insert Headers and Footers").</li>
+                        <li>Ve a <b>Fragmentos de código > Encabezado y pie de página</b>.</li>
+                        <li>Pega el siguiente script en la sección <b>Pie de página (Footer)</b> y guarda los cambios.</li>
+                    </ol>
+                    <div style="background:#0F1B31; color:#38BDF8; padding:12px; border-radius:8px; font-family:monospace; font-size:0.82rem; word-break:break-all;">
+                        ${escapeHtml(scriptCode)}
+                    </div>
+                    <button class="btn-topbar-save" style="margin-top:10px; padding:6px 12px; font-size:0.78rem;" onclick="copyCode()">Copiar Código</button>
+                `;
+            } else if (platform === 'shopify') {
+                cont.innerHTML = `
+                    <h4 style="font-size:0.92rem; color:var(--text-primary); margin-bottom:6px;">Instalación en Shopify</h4>
+                    <ol style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6; margin-left:18px; margin-bottom:10px;">
+                        <li>En tu panel de Shopify, ve a <b>Tienda online > Temas</b>.</li>
+                        <li>Haz clic en los tres puntos (...) de tu tema activo y selecciona <b>Editar código</b>.</li>
+                        <li>Abre el archivo <code>theme.liquid</code> en la carpeta <i>Layout</i>.</li>
+                        <li>Baja hasta el final y pega el script justo antes de <code>&lt;/body&gt;</code>.</li>
+                    </ol>
+                    <div style="background:#0F1B31; color:#38BDF8; padding:12px; border-radius:8px; font-family:monospace; font-size:0.82rem; word-break:break-all;">
+                        ${escapeHtml(scriptCode)}
+                    </div>
+                    <button class="btn-topbar-save" style="margin-top:10px; padding:6px 12px; font-size:0.78rem;" onclick="copyCode()">Copiar Código</button>
+                `;
+            } else if (platform === 'wix') {
+                cont.innerHTML = `
+                    <h4 style="font-size:0.92rem; color:var(--text-primary); margin-bottom:6px;">Instalación en Wix y Squarespace</h4>
+                    <ol style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6; margin-left:18px; margin-bottom:10px;">
+                        <li>En tu panel de Wix, ve a <b>Ajustes > Ajustes avanzados > Código personalizado</b>.</li>
+                        <li>Haz clic en <b>+ Agregar código personalizado</b>.</li>
+                        <li>Pega el script y selecciona la opción <b>Colocar código en: Cuerpo - final (Body - End)</b>.</li>
+                        <li>Aplica a todas las páginas y haz clic en <b>Aplicar</b>.</li>
+                    </ol>
+                    <div style="background:#0F1B31; color:#38BDF8; padding:12px; border-radius:8px; font-family:monospace; font-size:0.82rem; word-break:break-all;">
+                        ${escapeHtml(scriptCode)}
+                    </div>
+                    <button class="btn-topbar-save" style="margin-top:10px; padding:6px 12px; font-size:0.78rem;" onclick="copyCode()">Copiar Código</button>
+                `;
+            }
+        }
+
+        // =================================================================
+        // SELECTOR DE NEGOCIO & PERFIL DE USUARIO
+        // =================================================================
+        async function loadTenantsDropdown() {
+            const sel = document.getElementById('tenant_switcher');
+            if (!sel) return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentTenant = (urlParams.get('tenant') || document.getElementById('biz_id')?.value || 'KLYVEN-STUDIO').toUpperCase();
+
+            try {
+                const resp = await fetch('/api/tenants');
+                const data = await resp.json();
+                const tenants = data.tenants || [];
+                if (tenants.length > 0) {
+                    sel.innerHTML = tenants.map(t => `
+                        <option value="${t.tenant_id}" ${t.tenant_id.toUpperCase() === currentTenant ? 'selected' : ''}>
+                            ${t.business_name} (${t.tenant_id})
+                        </option>
+                    `).join('');
+                    sel.innerHTML += '<option value="__NEW__">➕ Registrar nueva empresa...</option>';
+                }
+            } catch(e) {}
+        }
+
+        function onSwitchTenantSelected(val) {
+            if (val === '__NEW__') {
+                const name = prompt('Nombre de la nueva empresa o cliente:');
+                if (!name) return loadTenantsDropdown();
+                const newId = name.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+                document.getElementById('biz_name').value = name;
+                document.getElementById('biz_id').value = newId;
+                window.location.search = `?tenant=${encodeURIComponent(newId)}`;
+                return;
+            }
+            window.location.search = `?tenant=${encodeURIComponent(val)}`;
+        }
+
+        function openBillingModal() {
+            document.getElementById('modal_facturacion').style.display = 'flex';
+        }
+
+        function closeBillingModal() {
+            document.getElementById('modal_facturacion').style.display = 'none';
+        }
+
+        function handleLogout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión en el Panel de Klyven Studio?')) {
+                alert('Sesión cerrada correctamente. Hasta pronto, Andrew.');
+                window.location.reload();
             }
         }
 
@@ -5319,6 +6754,10 @@
             updatePreview();
             updateHomeOverview();
             updateInstallationLinks();
+            loadTenantsDropdown();
+            loadUnresolvedQuestions();
+            loadBookings();
+            loadStats('7d');
         }
 
         // Inicializar vista previa, datos y resumen al cargar

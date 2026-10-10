@@ -56,7 +56,14 @@ from database import (
     get_tenant_by_id,
     list_all_tenants,
     save_lead,
-    get_tenant_leads
+    get_tenant_leads,
+    save_unresolved_question,
+    get_unresolved_questions,
+    resolve_unresolved_question,
+    create_booking,
+    get_tenant_bookings,
+    update_booking_status,
+    get_tenant_stats
 )
 
 class ChatRequest(BaseModel):
@@ -925,6 +932,109 @@ def api_submit_lead(payload: LeadSubmitRequest):
 
 
 # ==============================================================================
+# PREGUNTAS SIN RESOLVER (KNOWLEDGE GAPS & 1-CLICK AÑADIR A CONOCIMIENTO)
+# ==============================================================================
+
+class ResolveQuestionRequest(BaseModel):
+    question_id: int
+    tenant_id: str
+    answer: str
+
+@app.get("/api/unresolved-questions")
+def api_get_unresolved_questions(tenant_id: str = "KLYVEN-STUDIO", only_unresolved: bool = False):
+    """Lista las preguntas detectadas donde el bot no tuvo respuesta certera."""
+    t_id = tenant_id.strip().upper()
+    return {
+        "status": "success",
+        "questions": get_unresolved_questions(t_id, only_unresolved=only_unresolved)
+    }
+
+@app.post("/api/unresolved-questions/resolve")
+def api_resolve_question(req: ResolveQuestionRequest):
+    """Marca la pregunta como resuelta e inyecta la respuesta oficial en el conocimiento del bot."""
+    t_id = req.tenant_id.strip().upper()
+    success = resolve_unresolved_question(req.question_id, t_id, req.answer.strip())
+    if not success:
+        raise HTTPException(status_code=404, detail="No se encontró la pregunta especificada")
+    return {
+        "status": "success",
+        "message": "Pregunta agregada exitosamente a la base de conocimiento y marcada como resuelta."
+    }
+
+
+# ==============================================================================
+# AGENDA Y RESERVAS (ADAPTABLE POR TIPO DE NEGOCIO)
+# ==============================================================================
+
+class CreateBookingRequest(BaseModel):
+    tenant_id: str
+    customer_name: str
+    customer_contact: str
+    service_name: str
+    booking_date: str
+    booking_time: str
+    end_time: Optional[str] = ""
+    business_type: Optional[str] = "general"
+    resource_assigned: Optional[str] = ""
+    origin: Optional[str] = ""
+    destination: Optional[str] = ""
+    passengers_or_qty: Optional[int] = 1
+    advance_amount: Optional[float] = 0.0
+    total_amount: Optional[float] = 0.0
+    currency: Optional[str] = "USD"
+    notes: Optional[str] = ""
+
+class UpdateBookingStatusRequest(BaseModel):
+    status: str
+    notes: Optional[str] = None
+
+@app.get("/api/bookings")
+def api_get_bookings(tenant_id: str = "KLYVEN-STUDIO", status: Optional[str] = None):
+    """Obtiene las reservas registradas filtradas opcionalmente por estado."""
+    t_id = tenant_id.strip().upper()
+    return {
+        "status": "success",
+        "bookings": get_tenant_bookings(t_id, status=status)
+    }
+
+@app.post("/api/bookings")
+def api_create_booking(payload: CreateBookingRequest):
+    """Crea una reserva en el calendario operativo."""
+    data = payload.dict()
+    data["tenant_id"] = payload.tenant_id.strip().upper()
+    created = create_booking(data)
+    return {
+        "status": "success",
+        "booking": created
+    }
+
+@app.patch("/api/bookings/{booking_id}/status")
+def api_update_booking_status(booking_id: str, payload: UpdateBookingStatusRequest):
+    """Actualiza el estado de una reserva (CONFIRMADA, PENDIENTE, COMPLETADA, CANCELADA)."""
+    ok = update_booking_status(booking_id, payload.status, payload.notes)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Reserva no encontrada")
+    return {
+        "status": "success",
+        "message": f"Estado de reserva actualizado a {payload.status.upper()}"
+    }
+
+
+# ==============================================================================
+# ESTADÍSTICAS Y MÉTRICAS DE CONVERSIÓN POR PERIODO
+# ==============================================================================
+
+@app.get("/api/stats")
+def api_get_stats(tenant_id: str = "KLYVEN-STUDIO", period: str = "30d"):
+    """Calcula KPIs, tasa de conversión, top preguntas y analítica por periodo."""
+    t_id = tenant_id.strip().upper()
+    return {
+        "status": "success",
+        "stats": get_tenant_stats(t_id, period=period)
+    }
+
+
+# ==============================================================================
 # 4. CARGA REAL DE DOCUMENTOS Y CATÁLOGOS (PDF / TXT)
 # ==============================================================================
 @app.post("/api/upload-knowledge")
@@ -1229,6 +1339,25 @@ def api_chat(payload: ChatRequest):
                     "service_interest": datos_operativos.get("id_sku_seleccionado") or "",
                     "notes": msg_text[:200]
                 }
+            )
+        except Exception:
+            pass
+
+    # Detección y registro automático de Preguntas Sin Resolver (Knowledge Gaps)
+    low_resp = cliente_msg.lower()
+    unresolved_indicators = [
+        "no dispongo", "no cuento con", "te sugiero contactar", "no tengo esa información",
+        "no tengo información", "no cuento en mi catálogo", "no estoy seguro",
+        "te sugiero consultar con un asesor", "te recomiendo contactar", "no tengo detalles",
+        "un asesor te brindará", "no dispongo de los detalles"
+    ]
+    if any(ind in low_resp for ind in unresolved_indicators) and len(payload.message.strip()) > 5:
+        try:
+            save_unresolved_question(
+                tenant_id=matched_tenant.business_id,
+                question_text=payload.message.strip(),
+                bot_response=cliente_msg,
+                conversation_id=session_id
             )
         except Exception:
             pass
