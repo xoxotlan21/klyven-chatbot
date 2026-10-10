@@ -1088,6 +1088,10 @@
         }
 
         .btn-secondary {
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            font-family: inherit;
             background: #FFFFFF;
             color: var(--btn-primary);
             border: 1px solid var(--border-subtle);
@@ -1100,11 +1104,13 @@
             align-items: center;
             gap: 6px;
             transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         .btn-secondary:hover {
             background: #F8FAFC;
             border-color: #CBD5E1;
+            transform: translateY(-1px);
         }
 
         /* Tarjetas de fuentes adicionales en Conocimiento */
@@ -2093,6 +2099,8 @@
             .service-drag-handle {
                 display: none;
             }
+        }
+
         /* ------------------------------------------------------------- */
         /* SELECTOR DE NEGOCIO & PERFIL DE USUARIO EN SIDEBAR            */
         /* ------------------------------------------------------------- */
@@ -2205,32 +2213,38 @@
         }
 
         .profile-action-btn {
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            font-family: inherit;
             flex: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 5px;
-            padding: 6px 8px;
+            padding: 6px 10px;
             border-radius: 8px;
-            border: 1px solid var(--border-subtle);
+            border: 1px solid #E2E8F0;
             background: #FFFFFF;
             font-size: 0.74rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #475569;
             cursor: pointer;
             transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         .profile-action-btn:hover {
-            background: #F1F5F9;
-            color: var(--text-primary);
+            background: #F8FAFC;
+            color: #0F1B31;
             border-color: #CBD5E1;
+            transform: translateY(-1px);
         }
 
         .profile-action-btn.logout:hover {
             background: #FEF2F2;
             color: #DC2626;
-            border-color: #FCA5A5;
+            border-color: #FECACA;
         }
 
         /* ------------------------------------------------------------- */
@@ -2238,48 +2252,59 @@
         /* ------------------------------------------------------------- */
         .subtabs-bar {
             display: flex;
+            align-items: center;
             gap: 8px;
             border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 4px;
-            margin-bottom: 16px;
+            padding-bottom: 6px;
+            margin-bottom: 18px;
+            overflow-x: auto;
         }
 
         .subtab-btn {
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            font-family: inherit;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 10px;
-            border: none;
+            border: 1px solid transparent;
             background: transparent;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #64748B;
             cursor: pointer;
             transition: all 0.15s ease;
+            white-space: nowrap;
         }
 
         .subtab-btn:hover {
             background: #F1F5F9;
-            color: var(--text-primary);
+            color: #0F1B31;
         }
 
         .subtab-btn.active {
-            background: #0F1B31;
-            color: #FFFFFF;
+            background: #0F1B31 !important;
+            color: #FFFFFF !important;
+            border-color: #0F1B31 !important;
+            box-shadow: 0 2px 6px rgba(15, 27, 49, 0.15) !important;
         }
 
         .subtab-count-badge {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 700;
             padding: 1px 7px;
-            border-radius: 10px;
-            background: #F59E0B;
-            color: white;
+            border-radius: 9999px;
+            background: #E2E8F0;
+            color: #475569;
+            transition: all 0.15s;
         }
 
         .subtab-btn.active .subtab-count-badge {
-            background: #EF4444;
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #FFFFFF !important;
         }
 
         /* ------------------------------------------------------------- */
@@ -2330,24 +2355,100 @@
         /* AGENDA Y RESERVAS ESTILOS                                     */
         /* ------------------------------------------------------------- */
         .booking-industry-pill {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-subtle);
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            font-family: inherit;
+            padding: 7px 15px;
+            border-radius: 9999px;
+            border: 1px solid #E2E8F0;
             background: #FFFFFF;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #475569;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            user-select: none;
+        }
+
+        .booking-industry-pill:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+            color: #0F1B31;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
         }
 
         .booking-industry-pill.active {
-            background: #0F1B31;
-            color: white;
-            border-color: #0F1B31;
+            background: #0F1B31 !important;
+            color: #FFFFFF !important;
+            border-color: #0F1B31 !important;
+            box-shadow: 0 3px 10px rgba(15, 27, 49, 0.2) !important;
+        }
+
+        .btn-bk-action {
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            font-family: inherit;
+            border-style: solid;
+            border-width: 1px;
+            padding: 5px 12px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .btn-bk-confirm {
+            background: #ECFDF5;
+            color: #059669;
+            border-color: #A7F3D0;
+        }
+        .btn-bk-confirm:hover {
+            background: #059669;
+            color: #FFFFFF;
+            border-color: #059669;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-bk-complete {
+            background: #F0F9FF;
+            color: #0284C7;
+            border-color: #BAE6FD;
+        }
+        .btn-bk-complete:hover {
+            background: #0284C7;
+            color: #FFFFFF;
+            border-color: #0284C7;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-bk-cancel {
+            background: #FEF2F2;
+            color: #DC2626;
+            border-color: #FECACA;
+        }
+        .btn-bk-cancel:hover {
+            background: #DC2626;
+            color: #FFFFFF;
+            border-color: #DC2626;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+            transform: translateY(-1px);
         }
 
         .booking-card {
@@ -5031,9 +5132,9 @@
                                 <strong style="font-size: 0.92rem; color: var(--text-primary);">$${(b.total_amount || 0).toFixed(0)} ${escapeHtml(b.currency || 'USD')}</strong>
                             </div>
                             <div style="display: flex; gap: 6px;">
-                                ${b.status !== 'CONFIRMADA' ? `<button class="btn-secondary" style="padding:4px 8px; font-size:0.74rem; background:#DCFCE7; color:#15803D; border-color:#BBF7D0;" onclick="changeBookingStatus('${b.booking_id}', 'CONFIRMADA')">Confirmar</button>` : ''}
-                                ${b.status !== 'COMPLETADA' ? `<button class="btn-secondary" style="padding:4px 8px; font-size:0.74rem; background:#E0F2FE; color:#0369A1; border-color:#BAE6FD;" onclick="changeBookingStatus('${b.booking_id}', 'COMPLETADA')">Completar</button>` : ''}
-                                ${b.status !== 'CANCELADA' ? `<button class="btn-secondary" style="padding:4px 8px; font-size:0.74rem; background:#FEE2E2; color:#B91C1C; border-color:#FECACA;" onclick="changeBookingStatus('${b.booking_id}', 'CANCELADA')">Cancelar</button>` : ''}
+                                ${b.status !== 'CONFIRMADA' ? `<button class="btn-bk-action btn-bk-confirm" onclick="changeBookingStatus('${b.booking_id}', 'CONFIRMADA')">✓ Confirmar</button>` : ''}
+                                ${b.status !== 'COMPLETADA' ? `<button class="btn-bk-action btn-bk-complete" onclick="changeBookingStatus('${b.booking_id}', 'COMPLETADA')">★ Completar</button>` : ''}
+                                ${b.status !== 'CANCELADA' ? `<button class="btn-bk-action btn-bk-cancel" onclick="changeBookingStatus('${b.booking_id}', 'CANCELADA')">✕ Cancelar</button>` : ''}
                             </div>
                         </div>
                     </div>
