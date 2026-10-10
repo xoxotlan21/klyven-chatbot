@@ -45,6 +45,8 @@ class TenantConfig:
     pricing_json: str
     business_description: str = ""
     faqs: str = ""
+    booking_url: str = ""
+    webhook_url: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -396,7 +398,9 @@ def resolve_tenant(tenant_id: str) -> TenantConfig:
                 catalog_json=json.dumps(catalog, indent=2, ensure_ascii=False),
                 pricing_json=json.dumps(pricing, indent=2, ensure_ascii=False),
                 business_description=desc_biz,
-                faqs=faqs
+                faqs=faqs,
+                booking_url=cfg.get("booking_url", ""),
+                webhook_url=cfg.get("webhook_url", "")
             )
     except Exception:
         pass

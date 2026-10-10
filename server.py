@@ -4,8 +4,10 @@ Expone endpoints para que cualquier sitio web externo integre el chatbot con 1 l
 """
 
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import requests
 from fastapi import FastAPI, HTTPException, Request, Response, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
@@ -84,6 +86,8 @@ class CreateTenantRequest(BaseModel):
     services: Optional[List[Dict[str, Any]]] = None
     faqs: Optional[str] = ""
     auto_adapt: Optional[bool] = False
+    booking_url: Optional[str] = ""
+    webhook_url: Optional[str] = ""
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -419,7 +423,9 @@ def get_tenant_configuration(tenant_id: str):
             "website_url": cfg.get("website_url") or "",
             "services": cfg.get("services") or [],
             "faqs": cfg.get("faqs") or "",
-            "auto_adapt": cfg.get("auto_adapt", False)
+            "auto_adapt": cfg.get("auto_adapt", False),
+            "booking_url": cfg.get("booking_url") or "",
+            "webhook_url": cfg.get("webhook_url") or ""
         }
 
     # Defaults para Klyven u otros presets
@@ -441,6 +447,8 @@ def get_tenant_configuration(tenant_id: str):
         "auto_adapt": False,
         "currency": "USD",
         "support_phone": "+52 55 4169 6850" if is_klyven else "",
+        "booking_url": "https://calendly.com" if is_klyven else "",
+        "webhook_url": "",
         "services": [
             {"name": "Landing Page", "price": 450, "description": "Página de alta conversión, copy persuasivo, responsive 100%"},
             {"name": "Business Website", "price": 850, "description": "Sitio web corporativo hasta 5 secciones, CMS, SEO"},
@@ -468,6 +476,8 @@ def api_create_tenant(req: CreateTenantRequest):
         "services": req.services or [],
         "faqs": req.faqs,
         "auto_adapt": req.auto_adapt or False,
+        "booking_url": req.booking_url or "",
+        "webhook_url": req.webhook_url or "",
         "tone_style": "Profesional, cordial, empático y enfocado en asesorar y cerrar ventas."
     }
     saved = save_or_update_tenant(
@@ -575,18 +585,135 @@ class LeadCreateRequest(BaseModel):
     service_interest: Optional[str] = ""
     notes: Optional[str] = ""
 
+def dispatch_lead_webhook(tenant_id: str, lead_data: Dict[str, Any]):
+    """Envía un webhook HTTP POST asíncrono e inmediato al endpoint configurado por el cliente."""
+    import threading
+    def _send():
+        try:
+            db_tenant = get_tenant_by_id(tenant_id)
+            if not db_tenant:
+                return
+            cfg = db_tenant.get("config", {})
+            webhook_url = (cfg.get("webhook_url") or "").strip()
+            if not webhook_url or not webhook_url.startswith("http"):
+                return
+
+            biz_name = db_tenant.get("business_name", tenant_id)
+            cust_name = lead_data.get("customer_name") or "Visitante Web"
+            contact = lead_data.get("contact_info") or "No especificado"
+            interest = lead_data.get("service_interest") or "Consulta General"
+            notes = lead_data.get("notes") or ""
+
+            if "discord.com/api/webhooks" in webhook_url:
+                discord_payload = {
+                    "content": f"🔥 **Nuevo Lead capturado en tu web: {biz_name}**",
+                    "embeds": [{
+                        "title": f"Prospecto: {cust_name}",
+                        "color": 3447003,
+                        "fields": [
+                            {"name": "Contacto", "value": contact, "inline": True},
+                            {"name": "Interés", "value": interest, "inline": True},
+                            {"name": "Mensaje / Consulta", "value": notes or "Sin detalles", "inline": False}
+                        ],
+                        "footer": {"text": f"Klyven Studio • ID Lead #{lead_data.get('lead_id', '')}"}
+                    }]
+                }
+                requests.post(webhook_url, json=discord_payload, timeout=6)
+            elif "hooks.slack.com" in webhook_url:
+                slack_payload = {
+                    "text": f"🔥 *Nuevo Lead en tu web ({biz_name})*\n• *Nombre:* {cust_name}\n• *Contacto:* {contact}\n• *Interés:* {interest}\n• *Mensaje:* {notes}"
+                }
+                requests.post(webhook_url, json=slack_payload, timeout=6)
+            else:
+                body = {
+                    "event": "new_lead_captured",
+                    "timestamp": datetime.now().isoformat(),
+                    "tenant_id": tenant_id,
+                    "business_name": biz_name,
+                    "lead": lead_data
+                }
+                requests.post(webhook_url, json=body, headers={"Content-Type": "application/json"}, timeout=6)
+        except Exception as e:
+            print(f"[Lead Webhook Error] {e}")
+
+    threading.Thread(target=_send, daemon=True).start()
+
+
 @app.post("/api/leads")
 def api_create_lead(req: LeadCreateRequest):
-    """Guarda un lead o prospecto comercial en SQLite."""
+    """Guarda un lead o prospecto comercial en SQLite y dispara webhook si está configurado."""
+    t_id = req.tenant_id.strip().upper()
     lead_id = save_lead(
-        tenant_id=req.tenant_id.strip().upper(),
+        tenant_id=t_id,
         session_id=req.session_id or "",
         customer_name=req.customer_name or "",
         contact_info=req.contact_info.strip(),
         service_interest=req.service_interest or "",
         notes=req.notes or ""
     )
+    dispatch_lead_webhook(
+        tenant_id=t_id,
+        lead_data={
+            "lead_id": lead_id,
+            "session_id": req.session_id or "",
+            "customer_name": req.customer_name or "",
+            "contact_info": req.contact_info.strip(),
+            "service_interest": req.service_interest or "",
+            "notes": req.notes or ""
+        }
+    )
     return {"status": "success", "lead_id": lead_id}
+
+@app.post("/api/leads/test-webhook")
+def api_test_webhook(req: Dict[str, Any]):
+    """Prueba el envío de un webhook de lead en vivo."""
+    webhook_url = (req.get("webhook_url") or "").strip()
+    tenant_id = (req.get("tenant_id") or "KLYVEN-STUDIO").strip().upper()
+    if not webhook_url or not webhook_url.startswith("http"):
+        raise HTTPException(status_code=400, detail="URL de webhook inválida. Debe comenzar con http:// o https://")
+
+    test_lead = {
+        "lead_id": 999,
+        "customer_name": "Cliente de Prueba (Klyven Studio)",
+        "contact_info": "+52 55 1234 5678 / prueba@klyven.com",
+        "service_interest": "Diseño Web Corporativo",
+        "notes": "Alerta de prueba enviada desde el Panel de Chatbots de Klyven Studio para verificar tu integración.",
+        "created_at": datetime.now().isoformat()
+    }
+    try:
+        if "discord.com/api/webhooks" in webhook_url:
+            body = {
+                "content": "✅ **Prueba de Webhook Exitosa** desde el Panel de Klyven Studio",
+                "embeds": [{
+                    "title": "Conexión de Notificaciones en Tiempo Real Verificada",
+                    "description": "Tu webhook está activo y recibirá cada prospecto que deje su contacto en el chatbot.",
+                    "color": 65280
+                }]
+            }
+            resp = requests.post(webhook_url, json=body, timeout=6)
+        elif "hooks.slack.com" in webhook_url:
+            body = {"text": "✅ *Prueba de Webhook Exitosa* desde el Panel de Klyven Studio. Las alertas están activas."}
+            resp = requests.post(webhook_url, json=body, timeout=6)
+        else:
+            payload = {
+                "event": "test_ping",
+                "status": "success",
+                "tenant_id": tenant_id,
+                "message": "Prueba de conexión exitosa desde el Panel de Klyven Studio",
+                "sample_lead": test_lead
+            }
+            resp = requests.post(webhook_url, json=payload, headers={"Content-Type": "application/json"}, timeout=6)
+
+        return {
+            "status": "success",
+            "http_status": resp.status_code,
+            "message": f"Webhook enviado exitosamente (Código HTTP {resp.status_code})"
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"No se pudo conectar con el Webhook: {str(e)}"
+        }
 
 @app.get("/api/leads")
 def api_get_leads(tenant_id: str = "KLYVEN-STUDIO"):
@@ -778,7 +905,9 @@ def api_chat(payload: ChatRequest):
                     "theme_mode": pcfg.get("theme_mode") or "glass",
                     "bubble_style": pcfg.get("bubble_style") or "pill",
                     "bubble_text": pcfg.get("bubble_text") or "Hablemos de tu web",
-                    "position": pcfg.get("position") or "bottom-right"
+                    "position": pcfg.get("position") or "bottom-right",
+                    "booking_url": pcfg.get("booking_url") or "",
+                    "webhook_url": pcfg.get("webhook_url") or ""
                 }
             )
         except Exception:
@@ -863,13 +992,24 @@ def api_chat(payload: ChatRequest):
     if email_m or phone_m:
         contact_str = email_m.group(0) if email_m else phone_m.group(0)
         try:
-            save_lead(
+            lead_id = save_lead(
                 tenant_id=matched_tenant.business_id,
                 session_id=session_id,
                 customer_name=datos_operativos.get("nombre_cliente") or "",
                 contact_info=contact_str,
                 service_interest=datos_operativos.get("id_sku_seleccionado") or "",
                 notes=msg_text[:200]
+            )
+            dispatch_lead_webhook(
+                tenant_id=matched_tenant.business_id,
+                lead_data={
+                    "lead_id": lead_id,
+                    "session_id": session_id,
+                    "customer_name": datos_operativos.get("nombre_cliente") or "",
+                    "contact_info": contact_str,
+                    "service_interest": datos_operativos.get("id_sku_seleccionado") or "",
+                    "notes": msg_text[:200]
+                }
             )
         except Exception:
             pass
@@ -886,6 +1026,23 @@ def api_chat(payload: ChatRequest):
             wa_link = f"https://wa.me/{clean_phone}?text={encoded_txt}"
             if "wa.me" not in cliente_msg:
                 cliente_msg += f"\n\n[💬 Hablar por WhatsApp]({wa_link})"
+
+    # Agendamiento directo de citas o llamadas (Calendly / Cal.com / Google Calendar)
+    book_url = (payload.preview_config.get("booking_url") if payload.preview_config else "") or getattr(matched_tenant, "booking_url", "") or ""
+    if not book_url:
+        try:
+            db_t_match = get_tenant_by_id(matched_tenant.business_id)
+            if db_t_match:
+                book_url = db_t_match.get("config", {}).get("booking_url", "")
+        except Exception:
+            pass
+
+    clean_book_url = (book_url or "").strip()
+    if clean_book_url and clean_book_url.startswith("http"):
+        low_msg = payload.message.lower()
+        if any(w in low_msg for w in ["agendar", "cita", "llamada", "reunión", "reunion", "calendario", "reservar", "horario", "demo", "junta", "meet", "videollamada"]):
+            if clean_book_url not in cliente_msg:
+                cliente_msg += f"\n\n[📅 Agendar Cita o Llamada]({clean_book_url})"
 
     return {
         "reply": cliente_msg,

@@ -421,6 +421,9 @@
                 if (p2.includes('wa.me')) {
                     return '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#ffffff !important;font-weight:600;padding:8px 14px;border-radius:12px;text-decoration:none;margin-top:6px;box-shadow:0 2px 6px rgba(37,211,102,0.3);">' + p1 + '</a>';
                 }
+                if (p1.includes('Agendar') || p2.includes('calendly.com') || p2.includes('cal.com')) {
+                    return '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#4F46E5;color:#ffffff !important;font-weight:600;padding:8px 14px;border-radius:12px;text-decoration:none;margin-top:6px;box-shadow:0 2px 8px rgba(79,70,229,0.35);">' + p1 + '</a>';
+                }
                 return '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer">' + p1 + '</a>';
             });
             str = str.replace(/\n\n+/g, '<div style="height:8px;"></div>');
