@@ -207,7 +207,7 @@
                 border-bottom-left-radius: 2px !important;
             }
             .ts-msg-user {
-                background-color: #2563eb !important;
+                background-color: var(--ts-brand-color, #2563eb) !important;
                 color: #ffffff !important;
                 align-self: flex-end !important;
                 border-bottom-right-radius: 2px !important;
@@ -320,6 +320,8 @@
         window.openKlyvenChat = toggleChat;
         window.openTravelSalesChat = toggleChat;
 
+        let activeBrandColor = '#2563eb';
+
         // Cargar Configuración Dinámica y Personalización Libre
         fetch(`${apiBase}/api/tenant-config?tenant_id=${encodeURIComponent(tenantId)}`)
             .then(res => res.json())
@@ -332,13 +334,19 @@
                     const detected = detectHostPageColor();
                     if (detected) brandColor = detected;
                 }
+                activeBrandColor = brandColor;
 
                 // 2. Aplicar Color de Marca
+                document.documentElement.style.setProperty('--ts-brand-color', brandColor);
+                if (windowDiv) windowDiv.style.setProperty('--ts-brand-color', brandColor);
                 const headerEl = document.getElementById('travelsales-header');
                 const sendBtn = document.getElementById('travelsales-send');
                 if (headerEl) headerEl.style.backgroundColor = brandColor;
                 if (bubble) bubble.style.background = brandColor;
                 if (sendBtn) sendBtn.style.backgroundColor = brandColor;
+                document.querySelectorAll('.ts-msg-user').forEach(el => {
+                    el.style.backgroundColor = brandColor;
+                });
 
                 // 3. Tema (Dark, Light, Glass)
                 const themeMode = cfg.theme_mode || 'dark';
@@ -426,6 +434,7 @@
 
             const userEl = document.createElement('div');
             userEl.className = 'ts-msg ts-msg-user';
+            userEl.style.backgroundColor = activeBrandColor;
             userEl.innerHTML = formatRichText(text);
             msgBox.appendChild(userEl);
             input.value = '';

@@ -1019,7 +1019,7 @@
         }
 
         .mock-bubble-user {
-            background: var(--btn-primary);
+            background: var(--brand-dynamic, var(--btn-primary));
             color: #FFFFFF;
             border-bottom-right-radius: 4px;
             box-shadow: 0 4px 12px rgba(15, 27, 49, 0.12);
@@ -1079,7 +1079,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--btn-primary);
+            background: var(--brand-dynamic, var(--btn-primary));
             color: white;
             border: none;
             cursor: pointer;
@@ -1771,6 +1771,15 @@
             document.getElementById('color_hex_label').innerText = color.toUpperCase();
             document.getElementById('swatch_brand_display').style.background = color;
 
+            // Actualizar color de marca dinámico en la simulación del chatbot
+            document.documentElement.style.setProperty('--brand-dynamic', color);
+            document.querySelectorAll('.mock-bubble-user').forEach(b => {
+                b.style.setProperty('background', color, 'important');
+            });
+            document.querySelectorAll('.btn-send-mock').forEach(b => {
+                b.style.setProperty('background', color, 'important');
+            });
+
             const prevTitle = document.getElementById('preview_title');
             if (prevTitle) prevTitle.innerText = botName;
             
@@ -1860,8 +1869,14 @@
                 try {
                     const bResp = await fetch(`/api/extract-brand?url=${encodeURIComponent(url)}`);
                     const bData = await bResp.json();
-                    if (bData.dominant_color) document.getElementById('brand_color').value = bData.dominant_color;
-                    if (bData.logo_url) document.getElementById('bot_avatar_url').value = bData.logo_url;
+                    if (bData.dominant_color) {
+                        document.getElementById('brand_color').value = bData.dominant_color;
+                        updatePreview();
+                    }
+                    if (bData.logo_url) {
+                        document.getElementById('bot_avatar_url').value = bData.logo_url;
+                        updatePreview();
+                    }
                 } catch(e) {}
             }
 
@@ -1876,6 +1891,10 @@
 
                 if (res.status === 'success' && res.data) {
                     const d = res.data;
+                    if (d.brand_color) {
+                        document.getElementById('brand_color').value = d.brand_color;
+                        updatePreview();
+                    }
                     if (d.business_name) document.getElementById('biz_name').value = d.business_name;
                     if (d.tenant_id) document.getElementById('biz_id').value = d.tenant_id.toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
                     if (d.industry) {
@@ -2013,10 +2032,12 @@
 
             const box = document.getElementById('preview_messages');
             
+            const brandColor = document.getElementById('brand_color').value || '#0F1B31';
+            
             // Render usuario
             const uRow = document.createElement('div');
             uRow.className = 'mock-msg-row user-row';
-            uRow.innerHTML = `<div class="mock-bubble mock-bubble-user">${formatRichText(msg)}</div>`;
+            uRow.innerHTML = `<div class="mock-bubble mock-bubble-user" style="background: ${brandColor} !important;">${formatRichText(msg)}</div>`;
             box.appendChild(uRow);
             input.value = '';
             box.scrollTop = box.scrollHeight;

@@ -111,13 +111,64 @@ def health_check():
 # ==============================================================================
 # AUTO-DETECTOR DE MARCA Y COLORES DESDE CUALQUIER SITIO WEB
 # ==============================================================================
+def extract_brand_colors_from_html(html: str) -> str:
+    """Extrae el color de marca real y vibrante analizando variables CSS, botones y cromatismo."""
+    import re
+    from collections import Counter
+
+    # 1. Buscar variables CSS conocidas de colores de marca/botones
+    var_matches = re.findall(
+        r'--(?:primary|brand|accent|main|theme|color-primary|btn-primary)[^:]*:\s*(#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3})',
+        html,
+        re.IGNORECASE
+    )
+    for v in var_matches:
+        if len(v) == 7:
+            r, g, b = int(v[1:3], 16), int(v[3:5], 16), int(v[5:7], 16)
+            if max(r, g, b) - min(r, g, b) >= 30:
+                return v.lower()
+
+    # 2. Meta theme-color (si es colorido y no blanco/negro/gris neutro)
+    theme_color = re.search(r'<meta[^>]*name=["\']theme-color["\'][^>]*content=["\'](#[0-9a-fA-F]{6})["\']', html, re.IGNORECASE)
+    if theme_color:
+        c = theme_color.group(1).lower()
+        r, g, b = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
+        if max(r, g, b) - min(r, g, b) >= 35 and max(r, g, b) < 248 and min(r, g, b) > 12:
+            return c
+
+    # 3. Buscar colores en background-color de botones, enlaces y nav
+    btn_colors = re.findall(r'(?:background(?:-color)?|fill|stroke)\s*:\s*(#[0-9a-fA-F]{6})', html, re.IGNORECASE)
+    btn_vibrant = []
+    for h in btn_colors:
+        c = h.lower()
+        r, g, b = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
+        if max(r, g, b) - min(r, g, b) >= 35 and max(r, g, b) < 248 and min(r, g, b) > 10:
+            btn_vibrant.append(c)
+    if btn_vibrant:
+        return Counter(btn_vibrant).most_common(1)[0][0]
+
+    # 4. Análisis de frecuencia de hexacromáticos
+    hex_colors = re.findall(r'#([0-9a-fA-F]{6})\b', html)
+    vibrant = []
+    for h in hex_colors:
+        c = f"#{h.lower()}"
+        r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+        chroma = max(r, g, b) - min(r, g, b)
+        if chroma >= 35 and max(r, g, b) < 248 and min(r, g, b) > 10:
+            vibrant.append(c)
+
+    if vibrant:
+        return Counter(vibrant).most_common(1)[0][0]
+
+    return "#0F1B31"
+
+
 @app.get("/api/extract-brand")
 def api_extract_brand(url: str):
     """Inspecciona una web y extrae automáticamente su paleta de colores, logo y nombre."""
     import re
     import urllib.parse
     import requests
-    from collections import Counter
 
     target_url = url.strip()
     if not target_url.startswith("http"):
@@ -148,16 +199,8 @@ def api_extract_brand(url: str):
             else:
                 logo_url = urllib.parse.urljoin(target_url, cand)
 
-        # 3. Color dominante (meta theme-color o análisis CSS)
-        dominant_color = "#2563eb"
-        theme_color = re.search(r'<meta[^>]*name=["\']theme-color["\'][^>]*content=["\'](.*?)["\']', html, re.IGNORECASE)
-        if theme_color:
-            dominant_color = theme_color.group(1).strip()
-        else:
-            hex_colors = re.findall(r'#([0-9a-fA-F]{6})\b', html)
-            meaningful = [f"#{c.lower()}" for c in hex_colors if c.lower() not in ("ffffff", "000000", "111827", "0f172a", "f3f4f6", "e2e8f0")]
-            if meaningful:
-                dominant_color = Counter(meaningful).most_common(1)[0][0]
+        # 3. Color dominante con cromatismo y saturación
+        dominant_color = extract_brand_colors_from_html(html)
 
         return {
             "status": "success",
@@ -172,7 +215,7 @@ def api_extract_brand(url: str):
             "url": target_url,
             "business_name": clean_domain.split(".")[0].capitalize(),
             "logo_url": f"https://www.google.com/s2/favicons?domain={clean_domain}&sz=128",
-            "dominant_color": "#2563eb"
+            "dominant_color": "#0F1B31"
         }
 
 
@@ -250,6 +293,7 @@ Tu objetivo es analizar profundamente de qué trata el negocio para que el Chatb
    - Si no hay precios numéricos en el texto, coloca precios de mercado razonables.
 6. Políticas, horarios de atención, garantías y ubicación mencionadas.
 7. Nombre sugerido para el Asistente y un Mensaje de Bienvenida cordial y orientado a vender.
+8. Color de marca dominante / característico en hexadecimal (#HEX), como el color de los botones principales o logo.
 
 Responde ÚNICAMENTE en JSON válido con este esquema exacto:
 {{
@@ -258,6 +302,7 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
   "industry": "Giro Específico",
   "currency": "USD" o "MXN",
   "business_description": "Descripción precisa y única de este negocio...",
+  "brand_color": "#HEX_COLOR",
   "bot_name": "Nombre del Asistente",
   "welcome_message": "¡Hola! Bienvenido a... ¿en qué te podemos apoyar hoy?",
   "services": [
@@ -273,6 +318,8 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
     api_key = os.environ.get("GEMINI_API_KEY", "")
     if not api_key:
         return {"status": "error", "message": "Falta GEMINI_API_KEY en el servidor"}
+
+    html_detected_color = extract_brand_colors_from_html(html) if html else "#0F1B31"
 
     candidate_models = ["gemini-3.5-flash-lite", "gemini-3.5-flash"]
     for model_name in candidate_models:
@@ -290,6 +337,12 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
                 data = resp.json()
                 raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
                 parsed = json.loads(raw_text)
+
+                # Priorizar color detectado del HTML/CSS si es vibrante, o el sugerido por IA
+                final_color = html_detected_color
+                if final_color in ("#0F1B31", "#2563eb", "#000000", "#ffffff") and parsed.get("brand_color") and parsed["brand_color"].startswith("#"):
+                    final_color = parsed["brand_color"].strip()
+                parsed["brand_color"] = final_color
                 
                 # Auto-persistir en la base de datos SQLite para disponibilidad inmediata
                 try:
@@ -306,7 +359,7 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
                             "services": parsed.get("services") or [],
                             "faqs": parsed.get("faqs") or "",
                             "welcome_message": parsed.get("welcome_message") or "",
-                            "brand_color": "#0F1B31",
+                            "brand_color": final_color,
                             "theme_mode": "glass",
                             "bubble_style": "pill",
                             "bubble_text": "Hablemos de tu web",
