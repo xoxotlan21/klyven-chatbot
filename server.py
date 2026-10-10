@@ -1182,6 +1182,19 @@ def api_chat(payload: ChatRequest):
     ]
     user_asks_catalog = any(trig in payload.message.lower() for trig in catalog_triggers)
     if user_asks_catalog and services_for_carousel and ":::carousel" not in cliente_msg:
+        has_list_dump = bool(re.search(r'(?:\d+[\.\)]\s+|[-*•]\s+.*?\n|Actualmente ofrecemos|los siguientes planes|nuestros paquetes|nuestros servicios|ofrecemos las siguientes|ofrecemos los siguientes)', cliente_msg, re.IGNORECASE))
+        if has_list_dump:
+            greeting_match = re.search(r'(¡?Hola[^.!?\n]*[.!?])', cliente_msg, re.IGNORECASE)
+            greeting = greeting_match.group(1) if greeting_match else f"¡Hola! Bienvenido a **{matched_tenant.business_name}**."
+            cliente_msg = (
+                f"{greeting} Con gusto te comparto nuestras opciones y soluciones disponibles. "
+                f"Puedes deslizar las siguientes tarjetas para conocer los detalles, características y cotizar:"
+            )
+        else:
+            cliente_msg = cliente_msg.strip()
+            if not any(w in cliente_msg.lower() for w in ["tarjeta", "tarjetas", "desliza", "carrusel"]):
+                cliente_msg += "\n\nPuedes deslizar las siguientes tarjetas para conocer los detalles y cotizar:"
+
         carousel_cards = []
         for s in services_for_carousel:
             s_name = s.get("name") or s.get("nombre") or "Servicio"

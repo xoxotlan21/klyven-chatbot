@@ -320,16 +320,8 @@
             }
 
             /* Carrusel Interactivo de Tarjetas en Widget */
-            .ts-msg:has(.chat-carousel-wrapper) {
-                max-width: 100% !important;
-                width: 100% !important;
-                background: transparent !important;
-                border: none !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-            }
             .chat-carousel-wrapper {
-                margin: 8px 0 4px 0 !important;
+                margin: 4px 0 6px 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
                 overflow: hidden !important;
@@ -754,114 +746,118 @@
                 .replace(/'/g, '&#039;');
         }
 
+        function renderCarouselHtml(jsonStr) {
+            try {
+                const items = typeof jsonStr === 'string' ? JSON.parse(jsonStr.trim()) : jsonStr;
+                if (!Array.isArray(items) || items.length === 0) return '';
+
+                const countText = `${items.length} ${items.length === 1 ? 'OPCIÓN' : 'UNIDADES / OPCIONES'}`;
+
+                let cardsHtml = items.map(item => {
+                    const title = escapeHtml(item.title || item.name || 'Servicio');
+                    const imgUrl = item.image || item.image_url || '';
+                    const badge = item.badge || (imgUrl ? 'Foto' : '');
+                    const price = item.price ? (typeof item.price === 'number' ? `$${item.price}` : item.price) : '';
+                    const actionLabel = escapeHtml(item.action_label || 'Ver más');
+                    const actionQuery = (item.action_query || `Me interesa ${title}`).replace(/"/g, '&quot;');
+
+                    // Fila de especificaciones (3 columnas)
+                    let specsHtml = '';
+                    if (Array.isArray(item.specs) && item.specs.length > 0) {
+                        const cols = item.specs.slice(0, 3).map(sp => `
+                            <div class="chat-card-spec-col">
+                                <span class="chat-card-spec-lbl">${escapeHtml(sp.label || '')}</span>
+                                <span class="chat-card-spec-val">${escapeHtml(sp.val || sp.value || '')}</span>
+                            </div>
+                        `).join('');
+                        specsHtml = `<div class="chat-card-specs-row">${cols}</div>`;
+                    } else if (price) {
+                        specsHtml = `
+                            <div class="chat-card-specs-row">
+                                <div class="chat-card-spec-col">
+                                    <span class="chat-card-spec-lbl">PRECIO</span>
+                                    <span class="chat-card-spec-val">${escapeHtml(price)}</span>
+                                </div>
+                                <div class="chat-card-spec-col">
+                                    <span class="chat-card-spec-lbl">ESTADO</span>
+                                    <span class="chat-card-spec-val">Disponible</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Tags / Chips de amenidades
+                    let tagsList = [];
+                    if (Array.isArray(item.tags)) {
+                        tagsList = item.tags;
+                    } else if (typeof item.description === 'string' && item.description.includes('|')) {
+                        const parts = item.description.split('|');
+                        tagsList = parts[parts.length - 1].split(',').map(t => t.trim());
+                    } else if (typeof item.description === 'string') {
+                        tagsList = item.description.split(',').map(t => t.trim()).filter(Boolean);
+                    }
+
+                    let tagsHtml = '';
+                    if (tagsList.length > 0) {
+                        const visible = tagsList.slice(0, 3);
+                        const remaining = tagsList.length - 3;
+                        const chips = visible.map(t => `<span class="chat-card-tag">${escapeHtml(t)}</span>`).join('');
+                        const moreBadge = remaining > 0 ? `<span class="chat-card-tag more">+${remaining}</span>` : '';
+                        tagsHtml = `<div class="chat-card-tags-row">${chips}${moreBadge}</div>`;
+                    }
+
+                    // Cabecera visual (con foto o degradado)
+                    const imgHeader = imgUrl ? `
+                        <div class="chat-card-img-wrap" style="background-image: url('${encodeURI(imgUrl)}');">
+                            <div class="chat-card-gradient"></div>
+                            ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
+                            <div class="chat-card-img-title">${title}</div>
+                        </div>
+                    ` : `
+                        <div class="chat-card-no-img">
+                            ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
+                            <div class="chat-card-no-img-title">${title}</div>
+                        </div>
+                    `;
+
+                    return `
+                        <div class="chat-card-item">
+                            ${imgHeader}
+                            <div class="chat-card-body">
+                                ${specsHtml}
+                                ${tagsHtml}
+                                <button class="chat-card-action-btn" type="button" onclick="window.__tsQuickAsk ? window.__tsQuickAsk('${actionQuery.replace(/'/g, "\\'")}') : null">
+                                    ${actionLabel} →
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="chat-carousel-wrapper">
+                        <div class="chat-carousel-header">
+                            <span class="chat-carousel-count">${countText}</span>
+                            <span class="chat-carousel-hint">Desliza →</span>
+                        </div>
+                        <div class="chat-carousel-track">
+                            ${cardsHtml}
+                        </div>
+                    </div>
+                `;
+            } catch(e) {
+                console.error('Error procesando carrusel JSON en widget:', e);
+                return '';
+            }
+        }
+
         function formatRichText(raw) {
             if (!raw) return '';
             let str = String(raw);
 
-            // Parser de Carrusel Interactivo de Tarjetas
+            // Reemplazo limpio si existiera carrusel
             str = str.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, (match, jsonStr) => {
-                try {
-                    const items = JSON.parse(jsonStr.trim());
-                    if (!Array.isArray(items) || items.length === 0) return '';
-
-                    const countText = `${items.length} ${items.length === 1 ? 'OPCIÓN' : 'UNIDADES / OPCIONES'}`;
-
-                    let cardsHtml = items.map(item => {
-                        const title = escapeHtml(item.title || item.name || 'Servicio');
-                        const imgUrl = item.image || item.image_url || '';
-                        const badge = item.badge || (imgUrl ? 'Foto' : '');
-                        const price = item.price ? (typeof item.price === 'number' ? `$${item.price}` : item.price) : '';
-                        const actionLabel = escapeHtml(item.action_label || 'Ver más');
-                        const actionQuery = (item.action_query || `Me interesa ${title}`).replace(/"/g, '&quot;');
-
-                        // Fila de especificaciones (3 columnas)
-                        let specsHtml = '';
-                        if (Array.isArray(item.specs) && item.specs.length > 0) {
-                            const cols = item.specs.slice(0, 3).map(sp => `
-                                <div class="chat-card-spec-col">
-                                    <span class="chat-card-spec-lbl">${escapeHtml(sp.label || '')}</span>
-                                    <span class="chat-card-spec-val">${escapeHtml(sp.val || sp.value || '')}</span>
-                                </div>
-                            `).join('');
-                            specsHtml = `<div class="chat-card-specs-row">${cols}</div>`;
-                        } else if (price) {
-                            specsHtml = `
-                                <div class="chat-card-specs-row">
-                                    <div class="chat-card-spec-col">
-                                        <span class="chat-card-spec-lbl">PRECIO</span>
-                                        <span class="chat-card-spec-val">${escapeHtml(price)}</span>
-                                    </div>
-                                    <div class="chat-card-spec-col">
-                                        <span class="chat-card-spec-lbl">ESTADO</span>
-                                        <span class="chat-card-spec-val">Disponible</span>
-                                    </div>
-                                </div>
-                            `;
-                        }
-
-                        // Tags / Chips de amenidades
-                        let tagsList = [];
-                        if (Array.isArray(item.tags)) {
-                            tagsList = item.tags;
-                        } else if (typeof item.description === 'string' && item.description.includes('|')) {
-                            const parts = item.description.split('|');
-                            tagsList = parts[parts.length - 1].split(',').map(t => t.trim());
-                        } else if (typeof item.description === 'string') {
-                            tagsList = item.description.split(',').map(t => t.trim()).filter(Boolean);
-                        }
-
-                        let tagsHtml = '';
-                        if (tagsList.length > 0) {
-                            const visible = tagsList.slice(0, 3);
-                            const remaining = tagsList.length - 3;
-                            const chips = visible.map(t => `<span class="chat-card-tag">${escapeHtml(t)}</span>`).join('');
-                            const moreBadge = remaining > 0 ? `<span class="chat-card-tag more">+${remaining}</span>` : '';
-                            tagsHtml = `<div class="chat-card-tags-row">${chips}${moreBadge}</div>`;
-                        }
-
-                        // Cabecera visual (con foto o degradado)
-                        const imgHeader = imgUrl ? `
-                            <div class="chat-card-img-wrap" style="background-image: url('${encodeURI(imgUrl)}');">
-                                <div class="chat-card-gradient"></div>
-                                ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
-                                <div class="chat-card-img-title">${title}</div>
-                            </div>
-                        ` : `
-                            <div class="chat-card-no-img">
-                                ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
-                                <div class="chat-card-no-img-title">${title}</div>
-                            </div>
-                        `;
-
-                        return `
-                            <div class="chat-card-item">
-                                ${imgHeader}
-                                <div class="chat-card-body">
-                                    ${specsHtml}
-                                    ${tagsHtml}
-                                    <button class="chat-card-action-btn" type="button" onclick="window.__tsQuickAsk ? window.__tsQuickAsk('${actionQuery.replace(/'/g, "\\'")}') : null">
-                                        ${actionLabel} →
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                    return `
-                        <div class="chat-carousel-wrapper">
-                            <div class="chat-carousel-header">
-                                <span class="chat-carousel-count">${countText}</span>
-                                <span class="chat-carousel-hint">Desliza →</span>
-                            </div>
-                            <div class="chat-carousel-track">
-                                ${cardsHtml}
-                            </div>
-                        </div>
-                    `;
-                } catch(e) {
-                    console.error('Error procesando carrusel JSON en widget:', e);
-                    return '';
-                }
+                return renderCarouselHtml(jsonStr);
             });
 
             str = str.replace(/([^\n])\s+(\d+\.\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
@@ -935,9 +931,30 @@
                 const data = await resp.json();
                 msgBox.removeChild(typingEl);
 
-                const botEl = document.createElement('div');
-                botEl.className = 'ts-msg ts-msg-bot';
-                botEl.innerHTML = formatRichText(data.reply);
+                const replyStr = String(data.reply || '');
+                const cMatch = replyStr.match(/:::carousel\s*([\s\S]*?)\s*:::/);
+
+                if (cMatch) {
+                    const textBefore = replyStr.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, '').trim();
+                    if (textBefore) {
+                        const botEl = document.createElement('div');
+                        botEl.className = 'ts-msg ts-msg-bot';
+                        botEl.innerHTML = formatRichText(textBefore);
+                        msgBox.appendChild(botEl);
+                    }
+                    const carouselHtml = renderCarouselHtml(cMatch[1]);
+                    if (carouselHtml) {
+                        const cDiv = document.createElement('div');
+                        cDiv.className = 'chat-carousel-wrapper';
+                        cDiv.innerHTML = carouselHtml;
+                        msgBox.appendChild(cDiv);
+                    }
+                } else {
+                    const botEl = document.createElement('div');
+                    botEl.className = 'ts-msg ts-msg-bot';
+                    botEl.innerHTML = formatRichText(data.reply);
+                    msgBox.appendChild(botEl);
+                }
 
                 if (data.checkout_url) {
                     const btn = document.createElement('a');
@@ -945,11 +962,9 @@
                     btn.href = data.checkout_url;
                     btn.target = '_blank';
                     btn.innerText = `Pagar y Confirmar ($${data.price} ${data.currency})`;
-                    botEl.appendChild(document.createElement('br'));
-                    botEl.appendChild(btn);
+                    msgBox.appendChild(btn);
                 }
 
-                msgBox.appendChild(botEl);
                 conversationHistory.push({ role: 'assistant', content: data.reply });
                 msgBox.scrollTop = msgBox.scrollHeight;
             } catch (err) {
