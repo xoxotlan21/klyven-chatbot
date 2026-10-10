@@ -93,6 +93,28 @@ def init_db():
     );
     """)
 
+    # 5. Tabla de Leads y Prospectos Comerciales
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS leads (
+        lead_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tenant_id TEXT NOT NULL,
+        session_id TEXT,
+        customer_name TEXT,
+        contact_info TEXT,
+        service_interest TEXT,
+        notes TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (tenant_id) REFERENCES tenants (tenant_id)
+    );
+    """)
+
+    # Migración de columnas adicionales en leads si ya existía la tabla
+    for col_name in ["session_id", "contact_info", "service_interest"]:
+        try:
+            cursor.execute(f"ALTER TABLE leads ADD COLUMN {col_name} TEXT")
+        except Exception:
+            pass
+
     conn.commit()
     conn.close()
 
@@ -253,11 +275,15 @@ def save_or_update_tenant(
     existing = cursor.fetchone()
 
     if existing:
+        cursor.execute("SELECT support_phone FROM tenants WHERE tenant_id = ?", (tenant_id,))
+        curr_row = cursor.fetchone()
+        curr_phone = curr_row["support_phone"] if curr_row else ""
+        final_phone = support_phone if support_phone.strip() else (curr_phone or "")
         cursor.execute("""
         UPDATE tenants
         SET business_name = ?, industry = ?, currency = ?, support_phone = ?, config_json = ?
         WHERE tenant_id = ?
-        """, (business_name, industry, currency, support_phone, config_json, tenant_id))
+        """, (business_name, industry, currency, final_phone, config_json, tenant_id))
     else:
         cursor.execute("""
         INSERT INTO tenants (tenant_id, business_name, industry, currency, support_phone, config_json, created_at)
@@ -301,6 +327,37 @@ def list_all_tenants() -> List[Dict[str, Any]]:
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT tenant_id, business_name, industry, currency, support_phone, created_at FROM tenants ORDER BY created_at DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def save_lead(tenant_id: str, session_id: str = "", customer_name: str = "", contact_info: str = "", service_interest: str = "", notes: str = "") -> int:
+    """Guarda un prospecto o lead comercial extraído de la conversación."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    now = datetime.now().isoformat()
+    cursor.execute("""
+    INSERT INTO leads (tenant_id, session_id, customer_name, contact_info, service_interest, notes, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (tenant_id, session_id, customer_name, contact_info, service_interest, notes, now))
+    lead_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return lead_id
+
+
+def get_tenant_leads(tenant_id: str, limit: int = 100) -> List[Dict[str, Any]]:
+    """Obtiene los leads registrados para un tenant en orden cronológico inverso."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT lead_id, tenant_id, session_id, customer_name, contact_info, service_interest, notes, created_at
+    FROM leads
+    WHERE tenant_id = ?
+    ORDER BY created_at DESC
+    LIMIT ?
+    """, (tenant_id, limit))
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]

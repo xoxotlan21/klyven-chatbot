@@ -6,7 +6,7 @@ Expone endpoints para que cualquier sitio web externo integre el chatbot con 1 l
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
@@ -50,7 +50,9 @@ from database import (
     get_tenant_orders,
     save_or_update_tenant,
     get_tenant_by_id,
-    list_all_tenants
+    list_all_tenants,
+    save_lead,
+    get_tenant_leads
 )
 
 class ChatRequest(BaseModel):
@@ -400,6 +402,9 @@ def get_tenant_configuration(tenant_id: str):
         return {
             "tenant_id": db_tenant["tenant_id"],
             "business_name": db_tenant["business_name"],
+            "industry": db_tenant.get("industry") or "Diseño Web y Marketing",
+            "currency": db_tenant.get("currency") or "USD",
+            "support_phone": db_tenant.get("support_phone") or "",
             "bot_name": cfg.get("bot_name") or "Asistente Virtual",
             "bot_avatar": cfg.get("bot_avatar") or "🤖",
             "brand_color": cfg.get("brand_color") or "#2563eb",
@@ -410,8 +415,11 @@ def get_tenant_configuration(tenant_id: str):
             "border_radius": cfg.get("border_radius", 16),
             "welcome_message": cfg.get("welcome_message") or f"¡Hola! Bienvenido a {db_tenant['business_name']}. ¿En qué te podemos asesorar hoy?",
             "input_placeholder": cfg.get("input_placeholder") or "Escribe tu consulta o pedido...",
-            "auto_adapt": cfg.get("auto_adapt", False),
-            "currency": db_tenant.get("currency") or "USD"
+            "business_description": cfg.get("business_description") or "",
+            "website_url": cfg.get("website_url") or "",
+            "services": cfg.get("services") or [],
+            "faqs": cfg.get("faqs") or "",
+            "auto_adapt": cfg.get("auto_adapt", False)
         }
 
     # Defaults para Klyven u otros presets
@@ -419,6 +427,7 @@ def get_tenant_configuration(tenant_id: str):
     return {
         "tenant_id": clean_id,
         "business_name": "Klyven Studio" if is_klyven else "TravelSales",
+        "industry": "Diseño Web y Marketing" if is_klyven else "Turismo y Transporte",
         "bot_name": "Klyven Assistant" if is_klyven else "Asistente Oficial",
         "bot_avatar": "https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" if is_klyven else "/assets/logo-dark.png",
         "brand_color": "#0F1B31" if is_klyven else "#2563eb",
@@ -430,7 +439,13 @@ def get_tenant_configuration(tenant_id: str):
         "welcome_message": "¡Hola! Bienvenido a Klyven Studio. ¿Qué tipo de sitio web o proyecto te gustaría cotizar hoy?" if is_klyven else "¡Hola! ¿En qué destino o traslado te podemos apoyar hoy?",
         "input_placeholder": "Cuéntame de tu proyecto o idea..." if is_klyven else "Escribe tu consulta o ruta...",
         "auto_adapt": False,
-        "currency": "USD"
+        "currency": "USD",
+        "support_phone": "+52 55 4169 6850" if is_klyven else "",
+        "services": [
+            {"name": "Landing Page", "price": 450, "description": "Página de alta conversión, copy persuasivo, responsive 100%"},
+            {"name": "Business Website", "price": 850, "description": "Sitio web corporativo hasta 5 secciones, CMS, SEO"},
+            {"name": "Website Redesign", "price": 700, "description": "Auditoría UX y rediseño completo de identidad digital"}
+        ] if is_klyven else []
     }
 
 
@@ -487,6 +502,223 @@ def get_conversation_msgs(conversation_id: str):
 
 
 # ==============================================================================
+# 1. VERIFICADOR REAL DE INSTALACIÓN EN LA WEB (STATUS PING)
+# ==============================================================================
+class VerifyInstallRequest(BaseModel):
+    url: str
+    tenant_id: str
+
+@app.post("/api/verify-installation")
+def api_verify_installation(req: VerifyInstallRequest):
+    """Verifica en vivo si el sitio web del cliente tiene el script del widget instalado."""
+    import urllib.parse
+    import requests
+    import re
+
+    raw_url = req.url.strip()
+    if not raw_url:
+        return {"status": "error", "installed": False, "message": "Por favor ingresa la URL de tu sitio web"}
+    if not raw_url.startswith("http"):
+        raw_url = "https://" + raw_url
+
+    parsed_url = urllib.parse.urlparse(raw_url)
+    domain = parsed_url.hostname or raw_url
+
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        resp = requests.get(raw_url, headers=headers, timeout=8)
+        html = resp.text
+
+        has_widget = "widget.js" in html
+        has_tenant = req.tenant_id.upper() in html.upper() if req.tenant_id else False
+
+        if has_widget and has_tenant:
+            return {
+                "status": "success",
+                "installed": True,
+                "domain": domain,
+                "message": f"¡Verificación exitosa! El widget está activo y vinculado a tu negocio en {domain}."
+            }
+        elif has_widget:
+            return {
+                "status": "warning",
+                "installed": True,
+                "domain": domain,
+                "message": f"Se detectó widget.js en {domain}, pero verifica que el atributo data-tenant='{req.tenant_id}' coincida exactamente."
+            }
+        else:
+            return {
+                "status": "not_found",
+                "installed": False,
+                "domain": domain,
+                "message": f"No se encontró la etiqueta <script src='.../widget.js'> en el código HTML de {domain}. Pégala antes de </body>."
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "installed": False,
+            "domain": domain,
+            "message": f"No se pudo conectar con {domain} ({str(e)}). Revisa que la URL sea accesible."
+        }
+
+
+# ==============================================================================
+# 2. CAPTURA Y EXPORTACIÓN REAL DE LEADS / PROSPECTOS
+# ==============================================================================
+class LeadCreateRequest(BaseModel):
+    tenant_id: str
+    session_id: Optional[str] = ""
+    customer_name: Optional[str] = ""
+    contact_info: str
+    service_interest: Optional[str] = ""
+    notes: Optional[str] = ""
+
+@app.post("/api/leads")
+def api_create_lead(req: LeadCreateRequest):
+    """Guarda un lead o prospecto comercial en SQLite."""
+    lead_id = save_lead(
+        tenant_id=req.tenant_id.strip().upper(),
+        session_id=req.session_id or "",
+        customer_name=req.customer_name or "",
+        contact_info=req.contact_info.strip(),
+        service_interest=req.service_interest or "",
+        notes=req.notes or ""
+    )
+    return {"status": "success", "lead_id": lead_id}
+
+@app.get("/api/leads")
+def api_get_leads(tenant_id: str = "KLYVEN-STUDIO"):
+    """Lista todos los prospectos capturados para el tenant."""
+    leads = get_tenant_leads(tenant_id)
+    return {"status": "success", "leads": leads, "count": len(leads)}
+
+@app.get("/api/leads/export-csv")
+def api_export_leads_csv(tenant_id: str = "KLYVEN-STUDIO"):
+    """Descarga un archivo CSV con formato UTF-8 listo para abrir directamente en Microsoft Excel."""
+    import csv
+    import io
+
+    leads = get_tenant_leads(tenant_id)
+    output = io.StringIO()
+    # Escribir BOM UTF-8 para apertura directa en Excel
+    output.write('\ufeff')
+    writer = csv.writer(output)
+    writer.writerow(["ID Lead", "Fecha de Registro", "Nombre Prospecto", "Contacto (Teléfono/Email)", "Servicio de Interés", "Notas"])
+
+    for l in leads:
+        writer.writerow([
+            l.get("lead_id", ""),
+            l.get("created_at", ""),
+            l.get("customer_name", "") or "No especificado",
+            l.get("contact_info", ""),
+            l.get("service_interest", "") or "Consulta General",
+            l.get("notes", "")
+        ])
+
+    csv_data = output.getvalue()
+    return Response(
+        content=csv_data,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename=leads_{tenant_id}.csv"
+        }
+    )
+
+
+# ==============================================================================
+# 4. CARGA REAL DE DOCUMENTOS Y CATÁLOGOS (PDF / TXT)
+# ==============================================================================
+@app.post("/api/upload-knowledge")
+async def api_upload_knowledge(
+    file: UploadFile = File(...),
+    tenant_id: str = Form("KLYVEN-STUDIO"),
+    custom_notes: Optional[str] = Form("")
+):
+    """Extrae el contenido de un PDF o TXT y usa Gemini para estructurar servicios y políticas."""
+    import io
+    import json
+    import requests
+    import pypdf
+
+    content_bytes = await file.read()
+    filename = file.filename or "documento"
+    extracted_text = ""
+
+    if filename.lower().endswith(".pdf"):
+        try:
+            reader = pypdf.PdfReader(io.BytesIO(content_bytes))
+            pages_text = [page.extract_text() or "" for page in reader.pages]
+            extracted_text = "\n".join(pages_text)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Error al procesar el archivo PDF: {str(e)}")
+    else:
+        try:
+            extracted_text = content_bytes.decode("utf-8")
+        except Exception:
+            extracted_text = content_bytes.decode("latin-1", errors="ignore")
+
+    cleaned_text = extracted_text.strip()
+    if len(cleaned_text) < 20:
+        raise HTTPException(status_code=400, detail="El documento no contiene texto legible suficiente.")
+
+    api_key = os.environ.get("GEMINI_API_KEY", "")
+    if not api_key:
+        return {"status": "error", "message": "Falta GEMINI_API_KEY en el servidor"}
+
+    sample_text = cleaned_text[:14000]
+    prompt = f"""Eres un Especialista en Extracción de Datos Comerciales para Chatbots IA.
+Analiza el siguiente documento ({filename}) subido por el negocio {tenant_id}:
+
+--- CONTENIDO DEL DOCUMENTO ---
+{sample_text}
+--- NOTAS COMPLEMENTARIAS ---
+{custom_notes or ''}
+--- FIN CONTENIDO ---
+
+Extrae con exactitud:
+1. Lista de servicios o productos reales mencionados, con precio numérico si existe (o 0 si no lo especifica) y qué incluye.
+2. Políticas relevantes, garantías, formas de pago y horarios.
+3. Breve resumen de lo descubierto.
+
+Responde ÚNICAMENTE en JSON válido con este formato:
+{{
+  "services": [
+    {{
+      "name": "Nombre del servicio/producto",
+      "price": 100.0,
+      "description": "Detalle de lo que incluye"
+    }}
+  ],
+  "faqs": "Políticas, garantías y condiciones clave...",
+  "summary": "Resumen claro de lo extraído..."
+}}"""
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={api_key}"
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.2, "response_mime_type": "application/json"}
+    }
+
+    try:
+        resp = requests.post(url, json=payload, timeout=16)
+        if resp.status_code == 200:
+            raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+            parsed = json.loads(raw_text)
+            return {
+                "status": "success",
+                "filename": filename,
+                "chars_extracted": len(cleaned_text),
+                "data": parsed
+            }
+        else:
+            return {"status": "error", "message": f"Error de API Gemini: {resp.status_code}"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
+# ==============================================================================
 # WIDGET EMBEDDABLE & DEMO PAGE
 # ==============================================================================
 @app.get("/widget.js")
@@ -529,12 +761,13 @@ def api_chat(payload: ChatRequest):
         try:
             pcfg = payload.preview_config
             t_id = (payload.tenant_id or "KLYVEN-STUDIO").upper().replace(" ", "-")
+            support_phone = pcfg.get("support_phone") or ""
             save_or_update_tenant(
                 tenant_id=t_id,
                 business_name=pcfg.get("business_name") or "Mi Negocio",
                 industry=pcfg.get("industry") or "General",
                 currency=pcfg.get("currency") or "USD",
-                support_phone="",
+                support_phone=support_phone,
                 config_data={
                     "bot_name": pcfg.get("bot_name") or "Asistente",
                     "business_description": pcfg.get("business_description") or "",
@@ -621,6 +854,38 @@ def api_chat(payload: ChatRequest):
             })
         except Exception:
             pass
+
+    # Auto-detección y guardado de Prospecto (Lead) en SQLite
+    import re
+    msg_text = payload.message
+    email_m = re.search(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', msg_text)
+    phone_m = re.search(r'(?:\+?52\s?)?(?:\(?\d{2,3}\)?[-.\s]?)?\d{3,4}[-.\s]?\d{4}', msg_text)
+    if email_m or phone_m:
+        contact_str = email_m.group(0) if email_m else phone_m.group(0)
+        try:
+            save_lead(
+                tenant_id=matched_tenant.business_id,
+                session_id=session_id,
+                customer_name=datos_operativos.get("nombre_cliente") or "",
+                contact_info=contact_str,
+                service_interest=datos_operativos.get("id_sku_seleccionado") or "",
+                notes=msg_text[:200]
+            )
+        except Exception:
+            pass
+
+    # Derivación a WhatsApp si el usuario lo solicita
+    supp_phone = (payload.preview_config.get("support_phone") if payload.preview_config else "") or getattr(matched_tenant, "support_phone", "") or ""
+    clean_phone = re.sub(r'[^0-9]', '', supp_phone)
+    if clean_phone and len(clean_phone) >= 8:
+        low_msg = payload.message.lower()
+        if any(w in low_msg for w in ["whatsapp", "asesor", "humano", "persona", "hablar con alguien", "teléfono", "telefono", "contacto", "llamar", "celular", "whats"]):
+            import urllib.parse
+            biz_display = getattr(matched_tenant, "business_name", "ustedes")
+            encoded_txt = urllib.parse.quote(f"Hola {biz_display}, estoy en su página web y me gustaría hablar con un asesor.")
+            wa_link = f"https://wa.me/{clean_phone}?text={encoded_txt}"
+            if "wa.me" not in cliente_msg:
+                cliente_msg += f"\n\n[💬 Hablar por WhatsApp]({wa_link})"
 
     return {
         "reply": cliente_msg,

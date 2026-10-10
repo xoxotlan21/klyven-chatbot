@@ -417,7 +417,12 @@
             str = str.replace(/(^|[^_])_(?!_)([^_]+)_(?!_)/g, (m, p1, p2) => p1 + '<em>' + p2 + '</em>');
             str = str.replace(/~~(.*?)~~/g, (m, p) => '<del>' + p + '</del>');
             str = str.replace(/\`([^\`]+)\`/g, (m, p) => '<code>' + p + '</code>');
-            str = str.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (m, p1, p2) => '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer">' + p1 + '</a>');
+            str = str.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (m, p1, p2) => {
+                if (p2.includes('wa.me')) {
+                    return '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#ffffff !important;font-weight:600;padding:8px 14px;border-radius:12px;text-decoration:none;margin-top:6px;box-shadow:0 2px 6px rgba(37,211,102,0.3);">' + p1 + '</a>';
+                }
+                return '<a href="' + p2 + '" target="_blank" rel="noopener noreferrer">' + p1 + '</a>';
+            });
             str = str.replace(/\n\n+/g, '<div style="height:8px;"></div>');
             str = str.replace(/\n/g, '<br>');
             return str;
