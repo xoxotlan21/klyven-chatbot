@@ -60,9 +60,13 @@ from database import (
     save_unresolved_question,
     get_unresolved_questions,
     resolve_unresolved_question,
+    delete_unresolved_question,
+    clear_tenant_unresolved_questions,
     create_booking,
     get_tenant_bookings,
     update_booking_status,
+    delete_booking,
+    clear_tenant_bookings,
     get_tenant_stats
 )
 
@@ -961,6 +965,21 @@ def api_resolve_question(req: ResolveQuestionRequest):
         "message": "Pregunta agregada exitosamente a la base de conocimiento y marcada como resuelta."
     }
 
+@app.delete("/api/unresolved-questions/{question_id}")
+def api_delete_unresolved_question(question_id: int):
+    """Elimina una pregunta de la lista de pendientes."""
+    ok = delete_unresolved_question(question_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Pregunta no encontrada")
+    return {"status": "success", "message": "Pregunta eliminada exitosamente"}
+
+@app.post("/api/unresolved-questions/clear-all")
+def api_clear_unresolved_questions(tenant_id: str = "KLYVEN-STUDIO"):
+    """Limpia todas las preguntas registradas de un negocio para reiniciar en limpio."""
+    t_id = tenant_id.strip().upper()
+    count = clear_tenant_unresolved_questions(t_id)
+    return {"status": "success", "message": f"{count} preguntas eliminadas"}
+
 
 # ==============================================================================
 # AGENDA Y RESERVAS (ADAPTABLE POR TIPO DE NEGOCIO)
@@ -1018,6 +1037,21 @@ def api_update_booking_status(booking_id: str, payload: UpdateBookingStatusReque
         "status": "success",
         "message": f"Estado de reserva actualizado a {payload.status.upper()}"
     }
+
+@app.delete("/api/bookings/{booking_id}")
+def api_delete_booking(booking_id: str):
+    """Elimina una reserva operativa por su identificador."""
+    ok = delete_booking(booking_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Reserva no encontrada")
+    return {"status": "success", "message": "Reserva eliminada con éxito"}
+
+@app.post("/api/bookings/clear-all")
+def api_clear_bookings(tenant_id: str = "KLYVEN-STUDIO"):
+    """Limpia todas las reservas registradas de un negocio para iniciar en limpio."""
+    t_id = tenant_id.strip().upper()
+    count = clear_tenant_bookings(t_id)
+    return {"status": "success", "message": f"{count} reservas eliminadas"}
 
 
 # ==============================================================================
@@ -1340,6 +1374,53 @@ def api_chat(payload: ChatRequest):
                     "notes": msg_text[:200]
                 }
             )
+        except Exception:
+            pass
+
+    # Auto-creación de Reserva en Agenda Operativa en tiempo real (100% Funcional)
+    booking_keywords = ["agendar", "cita", "reserva", "reservar", "reunion", "reunión", "apartar", "programar", "turno", "traslado", "rentar", "tour"]
+    has_bk_intent = (
+        control_flujo.get("accion_backend") in ["AGENDAR_RESERVA", "CREAR_RESERVA", "GENERAR_CHECKOUT_STRIPE"] or
+        any(k in msg_text.lower() for k in booking_keywords) or
+        bool(datos_operativos.get("fecha_servicio"))
+    )
+
+    if has_bk_intent and (email_m or phone_m or datos_operativos.get("nombre_cliente") or datos_operativos.get("fecha_servicio")):
+        try:
+            extracted_name = None
+            name_m = re.search(r'(?:me llamo|mi nombre es|soy)\s+([A-Za-záéíóúÁÉÍÓÚñÑ]+(?:\s+[A-Za-záéíóúÁÉÍÓÚñÑ]+)?)', msg_text, re.IGNORECASE)
+            if name_m:
+                extracted_name = name_m.group(1).strip().title()
+            cust_name = datos_operativos.get("nombre_cliente") or extracted_name or "Cliente Web"
+            cust_contact = (email_m.group(0) if email_m else (phone_m.group(0) if phone_m else "")) or datos_operativos.get("contacto_cliente") or "Por confirmar"
+            srv_name = datos_operativos.get("servicio_solicitado") or datos_operativos.get("id_sku_seleccionado") or "Consulta y Asesoría"
+            srv_date = datos_operativos.get("fecha_servicio") or datetime.now().strftime("%Y-%m-%d")
+            srv_time = datos_operativos.get("hora_servicio") or "11:00"
+
+            created_bk = create_booking({
+                "tenant_id": matched_tenant.business_id,
+                "business_type": getattr(matched_tenant, 'business_industry', 'general').lower(),
+                "customer_name": cust_name,
+                "customer_contact": cust_contact,
+                "service_name": srv_name,
+                "booking_date": srv_date,
+                "booking_time": srv_time,
+                "end_time": "",
+                "resource_assigned": "Equipo Comercial",
+                "origin": datos_operativos.get("origen") or "",
+                "destination": datos_operativos.get("destino") or "",
+                "passengers_or_qty": datos_operativos.get("numero_pasajeros") or 1,
+                "status": "PENDIENTE",
+                "advance_amount": 0.0,
+                "total_amount": float(price or 0.0),
+                "currency": currency,
+                "notes": f"Agendado en tiempo real desde el Chatbot Web (Sesión: {session_id}). Mensaje: {msg_text[:140]}"
+            })
+
+            if created_bk and created_bk.get("booking_id"):
+                b_code = created_bk["booking_id"]
+                if b_code not in cliente_msg:
+                    cliente_msg += f"\n\n📅 **Solicitud registrada en tu agenda:** Folio `#{b_code}`. Nuestro equipo la revisará y confirmará a la brevedad."
         except Exception:
             pass
 

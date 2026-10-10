@@ -2451,6 +2451,20 @@
             transform: translateY(-1px);
         }
 
+        .btn-bk-delete {
+            background: #F8FAFC;
+            color: #64748B;
+            border-color: #E2E8F0;
+            padding: 5px 8px;
+        }
+        .btn-bk-delete:hover {
+            background: #FEF2F2;
+            color: #DC2626;
+            border-color: #FECACA;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
+            transform: translateY(-1px);
+        }
+
         .booking-card {
             background: #FFFFFF;
             border: 1px solid var(--border-subtle);
@@ -3834,9 +3848,14 @@
                             <button class="booking-industry-pill" id="unres_filter_pending" onclick="filterUnresolved('pending')">Pendientes</button>
                             <button class="booking-industry-pill" id="unres_filter_resolved" onclick="filterUnresolved('resolved')">Resueltas y aprendidas</button>
                         </div>
-                        <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadUnresolvedQuestions()">
-                            Actualizar lista
-                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadUnresolvedQuestions()">
+                                Actualizar lista
+                            </button>
+                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; color: #DC2626;" onclick="clearAllUnresolved()">
+                                🧹 Limpiar preguntas de prueba
+                            </button>
+                        </div>
                     </div>
 
                     <div id="unresolved_questions_list" style="display: flex; flex-direction: column; gap: 12px;">
@@ -3854,10 +3873,15 @@
                         <h2>Agenda y Reservas Operativas</h2>
                         <p>Control de citas, traslados, unidades y profesionales adaptado al giro del negocio.</p>
                     </div>
-                    <button class="btn-topbar-save" onclick="openNewBookingModal()" style="display: flex; align-items: center; gap: 6px;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        <span>Nueva Reserva</span>
-                    </button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button class="btn-secondary" style="padding: 9px 14px; font-size: 0.82rem; color: #DC2626;" onclick="clearAllBookings()">
+                            🧹 Limpiar reservas de prueba
+                        </button>
+                        <button class="btn-topbar-save" onclick="openNewBookingModal()" style="display: flex; align-items: center; gap: 6px;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>Nueva Reserva</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Giro selector -->
@@ -4946,7 +4970,8 @@
                             </div>
                         ` : ''}
 
-                        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;">
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 4px;">
+                            <button class="btn-bk-action btn-bk-delete" onclick="deleteUnresolved(${q.question_id})" title="Eliminar pregunta">🗑️</button>
                             <button class="btn-topbar-save" style="padding: 6px 14px; font-size: 0.8rem; background: ${isResolved ? '#475569' : '#2563EB'};" onclick="openResolveModal(${q.question_id}, '${escapeHtml(q.question_text).replace(/'/g, "\\'")}')">
                                 ${isResolved ? '✏️ Actualizar respuesta' : '➕ Añadir a Conocimiento'}
                             </button>
@@ -5005,6 +5030,40 @@
                 }
             } catch(e) {
                 alert('Error al conectar con el servidor: ' + e.message);
+            }
+        }
+
+        async function deleteUnresolved(qId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta pregunta?')) return;
+            try {
+                const resp = await fetch(`/api/unresolved-questions/${encodeURIComponent(qId)}`, {
+                    method: 'DELETE'
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadUnresolvedQuestions();
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function clearAllUnresolved() {
+            if (!confirm('¿Deseas limpiar todas las preguntas de prueba para ver únicamente las preguntas de tus clientes reales?')) return;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            try {
+                const resp = await fetch(`/api/unresolved-questions/clear-all?tenant_id=${encodeURIComponent(bizId)}`, {
+                    method: 'POST'
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadUnresolvedQuestions();
+                    alert('Preguntas limpiadas con éxito.');
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
             }
         }
 
@@ -5131,10 +5190,11 @@
                                 <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">MONTO TOTAL</span>
                                 <strong style="font-size: 0.92rem; color: var(--text-primary);">$${(b.total_amount || 0).toFixed(0)} ${escapeHtml(b.currency || 'USD')}</strong>
                             </div>
-                            <div style="display: flex; gap: 6px;">
+                            <div style="display: flex; gap: 6px; align-items: center;">
                                 ${b.status !== 'CONFIRMADA' ? `<button class="btn-bk-action btn-bk-confirm" onclick="changeBookingStatus('${b.booking_id}', 'CONFIRMADA')">✓ Confirmar</button>` : ''}
                                 ${b.status !== 'COMPLETADA' ? `<button class="btn-bk-action btn-bk-complete" onclick="changeBookingStatus('${b.booking_id}', 'COMPLETADA')">★ Completar</button>` : ''}
                                 ${b.status !== 'CANCELADA' ? `<button class="btn-bk-action btn-bk-cancel" onclick="changeBookingStatus('${b.booking_id}', 'CANCELADA')">✕ Cancelar</button>` : ''}
+                                <button class="btn-bk-action btn-bk-delete" onclick="deleteBooking('${b.booking_id}')" title="Eliminar reserva">🗑️</button>
                             </div>
                         </div>
                     </div>
@@ -5154,6 +5214,40 @@
                     await loadBookings();
                 } else {
                     alert('Error: ' + res.message);
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function deleteBooking(bookingId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar esta reserva?')) return;
+            try {
+                const resp = await fetch(`/api/bookings/${encodeURIComponent(bookingId)}`, {
+                    method: 'DELETE'
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadBookings();
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function clearAllBookings() {
+            if (!confirm('¿Deseas limpiar las reservas de prueba para iniciar en limpio con tus reservas reales?')) return;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            try {
+                const resp = await fetch(`/api/bookings/clear-all?tenant_id=${encodeURIComponent(bizId)}`, {
+                    method: 'POST'
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadBookings();
+                    alert('Reservas limpiadas con éxito.');
                 }
             } catch(e) {
                 alert('Error: ' + e.message);

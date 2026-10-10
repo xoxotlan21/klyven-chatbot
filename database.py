@@ -460,18 +460,30 @@ def get_unresolved_questions(tenant_id: str, only_unresolved: bool = False, limi
 
     cursor.execute(query, tuple(params))
     rows = cursor.fetchall()
-
-    # Si no hay registros aún, precargar 3 preguntas de ejemplo realistas para el giro del tenant
-    if len(rows) == 0:
-        conn.close()
-        seed_default_unresolved_questions(tenant_id)
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(query, tuple(params))
-        rows = cursor.fetchall()
-
     conn.close()
     return [dict(r) for r in rows]
+
+
+def delete_unresolved_question(question_id: int) -> bool:
+    """Elimina una pregunta sin resolver por su ID."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM unresolved_questions WHERE question_id = ?", (question_id,))
+    deleted = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return deleted
+
+
+def clear_tenant_unresolved_questions(tenant_id: str) -> int:
+    """Limpia todas las preguntas sin resolver de un tenant."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM unresolved_questions WHERE tenant_id = ?", (tenant_id,))
+    count = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return count
 
 
 def resolve_unresolved_question(question_id: int, tenant_id: str, added_answer: str) -> bool:
@@ -628,17 +640,30 @@ def get_tenant_bookings(tenant_id: str, status: Optional[str] = None, limit: int
 
     cursor.execute(query, tuple(params))
     rows = cursor.fetchall()
-
-    if len(rows) == 0:
-        conn.close()
-        seed_default_bookings(tenant_id)
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(query, tuple(params))
-        rows = cursor.fetchall()
-
     conn.close()
     return [dict(r) for r in rows]
+
+
+def delete_booking(booking_id: str) -> bool:
+    """Elimina una reserva por su ID."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM bookings WHERE booking_id = ?", (booking_id,))
+    deleted = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return deleted
+
+
+def clear_tenant_bookings(tenant_id: str) -> int:
+    """Limpia todas las reservas registradas de un tenant."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM bookings WHERE tenant_id = ?", (tenant_id,))
+    count = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return count
 
 
 def update_booking_status(booking_id: str, status: str, notes: Optional[str] = None) -> bool:
@@ -783,15 +808,15 @@ def get_tenant_stats(tenant_id: str, period: str = "30d") -> Dict[str, Any]:
     return {
         "tenant_id": tenant_id,
         "period": period,
-        "total_conversations": max(total_convs, 12),
-        "total_messages": max(total_messages, 48),
-        "total_leads": max(total_leads, 4),
+        "total_conversations": total_convs,
+        "total_messages": total_messages,
+        "total_leads": total_leads,
         "total_bookings": total_bookings,
         "total_revenue": total_revenue,
-        "conversion_rate": conversion_rate if total_convs > 0 else 33.3,
+        "conversion_rate": conversion_rate,
         "unresolved_count": unresolved_count,
         "resolved_count": resolved_count,
-        "resolution_rate": round((resolved_count / max(resolved_count + unresolved_count, 1)) * 100, 1),
+        "resolution_rate": round((resolved_count / max(resolved_count + unresolved_count, 1)) * 100, 1) if (resolved_count + unresolved_count) > 0 else 100.0,
         "top_questions": top_questions,
         "activity_timeline": activity_timeline
     }
