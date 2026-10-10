@@ -100,6 +100,75 @@
                 0% { transform: scale(1); }
                 50% { transform: scale(1.18); }
                 100% { transform: scale(1); }
+            #travelsales-teaser {
+                position: fixed !important;
+                bottom: 88px !important;
+                right: 24px !important;
+                background: #ffffff !important;
+                color: #020C21 !important;
+                padding: 10px 16px !important;
+                border-radius: 14px !important;
+                box-shadow: 0 12px 32px rgba(2, 12, 33, 0.18), 0 2px 6px rgba(0,0,0,0.06) !important;
+                border: 1px solid rgba(2, 12, 33, 0.08) !important;
+                font-size: 0.88rem !important;
+                font-weight: 500 !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+                max-width: 280px !important;
+                line-height: 1.4 !important;
+                z-index: 2147483646 !important;
+                cursor: pointer !important;
+                display: none;
+                align-items: center !important;
+                gap: 10px !important;
+                animation: ts-teaser-fade 0.35s ease !important;
+                transition: transform 0.2s ease !important;
+            }
+            #travelsales-teaser:hover {
+                transform: translateY(-2px) scale(1.02) !important;
+            }
+            #travelsales-teaser.ts-pos-left {
+                right: auto !important;
+                left: 24px !important;
+            }
+            #travelsales-teaser::after {
+                content: '' !important;
+                position: absolute !important;
+                bottom: -7px !important;
+                right: 26px !important;
+                width: 14px !important;
+                height: 14px !important;
+                background: #ffffff !important;
+                border-right: 1px solid rgba(2, 12, 33, 0.08) !important;
+                border-bottom: 1px solid rgba(2, 12, 33, 0.08) !important;
+                transform: rotate(45deg) !important;
+            }
+            #travelsales-teaser.ts-pos-left::after {
+                right: auto !important;
+                left: 26px !important;
+            }
+            #travelsales-teaser-close {
+                background: none !important;
+                border: none !important;
+                color: #94a3b8 !important;
+                font-size: 16px !important;
+                cursor: pointer !important;
+                padding: 0 !important;
+                line-height: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 18px !important;
+                height: 18px !important;
+                border-radius: 50% !important;
+                flex-shrink: 0 !important;
+            }
+            #travelsales-teaser-close:hover {
+                color: #020C21 !important;
+                background: #f1f5f9 !important;
+            }
+            @keyframes ts-teaser-fade {
+                from { opacity: 0; transform: translateY(8px); }
+                to { opacity: 1; transform: translateY(0); }
             }
             #travelsales-window {
                 position: fixed !important;
@@ -295,6 +364,14 @@
             </div>
         `;
 
+        const teaser = document.createElement('div');
+        teaser.id = 'travelsales-teaser';
+        teaser.innerHTML = `
+            <span id="travelsales-teaser-text">👋 ¿Tienes dudas sobre tu web? Pregúntame aquí</span>
+            <button id="travelsales-teaser-close" title="Cerrar">×</button>
+        `;
+
+        document.body.appendChild(teaser);
         document.body.appendChild(bubble);
         document.body.appendChild(windowDiv);
 
@@ -303,6 +380,7 @@
             const isHidden = windowDiv.style.display === 'none' || !windowDiv.style.display;
             windowDiv.style.display = isHidden ? 'flex' : 'none';
             if (isHidden) {
+                if (teaser) teaser.style.display = 'none';
                 const badge = document.getElementById('travelsales-badge');
                 if (badge) badge.style.display = 'none';
                 setTimeout(() => {
@@ -313,6 +391,21 @@
         }
 
         bubble.onclick = toggleChat;
+        teaser.onclick = (e) => {
+            if (e.target.id === 'travelsales-teaser-close') {
+                e.stopPropagation();
+                teaser.style.display = 'none';
+                return;
+            }
+            toggleChat();
+        };
+        const teaserCloseBtn = document.getElementById('travelsales-teaser-close');
+        if (teaserCloseBtn) {
+            teaserCloseBtn.onclick = (e) => {
+                e.stopPropagation();
+                teaser.style.display = 'none';
+            };
+        }
         document.getElementById('travelsales-close').onclick = () => {
             windowDiv.style.display = 'none';
         };
@@ -398,6 +491,33 @@
                 const inputEl = document.getElementById('travelsales-input');
                 if (inputEl && cfg.input_placeholder) {
                     inputEl.setAttribute('placeholder', cfg.input_placeholder);
+                }
+
+                // 8. Geometría de Bordes
+                if (cfg.border_radius) {
+                    const r = parseInt(cfg.border_radius) || 16;
+                    windowDiv.style.borderRadius = `${r}px`;
+                    document.querySelectorAll('.ts-msg').forEach(el => {
+                        el.style.borderRadius = `${Math.max(6, r - 4)}px`;
+                    });
+                }
+
+                // 9. Globo de Saludo Proactivo (Teaser Pop)
+                if (cfg.teaser_enabled) {
+                    const teaserText = document.getElementById('travelsales-teaser-text');
+                    if (teaserText && cfg.teaser_text) {
+                        teaserText.innerText = cfg.teaser_text;
+                    }
+                    if (cfg.position === 'bottom-left' && teaser) {
+                        teaser.classList.add('ts-pos-left');
+                    }
+                    const delaySec = parseInt(cfg.teaser_delay) || 4;
+                    setTimeout(() => {
+                        const isChatOpen = windowDiv && (windowDiv.style.display === 'flex');
+                        if (!isChatOpen && teaser) {
+                            teaser.style.display = 'flex';
+                        }
+                    }, delaySec * 1000);
                 }
             })
             .catch(() => {});

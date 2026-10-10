@@ -80,6 +80,9 @@ class CreateTenantRequest(BaseModel):
     bubble_text: Optional[str] = "👋 ¿Podemos ayudarte?"
     position: Optional[str] = "bottom-right"      # "bottom-right", "bottom-left"
     border_radius: Optional[int] = 16
+    teaser_enabled: Optional[bool] = False
+    teaser_text: Optional[str] = "👋 ¿Tienes alguna duda? Escríbenos aquí"
+    teaser_delay: Optional[int] = 4
     welcome_message: Optional[str] = "¡Hola! ¿En qué te podemos asesorar hoy?"
     input_placeholder: Optional[str] = "Escribe tu consulta o pedido..."
     business_description: Optional[str] = ""
@@ -417,6 +420,9 @@ def get_tenant_configuration(tenant_id: str):
             "bubble_text": cfg.get("bubble_text") or "👋 ¿Podemos ayudarte?",
             "position": cfg.get("position") or "bottom-right",
             "border_radius": cfg.get("border_radius", 16),
+            "teaser_enabled": cfg.get("teaser_enabled", False),
+            "teaser_text": cfg.get("teaser_text") or "👋 ¿Tienes alguna duda? Escríbenos aquí",
+            "teaser_delay": cfg.get("teaser_delay", 4),
             "welcome_message": cfg.get("welcome_message") or f"¡Hola! Bienvenido a {db_tenant['business_name']}. ¿En qué te podemos asesorar hoy?",
             "input_placeholder": cfg.get("input_placeholder") or "Escribe tu consulta o pedido...",
             "business_description": cfg.get("business_description") or "",
@@ -441,7 +447,10 @@ def get_tenant_configuration(tenant_id: str):
         "bubble_style": "pill",
         "bubble_text": "Hablemos de tu web" if is_klyven else "¿Podemos ayudarte?",
         "position": "bottom-right",
-        "border_radius": 18,
+        "border_radius": 16,
+        "teaser_enabled": True,
+        "teaser_text": "👋 ¿Tienes dudas sobre tu web? Pregúntame aquí",
+        "teaser_delay": 4,
         "welcome_message": "¡Hola! Bienvenido a Klyven Studio. ¿Qué tipo de sitio web o proyecto te gustaría cotizar hoy?" if is_klyven else "¡Hola! ¿En qué destino o traslado te podemos apoyar hoy?",
         "input_placeholder": "Cuéntame de tu proyecto o idea..." if is_klyven else "Escribe tu consulta o ruta...",
         "auto_adapt": False,
@@ -469,6 +478,9 @@ def api_create_tenant(req: CreateTenantRequest):
         "bubble_text": req.bubble_text or "👋 ¿Podemos ayudarte?",
         "position": req.position or "bottom-right",
         "border_radius": req.border_radius or 16,
+        "teaser_enabled": req.teaser_enabled if req.teaser_enabled is not None else False,
+        "teaser_text": req.teaser_text or "👋 ¿Tienes alguna duda? Escríbenos aquí",
+        "teaser_delay": req.teaser_delay or 4,
         "welcome_message": req.welcome_message,
         "input_placeholder": req.input_placeholder,
         "website_url": req.website_url,
