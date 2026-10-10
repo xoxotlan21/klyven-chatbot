@@ -318,6 +318,219 @@
                 justify-content: center !important;
                 flex-shrink: 0 !important;
             }
+
+            /* Carrusel Interactivo de Tarjetas en Widget */
+            .ts-msg:has(.chat-carousel-wrapper) {
+                max-width: 100% !important;
+                width: 100% !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            .chat-carousel-wrapper {
+                margin: 8px 0 4px 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+            }
+            .chat-carousel-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 0 4px 6px 4px !important;
+            }
+            .chat-carousel-count {
+                font-size: 11px !important;
+                font-weight: 700 !important;
+                color: #94A3B8 !important;
+                letter-spacing: 0.6px !important;
+                text-transform: uppercase !important;
+            }
+            .chat-carousel-hint {
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                color: #94A3B8 !important;
+            }
+            .chat-carousel-track {
+                display: flex !important;
+                gap: 12px !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                padding: 4px 4px 10px 4px !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: thin !important;
+            }
+            .chat-carousel-track::-webkit-scrollbar {
+                height: 5px !important;
+            }
+            .chat-carousel-track::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05) !important;
+                border-radius: 4px !important;
+            }
+            .chat-carousel-track::-webkit-scrollbar-thumb {
+                background: #CBD5E1 !important;
+                border-radius: 4px !important;
+            }
+            .chat-card-item {
+                flex: 0 0 220px !important;
+                width: 220px !important;
+                min-width: 220px !important;
+                scroll-snap-align: start !important;
+                background: #FFFFFF !important;
+                border: 1px solid #E2E8F0 !important;
+                border-radius: 18px !important;
+                overflow: hidden !important;
+                box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+                display: flex !important;
+                flex-direction: column !important;
+                transition: transform 0.16s ease, box-shadow 0.16s ease !important;
+            }
+            .ts-theme-dark .chat-card-item {
+                background: #1E293B !important;
+                border-color: #334155 !important;
+            }
+            .chat-card-item:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14) !important;
+            }
+            .chat-card-img-wrap {
+                height: 130px !important;
+                width: 100% !important;
+                background-size: cover !important;
+                background-position: center !important;
+                position: relative !important;
+                background-color: #0F172A !important;
+            }
+            .chat-card-gradient {
+                position: absolute !important;
+                inset: 0 !important;
+                background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.85) 100%) !important;
+            }
+            .chat-card-badge {
+                position: absolute !important;
+                top: 9px !important;
+                right: 9px !important;
+                background: rgba(15, 23, 42, 0.65) !important;
+                backdrop-filter: blur(6px) !important;
+                -webkit-backdrop-filter: blur(6px) !important;
+                color: #FFFFFF !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                padding: 3px 9px !important;
+                border-radius: 20px !important;
+                z-index: 2 !important;
+                border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            }
+            .chat-card-img-title {
+                position: absolute !important;
+                bottom: 9px !important;
+                left: 12px !important;
+                right: 12px !important;
+                color: #FFFFFF !important;
+                font-weight: 700 !important;
+                font-size: 14.5px !important;
+                text-shadow: 0 1px 3px rgba(0,0,0,0.7) !important;
+                z-index: 2 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .chat-card-no-img {
+                padding: 16px 12px 12px 12px !important;
+                background: linear-gradient(135deg, #0F1B31 0%, #1E293B 100%) !important;
+                position: relative !important;
+            }
+            .chat-card-no-img-title {
+                color: #FFFFFF !important;
+                font-weight: 700 !important;
+                font-size: 14.5px !important;
+            }
+            .chat-card-body {
+                padding: 12px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                flex: 1 !important;
+                background: #FFFFFF !important;
+            }
+            .ts-theme-dark .chat-card-body {
+                background: #1E293B !important;
+            }
+            .chat-card-specs-row {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+                padding-bottom: 2px !important;
+            }
+            .chat-card-spec-col {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 1px !important;
+            }
+            .chat-card-spec-lbl {
+                font-size: 9px !important;
+                font-weight: 700 !important;
+                color: #94A3B8 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.4px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .chat-card-spec-val {
+                font-size: 12.5px !important;
+                font-weight: 700 !important;
+                color: #0F172A !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .ts-theme-dark .chat-card-spec-val {
+                color: #F8FAFC !important;
+            }
+            .chat-card-tags-row {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                gap: 4px !important;
+            }
+            .chat-card-tag {
+                background: #F1F5F9 !important;
+                color: #334155 !important;
+                font-size: 10.5px !important;
+                font-weight: 500 !important;
+                padding: 3px 8px !important;
+                border-radius: 12px !important;
+                white-space: nowrap !important;
+            }
+            .ts-theme-dark .chat-card-tag {
+                background: #334155 !important;
+                color: #E2E8F0 !important;
+            }
+            .chat-card-tag.more {
+                background: #E2E8F0 !important;
+                color: #475569 !important;
+                font-weight: 600 !important;
+            }
+            .chat-card-action-btn {
+                background: none !important;
+                border: none !important;
+                padding: 6px 0 0 0 !important;
+                color: #2563EB !important;
+                font-weight: 700 !important;
+                font-size: 13px !important;
+                cursor: pointer !important;
+                text-align: left !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                transition: color 0.15s ease !important;
+                margin-top: auto !important;
+            }
+            .chat-card-action-btn:hover {
+                color: #1D4ED8 !important;
+                text-decoration: underline !important;
+            }
         `;
         document.head.appendChild(style);
 
@@ -531,9 +744,126 @@
             })
             .catch(() => {});
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         function formatRichText(raw) {
             if (!raw) return '';
             let str = String(raw);
+
+            // Parser de Carrusel Interactivo de Tarjetas
+            str = str.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, (match, jsonStr) => {
+                try {
+                    const items = JSON.parse(jsonStr.trim());
+                    if (!Array.isArray(items) || items.length === 0) return '';
+
+                    const countText = `${items.length} ${items.length === 1 ? 'OPCIÓN' : 'UNIDADES / OPCIONES'}`;
+
+                    let cardsHtml = items.map(item => {
+                        const title = escapeHtml(item.title || item.name || 'Servicio');
+                        const imgUrl = item.image || item.image_url || '';
+                        const badge = item.badge || (imgUrl ? 'Foto' : '');
+                        const price = item.price ? (typeof item.price === 'number' ? `$${item.price}` : item.price) : '';
+                        const actionLabel = escapeHtml(item.action_label || 'Ver más');
+                        const actionQuery = (item.action_query || `Me interesa ${title}`).replace(/"/g, '&quot;');
+
+                        // Fila de especificaciones (3 columnas)
+                        let specsHtml = '';
+                        if (Array.isArray(item.specs) && item.specs.length > 0) {
+                            const cols = item.specs.slice(0, 3).map(sp => `
+                                <div class="chat-card-spec-col">
+                                    <span class="chat-card-spec-lbl">${escapeHtml(sp.label || '')}</span>
+                                    <span class="chat-card-spec-val">${escapeHtml(sp.val || sp.value || '')}</span>
+                                </div>
+                            `).join('');
+                            specsHtml = `<div class="chat-card-specs-row">${cols}</div>`;
+                        } else if (price) {
+                            specsHtml = `
+                                <div class="chat-card-specs-row">
+                                    <div class="chat-card-spec-col">
+                                        <span class="chat-card-spec-lbl">PRECIO</span>
+                                        <span class="chat-card-spec-val">${escapeHtml(price)}</span>
+                                    </div>
+                                    <div class="chat-card-spec-col">
+                                        <span class="chat-card-spec-lbl">ESTADO</span>
+                                        <span class="chat-card-spec-val">Disponible</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Tags / Chips de amenidades
+                        let tagsList = [];
+                        if (Array.isArray(item.tags)) {
+                            tagsList = item.tags;
+                        } else if (typeof item.description === 'string' && item.description.includes('|')) {
+                            const parts = item.description.split('|');
+                            tagsList = parts[parts.length - 1].split(',').map(t => t.trim());
+                        } else if (typeof item.description === 'string') {
+                            tagsList = item.description.split(',').map(t => t.trim()).filter(Boolean);
+                        }
+
+                        let tagsHtml = '';
+                        if (tagsList.length > 0) {
+                            const visible = tagsList.slice(0, 3);
+                            const remaining = tagsList.length - 3;
+                            const chips = visible.map(t => `<span class="chat-card-tag">${escapeHtml(t)}</span>`).join('');
+                            const moreBadge = remaining > 0 ? `<span class="chat-card-tag more">+${remaining}</span>` : '';
+                            tagsHtml = `<div class="chat-card-tags-row">${chips}${moreBadge}</div>`;
+                        }
+
+                        // Cabecera visual (con foto o degradado)
+                        const imgHeader = imgUrl ? `
+                            <div class="chat-card-img-wrap" style="background-image: url('${encodeURI(imgUrl)}');">
+                                <div class="chat-card-gradient"></div>
+                                ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
+                                <div class="chat-card-img-title">${title}</div>
+                            </div>
+                        ` : `
+                            <div class="chat-card-no-img">
+                                ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
+                                <div class="chat-card-no-img-title">${title}</div>
+                            </div>
+                        `;
+
+                        return `
+                            <div class="chat-card-item">
+                                ${imgHeader}
+                                <div class="chat-card-body">
+                                    ${specsHtml}
+                                    ${tagsHtml}
+                                    <button class="chat-card-action-btn" type="button" onclick="window.__tsQuickAsk ? window.__tsQuickAsk('${actionQuery.replace(/'/g, "\\'")}') : null">
+                                        ${actionLabel} →
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="chat-carousel-wrapper">
+                            <div class="chat-carousel-header">
+                                <span class="chat-carousel-count">${countText}</span>
+                                <span class="chat-carousel-hint">Desliza →</span>
+                            </div>
+                            <div class="chat-carousel-track">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
+                } catch(e) {
+                    console.error('Error procesando carrusel JSON en widget:', e);
+                    return '';
+                }
+            });
+
             str = str.replace(/([^\n])\s+(\d+\.\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
             str = str.replace(/([^\n])\s+([\-\*]\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
             str = str.replace(/^###\s+(.*?)$/gm, '<div style="font-weight:700;font-size:1.02em;margin:6px 0 2px 0;">$1</div>');
@@ -630,6 +960,13 @@
                 msgBox.appendChild(errEl);
             }
         }
+
+        window.__tsQuickAsk = function(query) {
+            if (input && query) {
+                input.value = query;
+                sendMessage();
+            }
+        };
 
         sendBtn.onclick = sendMessage;
         input.onkeypress = (e) => {

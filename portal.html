@@ -529,20 +529,65 @@
         }
 
         .service-row {
-            display: grid;
-            grid-template-columns: 24px 1.4fr 110px 2fr 36px;
-            gap: 10px;
-            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             background: #F8FAFC;
             border: 1px solid var(--border-subtle);
             padding: 10px 12px;
             border-radius: var(--radius-control);
-            transition: border-color 0.18s;
+            transition: all 0.18s ease;
         }
 
         .service-row:hover {
             border-color: #CBD5E1;
             background: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.04);
+        }
+
+        .srv-top-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .srv-bottom-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding-left: 74px; /* Alinear tras handle + miniatura */
+        }
+
+        .srv-thumb-box {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #E2E8F0;
+            border: 1px solid #CBD5E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .srv-thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .srv-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94A3B8;
         }
 
         .service-drag-handle {
@@ -551,6 +596,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 20px;
+            flex-shrink: 0;
         }
 
         .service-row input {
@@ -558,6 +605,32 @@
             background: #FFFFFF;
             font-size: 0.86rem;
             padding: 0 10px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .service-row input:focus {
+            border-color: var(--accent-steel);
+        }
+
+        .srv-input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .srv-field-icon {
+            position: absolute;
+            left: 10px;
+            color: #94A3B8;
+            pointer-events: none;
+        }
+
+        .srv-input-with-icon input {
+            width: 100%;
+            padding-left: 32px !important;
         }
 
         .btn-del {
@@ -572,12 +645,245 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .btn-del:hover {
             color: #EF4444;
             background: #FEF2F2;
             border-color: #FECACA;
+        }
+
+        /* -----------------------------------------------------------------
+           CARRUSEL INTERACTIVO DE SERVICIOS / UNIDADES EN EL CHAT
+        ----------------------------------------------------------------- */
+        .mock-msg-row:has(.chat-carousel-wrapper) {
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        .mock-bubble:has(.chat-carousel-wrapper) {
+            max-width: 100% !important;
+            width: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
+        .chat-carousel-wrapper {
+            margin: 10px 0 6px 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .chat-carousel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4px 6px 4px;
+        }
+
+        .chat-carousel-count {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .chat-carousel-hint {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94A3B8;
+        }
+
+        .chat-carousel-track {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 4px 4px 10px 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .chat-carousel-track::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .chat-carousel-track::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 4px;
+        }
+
+        .chat-carousel-track::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        .chat-card-item {
+            flex: 0 0 230px;
+            width: 230px;
+            min-width: 230px;
+            scroll-snap-align: start;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .chat-card-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+        }
+
+        .chat-card-img-wrap {
+            height: 135px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            background-color: #0F172A;
+        }
+
+        .chat-card-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.85) 100%);
+        }
+
+        .chat-card-badge {
+            position: absolute;
+            top: 9px;
+            right: 9px;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .chat-card-img-title {
+            position: absolute;
+            bottom: 9px;
+            left: 12px;
+            right: 12px;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 15px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+            z-index: 2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-card-no-img {
+            padding: 16px 12px 12px 12px;
+            background: linear-gradient(135deg, #0F1B31 0%, #1E293B 100%);
+            position: relative;
+        }
+
+        .chat-card-no-img-title {
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .chat-card-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            background: #FFFFFF;
+        }
+
+        .chat-card-specs-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            padding-bottom: 2px;
+        }
+
+        .chat-card-spec-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .chat-card-spec-lbl {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-card-spec-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0F172A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-card-tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .chat-card-tag {
+            background: #F1F5F9;
+            color: #334155;
+            font-size: 10.5px;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .chat-card-tag.more {
+            background: #E2E8F0;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .chat-card-action-btn {
+            background: none;
+            border: none;
+            padding: 6px 0 0 0;
+            color: #2563EB;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: left;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.15s ease;
+            margin-top: auto;
+        }
+
+        .chat-card-action-btn:hover {
+            color: #1D4ED8;
+            text-decoration: underline;
         }
 
         .card-actions-footer {
@@ -1575,9 +1881,12 @@
             .theme-selector-grid {
                 grid-template-columns: 1fr;
             }
-            .service-row {
-                grid-template-columns: 1fr;
-                gap: 8px;
+            .srv-top-bar {
+                flex-wrap: wrap;
+            }
+            .srv-bottom-bar {
+                padding-left: 0;
+                flex-direction: column;
             }
             .service-drag-handle {
                 display: none;
@@ -2013,31 +2322,91 @@
                         <div id="tab_servicios_content">
                             <div id="services_container" class="services-list">
                                 <div class="service-row">
-                                    <div class="service-drag-handle">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                    <div class="srv-top-bar">
+                                        <div class="service-drag-handle" title="Mover">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                        </div>
+                                        <div class="srv-thumb-box" title="Vista previa de foto">
+                                            <img class="srv-thumb-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                            <div class="srv-thumb-placeholder" style="display:none;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="srv-name" value="Landing Page" placeholder="Servicio o unidad" style="flex: 1.5;" />
+                                        <div class="srv-price-wrap" style="width: 120px;">
+                                            <input type="number" class="srv-price" value="450" placeholder="Precio ($)" style="width: 100%;" />
+                                        </div>
+                                        <input type="text" class="srv-badge" value="⭐ Más pedido" placeholder="Insignia (ej: 5 fotos)" style="width: 150px;" />
+                                        <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                     </div>
-                                    <input type="text" class="srv-name" value="Landing Page" placeholder="Servicio" />
-                                    <input type="number" class="srv-price" value="450" placeholder="Precio" />
-                                    <input type="text" class="srv-desc" value="Página de alta conversión, copy persuasivo, responsive 100%" placeholder="Detalles / Qué incluye" />
-                                    <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                                    <div class="srv-bottom-bar">
+                                        <div class="srv-input-with-icon" style="flex: 1.2;">
+                                            <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                            <input type="text" class="srv-image" value="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80" oninput="updateRowThumb(this)" placeholder="URL de la foto (https://...)" />
+                                        </div>
+                                        <div class="srv-input-with-icon" style="flex: 2;">
+                                            <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                                            <input type="text" class="srv-desc" value="Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%" placeholder="Detalles, specs o tags" />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="service-row">
-                                    <div class="service-drag-handle">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                    <div class="srv-top-bar">
+                                        <div class="service-drag-handle" title="Mover">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                        </div>
+                                        <div class="srv-thumb-box" title="Vista previa de foto">
+                                            <img class="srv-thumb-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                            <div class="srv-thumb-placeholder" style="display:none;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="srv-name" value="Business Website" placeholder="Servicio o unidad" style="flex: 1.5;" />
+                                        <div class="srv-price-wrap" style="width: 120px;">
+                                            <input type="number" class="srv-price" value="850" placeholder="Precio ($)" style="width: 100%;" />
+                                        </div>
+                                        <input type="text" class="srv-badge" value="Corporativo" placeholder="Insignia (ej: 5 fotos)" style="width: 150px;" />
+                                        <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                     </div>
-                                    <input type="text" class="srv-name" value="Business Website" placeholder="Servicio" />
-                                    <input type="number" class="srv-price" value="850" placeholder="Precio" />
-                                    <input type="text" class="srv-desc" value="Sitio web corporativo hasta 5 secciones, CMS, SEO" placeholder="Detalles / Qué incluye" />
-                                    <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                                    <div class="srv-bottom-bar">
+                                        <div class="srv-input-with-icon" style="flex: 1.2;">
+                                            <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                            <input type="text" class="srv-image" value="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80" oninput="updateRowThumb(this)" placeholder="URL de la foto (https://...)" />
+                                        </div>
+                                        <div class="srv-input-with-icon" style="flex: 2;">
+                                            <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                                            <input type="text" class="srv-desc" value="Entrega 7 días, 5 secciones, CMS + SEO | Blog dinámico, Optimización SEO, Dominio y SSL" placeholder="Detalles, specs o tags" />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="service-row">
-                                    <div class="service-drag-handle">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                    <div class="srv-top-bar">
+                                        <div class="service-drag-handle" title="Mover">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                                        </div>
+                                        <div class="srv-thumb-box" title="Vista previa de foto">
+                                            <img class="srv-thumb-img" src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                                            <div class="srv-thumb-placeholder" style="display:none;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="srv-name" value="Website Redesign" placeholder="Servicio o unidad" style="flex: 1.5;" />
+                                        <div class="srv-price-wrap" style="width: 120px;">
+                                            <input type="number" class="srv-price" value="700" placeholder="Precio ($)" style="width: 100%;" />
+                                        </div>
+                                        <input type="text" class="srv-badge" value="Renovación" placeholder="Insignia (ej: 5 fotos)" style="width: 150px;" />
+                                        <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                                     </div>
-                                    <input type="text" class="srv-name" value="Website Redesign" placeholder="Servicio" />
-                                    <input type="number" class="srv-price" value="700" placeholder="Precio" />
-                                    <input type="text" class="srv-desc" value="Auditoría UX y rediseño completo de identidad digital" placeholder="Detalles / Qué incluye" />
-                                    <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                                    <div class="srv-bottom-bar">
+                                        <div class="srv-input-with-icon" style="flex: 1.2;">
+                                            <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                            <input type="text" class="srv-image" value="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80" oninput="updateRowThumb(this)" placeholder="URL de la foto (https://...)" />
+                                        </div>
+                                        <div class="srv-input-with-icon" style="flex: 2;">
+                                            <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                                            <input type="text" class="srv-desc" value="Auditoría UX, UI Premium, +Ventas | Rediseño total, Identidad digital, Carga ultra-rápida" placeholder="Detalles, specs o tags" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -3284,18 +3653,61 @@
             updatePreview();
         }
 
-        function addServiceRow() {
+        function updateRowThumb(input) {
+            const row = input.closest('.service-row');
+            if (!row) return;
+            const imgEl = row.querySelector('.srv-thumb-img');
+            const phEl = row.querySelector('.srv-thumb-placeholder');
+            const url = input.value.trim();
+            if (url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/'))) {
+                imgEl.src = url;
+                imgEl.style.display = 'block';
+                if (phEl) phEl.style.display = 'none';
+            } else {
+                imgEl.style.display = 'none';
+                if (phEl) phEl.style.display = 'flex';
+            }
+        }
+
+        function addServiceRow(s = null) {
             const container = document.getElementById('services_container');
+            if (!container) return;
+            const sName = s?.name || s?.nombre || '';
+            const sPrice = (s?.price !== undefined && s?.price !== null) ? s.price : '';
+            const sDesc = s?.description || s?.detalles || '';
+            const sImg = s?.image_url || s?.image || s?.foto || '';
+            const sBadge = s?.badge || '';
+
             const row = document.createElement('div');
             row.className = 'service-row';
             row.innerHTML = `
-                <div class="service-drag-handle">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                <div class="srv-top-bar">
+                    <div class="service-drag-handle" title="Mover">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
+                    </div>
+                    <div class="srv-thumb-box" title="Vista previa de foto">
+                        <img class="srv-thumb-img" src="${sImg}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" style="${sImg ? '' : 'display:none;'}" />
+                        <div class="srv-thumb-placeholder" style="${sImg ? 'display:none;' : 'display:flex;'}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </div>
+                    </div>
+                    <input type="text" class="srv-name" value="${escapeHtml(sName)}" placeholder="Nombre de servicio / unidad (ej: Sienna XLE / Landing Page)" style="flex: 1.5;" />
+                    <div class="srv-price-wrap" style="width: 120px;">
+                        <input type="number" class="srv-price" value="${sPrice}" placeholder="Precio ($)" style="width: 100%;" />
+                    </div>
+                    <input type="text" class="srv-badge" value="${escapeHtml(sBadge)}" placeholder="Insignia (ej: 5 fotos, ⭐ Más pedido)" style="width: 150px;" />
+                    <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
-                <input type="text" class="srv-name" placeholder="Servicio o paquete" />
-                <input type="number" class="srv-price" placeholder="Precio" />
-                <input type="text" class="srv-desc" placeholder="Detalles / Qué incluye" />
-                <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                <div class="srv-bottom-bar">
+                    <div class="srv-input-with-icon" style="flex: 1.2;">
+                        <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <input type="text" class="srv-image" value="${escapeHtml(sImg)}" oninput="updateRowThumb(this)" placeholder="URL de la foto o imagen (https://...)" />
+                    </div>
+                    <div class="srv-input-with-icon" style="flex: 2;">
+                        <svg class="srv-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        <input type="text" class="srv-desc" value="${escapeHtml(sDesc)}" placeholder="Detalles, specs o tags (ej: 6 pasajeros, 2018 | GPS, A/C)" />
+                    </div>
+                </div>
             `;
             container.appendChild(row);
         }
@@ -3318,12 +3730,128 @@
             return currentAvatar;
         }
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // -----------------------------------------------------------------
-        // FORMATEADOR DE TEXTO ENRIQUECIDO (MARKDOWN SEGURO)
+        // FORMATEADOR DE TEXTO ENRIQUECIDO (MARKDOWN SEGURO Y CARRUSEL)
         // -----------------------------------------------------------------
         function formatRichText(raw) {
             if (!raw) return '';
             let str = String(raw);
+
+            // Parser de Carrusel Interactivo de Tarjetas
+            str = str.replace(/:::carousel\s*([\s\S]*?)\s*:::/g, (match, jsonStr) => {
+                try {
+                    const items = JSON.parse(jsonStr.trim());
+                    if (!Array.isArray(items) || items.length === 0) return '';
+
+                    const countText = `${items.length} ${items.length === 1 ? 'OPCIÓN' : 'UNIDADES / OPCIONES'}`;
+
+                    let cardsHtml = items.map(item => {
+                        const title = escapeHtml(item.title || item.name || 'Servicio');
+                        const imgUrl = item.image || item.image_url || '';
+                        const badge = item.badge || (imgUrl ? 'Foto' : '');
+                        const price = item.price ? (typeof item.price === 'number' ? `$${item.price}` : item.price) : '';
+                        const actionLabel = escapeHtml(item.action_label || 'Ver más');
+                        const actionQuery = (item.action_query || `Me interesa ${title}`).replace(/"/g, '&quot;');
+
+                        // Fila de especificaciones (3 columnas)
+                        let specsHtml = '';
+                        if (Array.isArray(item.specs) && item.specs.length > 0) {
+                            const cols = item.specs.slice(0, 3).map(sp => `
+                                <div class="chat-card-spec-col">
+                                    <span class="chat-card-spec-lbl">${escapeHtml(sp.label || '')}</span>
+                                    <span class="chat-card-spec-val">${escapeHtml(sp.val || sp.value || '')}</span>
+                                </div>
+                            `).join('');
+                            specsHtml = `<div class="chat-card-specs-row">${cols}</div>`;
+                        } else if (price) {
+                            specsHtml = `
+                                <div class="chat-card-specs-row">
+                                    <div class="chat-card-spec-col">
+                                        <span class="chat-card-spec-lbl">PRECIO</span>
+                                        <span class="chat-card-spec-val">${escapeHtml(price)}</span>
+                                    </div>
+                                    <div class="chat-card-spec-col">
+                                        <span class="chat-card-spec-lbl">DISPONIBILIDAD</span>
+                                        <span class="chat-card-spec-val">Inmediata</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        // Tags / Chips de amenidades
+                        let tagsList = [];
+                        if (Array.isArray(item.tags)) {
+                            tagsList = item.tags;
+                        } else if (typeof item.description === 'string' && item.description.includes('|')) {
+                            const parts = item.description.split('|');
+                            tagsList = parts[parts.length - 1].split(',').map(t => t.trim());
+                        } else if (typeof item.description === 'string') {
+                            tagsList = item.description.split(',').map(t => t.trim()).filter(Boolean);
+                        }
+
+                        let tagsHtml = '';
+                        if (tagsList.length > 0) {
+                            const visible = tagsList.slice(0, 3);
+                            const remaining = tagsList.length - 3;
+                            const chips = visible.map(t => `<span class="chat-card-tag">${escapeHtml(t)}</span>`).join('');
+                            const moreBadge = remaining > 0 ? `<span class="chat-card-tag more">+${remaining}</span>` : '';
+                            tagsHtml = `<div class="chat-card-tags-row">${chips}${moreBadge}</div>`;
+                        }
+
+                        // Cabecera visual (con foto o degradado)
+                        const imgHeader = imgUrl ? `
+                            <div class="chat-card-img-wrap" style="background-image: url('${encodeURI(imgUrl)}');">
+                                <div class="chat-card-gradient"></div>
+                                ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
+                                <div class="chat-card-img-title">${title}</div>
+                            </div>
+                        ` : `
+                            <div class="chat-card-no-img">
+                                ${badge ? `<div class="chat-card-badge">${escapeHtml(badge)}</div>` : ''}
+                                <div class="chat-card-no-img-title">${title}</div>
+                            </div>
+                        `;
+
+                        return `
+                            <div class="chat-card-item">
+                                ${imgHeader}
+                                <div class="chat-card-body">
+                                    ${specsHtml}
+                                    ${tagsHtml}
+                                    <button class="chat-card-action-btn" type="button" onclick="quickAsk('${actionQuery.replace(/'/g, "\\'")}')">
+                                        ${actionLabel} →
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="chat-carousel-wrapper">
+                            <div class="chat-carousel-header">
+                                <span class="chat-carousel-count">${countText}</span>
+                                <span class="chat-carousel-hint">Desliza →</span>
+                            </div>
+                            <div class="chat-carousel-track">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
+                } catch(e) {
+                    console.error('Error procesando carrusel JSON:', e);
+                    return '';
+                }
+            });
 
             str = str.replace(/([^\n])\s+(\d+\.\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
             str = str.replace(/([^\n])\s+([\-\*]\s+\*\*)/g, (m, p1, p2) => p1 + '\n\n' + p2);
@@ -3357,23 +3885,15 @@
             return str;
         }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
         function getCurrentServicesList() {
             const list = [];
             document.querySelectorAll('.service-row').forEach(row => {
                 const name = row.querySelector('.srv-name')?.value?.trim();
                 const price = parseFloat(row.querySelector('.srv-price')?.value || 0);
                 const description = row.querySelector('.srv-desc')?.value?.trim() || '';
-                if (name) list.push({ name, price, description });
+                const image_url = row.querySelector('.srv-image')?.value?.trim() || '';
+                const badge = row.querySelector('.srv-badge')?.value?.trim() || '';
+                if (name) list.push({ name, price, description, image_url, badge });
             });
             return list;
         }
@@ -3657,20 +4177,7 @@
                     if (d.services && d.services.length > 0) {
                         const container = document.getElementById('services_container');
                         container.innerHTML = '';
-                        d.services.forEach(s => {
-                            const row = document.createElement('div');
-                            row.className = 'service-row';
-                            row.innerHTML = `
-                                <div class="service-drag-handle">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
-                                </div>
-                                <input type="text" class="srv-name" value="${s.name || ''}" placeholder="Servicio" />
-                                <input type="number" class="srv-price" value="${s.price || 0}" placeholder="Precio" />
-                                <input type="text" class="srv-desc" value="${s.description || ''}" placeholder="Detalles / Qué incluye" />
-                                <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-                            `;
-                            container.appendChild(row);
-                        });
+                        d.services.forEach(s => addServiceRow(s));
                     }
 
                     // Resetear y limpiar el chat de prueba inmediatamente con el mensaje y chips del nuevo negocio
@@ -3709,15 +4216,7 @@
             const bubbleText = document.getElementById('bubble_text').value.trim();
             const autoAdapt = document.getElementById('auto_adapt_check').checked;
 
-            const services = [];
-            document.querySelectorAll('.service-row').forEach(row => {
-                const name = row.querySelector('.srv-name')?.value.trim();
-                const price = parseFloat(row.querySelector('.srv-price')?.value || 0);
-                const description = row.querySelector('.srv-desc')?.value.trim() || '';
-                if (name) {
-                    services.push({ name, price, description });
-                }
-            });
+            const services = getCurrentServicesList();
 
             const bizPhone = document.getElementById('biz_phone')?.value?.trim() || '';
             const bizUrl = document.getElementById('biz_url')?.value?.trim() || '';
@@ -3832,13 +4331,7 @@
 
             const bizId = document.getElementById('biz_id').value.trim().toUpperCase() || 'KLYVEN-STUDIO';
 
-            const services = [];
-            document.querySelectorAll('.service-row').forEach(row => {
-                const name = row.querySelector('.srv-name')?.value.trim();
-                const price = parseFloat(row.querySelector('.srv-price')?.value || 0);
-                const description = row.querySelector('.srv-desc')?.value.trim() || '';
-                if (name) services.push({ name, price, description });
-            });
+            const services = getCurrentServicesList();
 
             const previewConfig = {
                 business_name: document.getElementById('biz_name').value.trim() || 'Klyven Studio',
@@ -3934,20 +4427,7 @@
                     if (d.services && d.services.length > 0) {
                         const container = document.getElementById('services_container');
                         container.innerHTML = '';
-                        d.services.forEach(s => {
-                            const row = document.createElement('div');
-                            row.className = 'service-row';
-                            row.innerHTML = `
-                                <div class="service-drag-handle">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"></circle><circle cx="9" cy="5" r="1"></circle><circle cx="9" cy="19" r="1"></circle><circle cx="15" cy="12" r="1"></circle><circle cx="15" cy="5" r="1"></circle><circle cx="15" cy="19" r="1"></circle></svg>
-                                </div>
-                                <input type="text" class="srv-name" value="${s.name || ''}" placeholder="Servicio" />
-                                <input type="number" class="srv-price" value="${s.price || 0}" placeholder="Precio" />
-                                <input type="text" class="srv-desc" value="${s.description || ''}" placeholder="Detalles / Qué incluye" />
-                                <button class="btn-del" onclick="delRow(this)" title="Eliminar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-                            `;
-                            container.appendChild(row);
-                        });
+                        d.services.forEach(s => addServiceRow(s));
                     }
                     if (d.faqs) {
                         const faqsEl = document.getElementById('biz_faqs');
@@ -4177,6 +4657,19 @@
                     }
                     if (data.welcome_message) {
                         document.getElementById('bot_welcome').value = data.welcome_message;
+                    }
+                    if (data.services && data.services.length > 0) {
+                        const container = document.getElementById('services_container');
+                        if (container) {
+                            container.innerHTML = '';
+                            data.services.forEach(s => addServiceRow(s));
+                        }
+                    }
+                    if (data.business_description && document.getElementById('biz_desc')) {
+                        document.getElementById('biz_desc').value = data.business_description;
+                    }
+                    if (data.faqs && document.getElementById('biz_faqs')) {
+                        document.getElementById('biz_faqs').value = data.faqs;
                     }
                     if (data.border_radius) {
                         setBorderRadius(data.border_radius);

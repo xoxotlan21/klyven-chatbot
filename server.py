@@ -4,6 +4,8 @@ Expone endpoints para que cualquier sitio web externo integre el chatbot con 1 l
 """
 
 import os
+import json
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -403,6 +405,53 @@ def portal_page():
 def get_tenant_configuration(tenant_id: str):
     """Devuelve la configuración visual completa, estilo, posición y avatar del bot."""
     clean_id = (tenant_id or "").strip()
+    is_klyven = "KLYVEN" in clean_id.upper()
+    default_services = [
+        {
+            "name": "Landing Page",
+            "price": 450,
+            "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%",
+            "badge": "⭐ Más pedido",
+            "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
+        },
+        {
+            "name": "Business Website",
+            "price": 850,
+            "description": "Entrega 7 días, 5 secciones, CMS + SEO | Blog dinámico, Optimización SEO, Dominio y SSL",
+            "badge": "Corporativo",
+            "image_url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80"
+        },
+        {
+            "name": "Website Redesign",
+            "price": 700,
+            "description": "Auditoría UX, UI Premium, +Ventas | Rediseño total, Identidad digital, Carga ultra-rápida",
+            "badge": "Renovación",
+            "image_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80"
+        }
+    ] if is_klyven else [
+        {
+            "name": "Sienna XLE",
+            "price": 120,
+            "description": "6 pasajeros, Modelo 2018, 4 maletas | GPS, Aire acondicionado, Asientos reclinables",
+            "badge": "5 fotos",
+            "image_url": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&auto=format&fit=crop&q=80"
+        },
+        {
+            "name": "Toyota HiAce",
+            "price": 160,
+            "description": "8 pasajeros, Modelo 2022, 8 maletas | Pantalla, Asientos reclinables, Aire acondicionado",
+            "badge": "4 fotos",
+            "image_url": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&auto=format&fit=crop&q=80"
+        },
+        {
+            "name": "Suburban VIP",
+            "price": 220,
+            "description": "5 pasajeros, Modelo 2023, 5 maletas | Asientos de piel, Wifi alta velocidad, Bebidas, Chofer bilingüe",
+            "badge": "6 fotos",
+            "image_url": "https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=80"
+        }
+    ]
+
     db_tenant = get_tenant_by_id(clean_id)
     if db_tenant:
         cfg = db_tenant.get("config", {})
@@ -427,7 +476,7 @@ def get_tenant_configuration(tenant_id: str):
             "input_placeholder": cfg.get("input_placeholder") or "Escribe tu consulta o pedido...",
             "business_description": cfg.get("business_description") or "",
             "website_url": cfg.get("website_url") or "",
-            "services": cfg.get("services") or [],
+            "services": cfg.get("services") if (cfg.get("services") and len(cfg.get("services")) > 0) else default_services,
             "faqs": cfg.get("faqs") or "",
             "auto_adapt": cfg.get("auto_adapt", False),
             "booking_url": cfg.get("booking_url") or "",
@@ -459,10 +508,50 @@ def get_tenant_configuration(tenant_id: str):
         "booking_url": "https://calendly.com" if is_klyven else "",
         "webhook_url": "",
         "services": [
-            {"name": "Landing Page", "price": 450, "description": "Página de alta conversión, copy persuasivo, responsive 100%"},
-            {"name": "Business Website", "price": 850, "description": "Sitio web corporativo hasta 5 secciones, CMS, SEO"},
-            {"name": "Website Redesign", "price": 700, "description": "Auditoría UX y rediseño completo de identidad digital"}
-        ] if is_klyven else []
+            {
+                "name": "Landing Page",
+                "price": 450,
+                "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%",
+                "badge": "⭐ Más pedido",
+                "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                "name": "Business Website",
+                "price": 850,
+                "description": "Entrega 7 días, 5 secciones, CMS + SEO | Blog dinámico, Optimización SEO, Dominio y SSL",
+                "badge": "Corporativo",
+                "image_url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                "name": "Website Redesign",
+                "price": 700,
+                "description": "Auditoría UX, UI Premium, +Ventas | Rediseño total, Identidad digital, Carga ultra-rápida",
+                "badge": "Renovación",
+                "image_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80"
+            }
+        ] if is_klyven else [
+            {
+                "name": "Sienna XLE",
+                "price": 120,
+                "description": "6 pasajeros, Modelo 2018, 4 maletas | GPS, Aire acondicionado, Asientos reclinables",
+                "badge": "5 fotos",
+                "image_url": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                "name": "Toyota HiAce",
+                "price": 160,
+                "description": "8 pasajeros, Modelo 2022, 8 maletas | Pantalla, Asientos reclinables, Aire acondicionado",
+                "badge": "4 fotos",
+                "image_url": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&auto=format&fit=crop&q=80"
+            },
+            {
+                "name": "Suburban VIP",
+                "price": 220,
+                "description": "5 pasajeros, Modelo 2023, 5 maletas | Asientos de piel, Wifi alta velocidad, Bebidas, Chofer bilingüe",
+                "badge": "6 fotos",
+                "image_url": "https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=80"
+            }
+        ]
     }
 
 
@@ -1055,6 +1144,97 @@ def api_chat(payload: ChatRequest):
         if any(w in low_msg for w in ["agendar", "cita", "llamada", "reunión", "reunion", "calendario", "reservar", "horario", "demo", "junta", "meet", "videollamada"]):
             if clean_book_url not in cliente_msg:
                 cliente_msg += f"\n\n[📅 Agendar Cita o Llamada]({clean_book_url})"
+
+    # 7. Inyección de Carrusel Visual de Tarjetas si el usuario consulta el catálogo, unidades, flota, precios o fotos
+    services_for_carousel = []
+    if payload.preview_config and payload.preview_config.get("services"):
+        services_for_carousel = payload.preview_config.get("services")
+    else:
+        try:
+            db_t_c = get_tenant_by_id(matched_tenant.business_id)
+            if db_t_c:
+                services_for_carousel = db_t_c.get("config", {}).get("services", [])
+        except Exception:
+            pass
+
+    if not services_for_carousel:
+        is_klyv_check = "KLYVEN" in matched_tenant.business_id.upper()
+        if is_klyv_check:
+            services_for_carousel = [
+                {"name": "Landing Page", "price": 450, "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%", "badge": "⭐ Más pedido", "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"},
+                {"name": "Business Website", "price": 850, "description": "Entrega 7 días, 5 secciones, CMS + SEO | Blog dinámico, Optimización SEO, Dominio y SSL", "badge": "Corporativo", "image_url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80"},
+                {"name": "Website Redesign", "price": 700, "description": "Auditoría UX, UI Premium, +Ventas | Rediseño total, Identidad digital, Carga ultra-rápida", "badge": "Renovación", "image_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80"}
+            ]
+        elif "TRM" in matched_tenant.business_id.upper() or "TRANS" in matched_tenant.business_id.upper():
+            services_for_carousel = [
+                {"name": "Sienna XLE", "price": 120, "description": "6 pasajeros, Modelo 2018, 4 maletas | GPS, Aire acondicionado, Asientos reclinables", "badge": "5 fotos", "image_url": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&auto=format&fit=crop&q=80"},
+                {"name": "Toyota HiAce", "price": 160, "description": "8 pasajeros, Modelo 2022, 8 maletas | Pantalla, Asientos reclinables, Aire acondicionado", "badge": "4 fotos", "image_url": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&auto=format&fit=crop&q=80"},
+                {"name": "Suburban VIP", "price": 220, "description": "5 pasajeros, Modelo 2023, 5 maletas | Asientos de piel, Wifi alta velocidad, Bebidas, Chofer bilingüe", "badge": "6 fotos", "image_url": "https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&auto=format&fit=crop&q=80"}
+            ]
+
+    catalog_triggers = [
+        "servicio", "servicios", "paquete", "paquetes", "unidad", "unidades", 
+        "flota", "vehículo", "vehiculo", "vehículos", "vehiculos", "auto", "autos", 
+        "carro", "carros", "camioneta", "camionetas", "modelo", "modelos", 
+        "opciones", "catalogo", "catálogo", "foto", "fotos", "imagen", "imagenes", 
+        "imágenes", "precio", "precios", "ofrecen", "tienen", "mostrar", "muestrame", 
+        "muéstrame", "ver más", "ver mas", "cotizar"
+    ]
+    user_asks_catalog = any(trig in payload.message.lower() for trig in catalog_triggers)
+    if user_asks_catalog and services_for_carousel and ":::carousel" not in cliente_msg:
+        carousel_cards = []
+        for s in services_for_carousel:
+            s_name = s.get("name") or s.get("nombre") or "Servicio"
+            s_price = s.get("price") or 0
+            s_img = s.get("image_url") or s.get("image") or ""
+            s_badge = s.get("badge") or ("Foto" if s_img else "")
+            s_desc = s.get("description") or ""
+
+            specs = []
+            tags = []
+            if "|" in s_desc:
+                p_specs, p_tags = s_desc.split("|", 1)
+                for part in p_specs.split(","):
+                    part = part.strip()
+                    if part:
+                        words = part.split(" ", 1)
+                        if len(words) == 2 and (words[0].isdigit() or any(c.isdigit() for c in words[0])):
+                            specs.append({"label": words[1].upper()[:9], "val": words[0]})
+                        elif ":" in part:
+                            sp_k, sp_v = part.split(":", 1)
+                            specs.append({"label": sp_k.strip().upper()[:9], "val": sp_v.strip()})
+                        else:
+                            specs.append({"label": "DETALLE", "val": part})
+                for t in p_tags.split(","):
+                    t = t.strip()
+                    if t:
+                        tags.append(t)
+            else:
+                for t in s_desc.split(","):
+                    t = t.strip()
+                    if t:
+                        tags.append(t)
+
+            if not specs and s_price and float(s_price) > 0:
+                specs.append({"label": "PRECIO", "val": f"${float(s_price):,.0f} {currency}"})
+                specs.append({"label": "ESTADO", "val": "Disponible"})
+            elif not specs:
+                specs.append({"label": "ESTADO", "val": "Disponible"})
+
+            carousel_cards.append({
+                "title": s_name,
+                "image": s_img,
+                "badge": s_badge,
+                "price": f"${float(s_price):,.0f} {currency}" if (s_price and float(s_price) > 0) else "",
+                "specs": specs[:3],
+                "tags": tags[:4],
+                "action_label": "Ver más",
+                "action_query": f"Me interesa {s_name}"
+            })
+
+        if carousel_cards:
+            carousel_json = json.dumps(carousel_cards, ensure_ascii=False)
+            cliente_msg += f"\n\n:::carousel\n{carousel_json}\n:::"
 
     return {
         "reply": cliente_msg,
