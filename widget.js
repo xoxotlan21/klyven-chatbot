@@ -497,9 +497,18 @@
                 if (cfg.border_radius) {
                     const r = parseInt(cfg.border_radius) || 16;
                     windowDiv.style.borderRadius = `${r}px`;
+                    const bRadius = (r <= 8 ? 6 : (r >= 24 ? 22 : 14));
+                    const iRadius = (r <= 8 ? 6 : (r >= 24 ? 22 : 18));
+                    const btnR = (r <= 8 ? '6px' : '50%');
                     document.querySelectorAll('.ts-msg').forEach(el => {
-                        el.style.borderRadius = `${Math.max(6, r - 4)}px`;
+                        el.style.borderRadius = `${bRadius}px`;
                     });
+                    if (inputEl) inputEl.style.borderRadius = `${iRadius}px`;
+                    const sendBtnEl = document.getElementById('travelsales-send');
+                    if (sendBtnEl) sendBtnEl.style.borderRadius = btnR;
+                    if (bubble && cfg.bubble_style === 'pill' && r <= 8) {
+                        bubble.style.borderRadius = '10px';
+                    }
                 }
 
                 // 9. Globo de Saludo Proactivo (Teaser Pop)

@@ -977,14 +977,14 @@
 
         /* Marco del Chatbot Mockup */
         .mockup-window {
-            border-radius: 18px;
+            border-radius: var(--mock-window-radius, 16px);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 480px;
-            border: 1px solid #E2E8F0;
-            box-shadow: var(--shadow-floating);
-            transition: all 0.25s ease;
+            border: 1.5px solid rgba(2, 12, 33, 0.12);
+            box-shadow: 0 10px 30px rgba(2, 12, 33, 0.08);
+            transition: border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
         }
 
         /* Variantes de tema para el mockup */
@@ -1116,21 +1116,22 @@
 
         .mock-bubble {
             padding: 9px 13px;
-            border-radius: 14px;
+            border-radius: var(--mock-bubble-radius, 14px);
             font-size: 0.85rem;
             line-height: 1.45;
             word-wrap: break-word;
+            transition: border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .mock-bubble-bot {
-            border-bottom-left-radius: 3px;
+            border-bottom-left-radius: 2px !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
         .mock-bubble-user {
             background: var(--brand-dynamic);
             color: #FFFFFF;
-            border-bottom-right-radius: 3px;
+            border-bottom-right-radius: 2px !important;
             box-shadow: 0 2px 8px rgba(0,0,0,0.12);
         }
 
@@ -1150,12 +1151,12 @@
             background: #FFFFFF;
             border: 1px solid var(--border-subtle);
             padding: 5px 10px;
-            border-radius: 14px;
+            border-radius: var(--mock-chip-radius, 14px);
             font-size: 0.74rem;
             font-weight: 500;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.15s;
+            transition: border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s;
         }
 
         .mock-chip-btn:hover {
@@ -1173,16 +1174,17 @@
         #test_input {
             flex: 1;
             height: 38px;
-            border-radius: 19px;
+            border-radius: var(--mock-input-radius, 19px);
             padding: 0 14px;
             font-size: 0.84rem;
             background: #F1F5F9;
+            transition: border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-send-mock {
             width: 36px;
             height: 36px;
-            border-radius: 50%;
+            border-radius: var(--mock-btn-radius, 50%);
             background: var(--brand-dynamic);
             color: #FFFFFF;
             border: none;
@@ -1191,7 +1193,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: transform 0.15s;
+            transition: border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s;
         }
 
         .btn-send-mock:hover {
@@ -1212,15 +1214,15 @@
             background: var(--brand-dynamic);
             color: #FFFFFF;
             padding: 8px 14px 8px 8px;
-            border-radius: 24px;
+            border-radius: var(--mock-widget-radius, 24px);
             cursor: pointer;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s;
+            transition: border-radius 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s;
         }
 
         .mini-bubble-widget.circle-mode {
             padding: 8px;
-            border-radius: 50%;
+            border-radius: 50% !important;
             width: 44px;
             height: 44px;
             justify-content: center;
@@ -3495,10 +3497,46 @@
                 container.style.justifyContent = currentPosition === 'bottom-left' ? 'flex-start' : 'flex-end';
             }
 
-            // Aplicar curvatura de bordes a la ventana mock
+            // Aplicar curvatura de bordes completa a todo el chatbot
+            const r = parseInt(currentBorderRadius) || 16;
+            const windowRadius = r + 'px';
+            const bubbleRadius = (r <= 8 ? '6px' : (r >= 24 ? '22px' : '14px'));
+            const inputRadius = (r <= 8 ? '6px' : (r >= 24 ? '22px' : '18px'));
+            const chipRadius = (r <= 8 ? '6px' : (r >= 24 ? '20px' : '14px'));
+            const btnRadius = (r <= 8 ? '6px' : '50%');
+            const widgetRadius = (r <= 8 ? '8px' : (r >= 24 ? '30px' : '24px'));
+
+            document.documentElement.style.setProperty('--mock-window-radius', windowRadius);
+            document.documentElement.style.setProperty('--mock-bubble-radius', bubbleRadius);
+            document.documentElement.style.setProperty('--mock-input-radius', inputRadius);
+            document.documentElement.style.setProperty('--mock-chip-radius', chipRadius);
+            document.documentElement.style.setProperty('--mock-btn-radius', btnRadius);
+            document.documentElement.style.setProperty('--mock-widget-radius', widgetRadius);
+
             const screen = document.getElementById('mock_screen');
             if (screen) {
-                screen.style.borderRadius = currentBorderRadius + 'px';
+                screen.style.borderRadius = windowRadius;
+            }
+            document.querySelectorAll('.mock-bubble').forEach(b => {
+                b.style.borderRadius = bubbleRadius;
+            });
+            document.querySelectorAll('.mock-bubble-bot').forEach(b => {
+                b.style.borderBottomLeftRadius = '2px';
+            });
+            document.querySelectorAll('.mock-bubble-user').forEach(b => {
+                b.style.borderBottomRightRadius = '2px';
+            });
+            document.querySelectorAll('.mock-chip-btn').forEach(c => {
+                c.style.borderRadius = chipRadius;
+            });
+            const testInputEl = document.getElementById('test_input');
+            if (testInputEl) testInputEl.style.borderRadius = inputRadius;
+            document.querySelectorAll('.btn-send-mock').forEach(btn => {
+                btn.style.borderRadius = btnRadius;
+            });
+            const miniBubbleEl = document.getElementById('mini_bubble_preview');
+            if (miniBubbleEl && currentBubbleStyle !== 'circle') {
+                miniBubbleEl.style.borderRadius = widgetRadius;
             }
 
             // Actualizar globo de saludo proactivo en la vista previa
@@ -3509,6 +3547,7 @@
             if (teaserBubble && teaserLabel) {
                 teaserLabel.innerText = teaserText || '👋 ¿Tienes dudas sobre tu web? Pregúntame aquí';
                 teaserBubble.style.display = (teaserCheck && teaserCheck.checked) ? 'flex' : 'none';
+                teaserBubble.style.borderRadius = (r <= 8 ? '6px' : (r >= 24 ? '18px' : '12px'));
             }
 
             updateHomeOverview();
