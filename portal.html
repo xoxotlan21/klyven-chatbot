@@ -1316,6 +1316,225 @@
         }
 
         /* ------------------------------------------------------------- */
+        /* SECCIÓN INICIO: PANEL DE CONTROL (FIEL AL DISEÑO KLYVEN)      */
+        /* ------------------------------------------------------------- */
+        .home-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .home-kpi-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.03);
+        }
+
+        .home-kpi-card:hover {
+            border-color: #CBD5E1;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(15, 27, 49, 0.06);
+        }
+
+        .home-kpi-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .home-kpi-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .home-kpi-badge.badge-green {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .home-kpi-badge.badge-blue {
+            background: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .home-kpi-badge.badge-purple {
+            background: #F3E8FF;
+            color: #7C3AED;
+        }
+
+        .home-kpi-badge.badge-amber {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .home-pulsing-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #16A34A;
+            display: inline-block;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25);
+        }
+
+        .home-kpi-texts {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .home-kpi-label {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .home-kpi-value {
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 2px 0;
+        }
+
+        .home-kpi-sub {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+        }
+
+        .home-kpi-right {
+            color: #59627E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .home-checklist-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 22px 24px;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.03);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .home-checklist-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 12px;
+            border-radius: 12px;
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .home-checklist-row:hover {
+            background: #F8FAFC;
+        }
+
+        .home-step-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .home-step-icon.done {
+            background: #10B981;
+            color: #FFFFFF;
+        }
+
+        .home-step-icon.pending {
+            border: 2px solid #CBD5E1;
+            background: transparent;
+        }
+
+        .btn-check-install {
+            background: var(--btn-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-check-install:hover {
+            background: var(--btn-primary-hover);
+        }
+
+        .home-quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .home-quick-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.03);
+        }
+
+        .home-quick-card:hover {
+            border-color: #CBD5E1;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(15, 27, 49, 0.06);
+        }
+
+        .home-quick-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .home-quick-icon.badge-blue {
+            background: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .home-quick-icon.badge-purple {
+            background: #F3E8FF;
+            color: #7C3AED;
+        }
+
+        @media (max-width: 960px) {
+            .home-kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .home-quick-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ------------------------------------------------------------- */
         /* RESPONSIVE DESIGN                                             */
         /* ------------------------------------------------------------- */
         @media (max-width: 1240px) {
@@ -1386,7 +1605,7 @@
             <nav>
                 <ul class="sidebar-nav-list">
                     <li>
-                        <button class="sidebar-nav-btn" data-sec="inicio" onclick="switchSection('inicio')">
+                        <button class="sidebar-nav-btn active" data-sec="inicio" onclick="switchSection('inicio')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                             <span>Inicio</span>
                         </button>
@@ -1398,7 +1617,7 @@
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn active" data-sec="conocimiento" onclick="switchSection('conocimiento')">
+                        <button class="sidebar-nav-btn" data-sec="conocimiento" onclick="switchSection('conocimiento')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                             <span>Conocimiento</span>
                         </button>
@@ -1464,7 +1683,7 @@
                 <div class="breadcrumb">
                     <span>Mi asistente</span>
                     <span>/</span>
-                    <strong id="breadcrumb_current">Conocimiento</strong>
+                    <strong id="breadcrumb_current">Inicio</strong>
                 </div>
                 <div class="topbar-actions">
                     <button class="btn-topbar-save" onclick="saveTenant()">
@@ -1475,102 +1694,230 @@
             </div>
 
             <!-- ----------------------------------------------------- -->
-            <!-- SECCIÓN: INICIO (PANEL DE CONTROL)                    -->
+            <!-- SECCIÓN: INICIO (PANEL DE CONTROL - REDISEÑO KLYVEN)  -->
             <!-- ----------------------------------------------------- -->
-            <div id="section_inicio" class="content-section" style="display: none;">
+            <div id="section_inicio" class="content-section">
                 <div class="section-header">
                     <h2>Panel de control</h2>
-                    <p>Visión general y estado en tiempo real del asistente para tu negocio.</p>
+                    <p>El estado de tu asistente y tus próximos pasos.</p>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 14px;">
-                    <!-- KPI Cards Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
-                        <div class="card" style="padding: 18px;">
-                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Estado del Asistente</span>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-                                <span style="width: 10px; height: 10px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
-                                <strong style="font-size: 1.15rem; color: var(--text-primary);">En línea</strong>
+                    <!-- Cuadrícula 2x2 de resumen del estado del chatbot -->
+                    <div class="home-kpi-grid">
+                        <!-- Tarjeta 1: Estado del chatbot -->
+                        <div class="home-kpi-card" onclick="switchSection('instalacion')">
+                            <div class="home-kpi-left">
+                                <div class="home-kpi-badge badge-green">
+                                    <span class="home-pulsing-dot" id="home_status_dot"></span>
+                                </div>
+                                <div class="home-kpi-texts">
+                                    <span class="home-kpi-label">Estado del chatbot</span>
+                                    <span class="home-kpi-value" id="home_status_val">Publicado</span>
+                                    <span class="home-kpi-sub" id="home_status_sub">Tu asistente está activo y disponible.</span>
+                                </div>
                             </div>
-                            <span style="font-size: 0.72rem; color: #10B981; margin-top: 4px;">Listo para atender prospectos</span>
+                            <div class="home-kpi-right">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
                         </div>
 
-                        <div class="card" style="padding: 18px;">
-                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Servicios entrenados</span>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-                                <strong style="font-size: 1.15rem; color: var(--text-primary);" id="kpi_services_count">3 activos</strong>
+                        <!-- Tarjeta 2: Sitio web -->
+                        <div class="home-kpi-card" onclick="openConfiguredSite(event)">
+                            <div class="home-kpi-left">
+                                <div class="home-kpi-badge badge-blue">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                </div>
+                                <div class="home-kpi-texts">
+                                    <span class="home-kpi-label">Sitio web</span>
+                                    <span class="home-kpi-value" id="home_site_domain">minegocio.com</span>
+                                    <span class="home-kpi-sub" id="home_site_sub">Conectado a tu dominio.</span>
+                                </div>
                             </div>
-                            <span style="font-size: 0.72rem; color: var(--accent-steel); margin-top: 4px;">Cotización determinista</span>
+                            <div class="home-kpi-right">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </div>
                         </div>
 
-                        <div class="card" style="padding: 18px;">
-                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Motor de Inteligencia</span>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-                                <strong style="font-size: 1.15rem; color: var(--text-primary);">Google Gemini</strong>
+                        <!-- Tarjeta 3: Información -->
+                        <div class="home-kpi-card" onclick="switchSection('conocimiento')">
+                            <div class="home-kpi-left">
+                                <div class="home-kpi-badge badge-purple">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                </div>
+                                <div class="home-kpi-texts">
+                                    <span class="home-kpi-label">Información</span>
+                                    <span class="home-kpi-value" id="home_services_count">3 servicios</span>
+                                    <span class="home-kpi-sub">Tu asistente conoce tus servicios.</span>
+                                </div>
                             </div>
-                            <span style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">Respuestas en ~650 ms</span>
+                            <div class="home-kpi-right">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
                         </div>
 
-                        <div class="card" style="padding: 18px;">
-                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Integración Web</span>
-                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
-                                <strong style="font-size: 1.15rem; color: var(--text-primary);">Widget Listo</strong>
+                        <!-- Tarjeta 4: Uso del plan -->
+                        <div class="home-kpi-card" onclick="switchSection('plan')">
+                            <div class="home-kpi-left">
+                                <div class="home-kpi-badge badge-amber">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                </div>
+                                <div class="home-kpi-texts">
+                                    <span class="home-kpi-label">Uso del plan</span>
+                                    <span class="home-kpi-value" id="home_plan_title">Sin actividad</span>
+                                    <span class="home-kpi-sub" id="home_plan_sub">Aún no hay conversaciones.</span>
+                                </div>
                             </div>
-                            <span style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">Una línea de código</span>
+                            <div class="home-kpi-right">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Acciones rápidas -->
-                    <div class="card">
-                        <div class="card-header-row">
-                            <div class="card-icon-badge">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                            </div>
-                            <div class="card-header-titles">
-                                <h3>Acciones y accesos rápidos</h3>
-                                <p>Configura y pon en marcha tu chatbot paso a paso.</p>
-                            </div>
+                    <!-- Bloque: Completa tu configuración -->
+                    <div class="home-checklist-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-size: 1.05rem; font-weight: 700; color: #020C21;">Completa tu configuración</h3>
+                            <span id="home_progress_counter" style="font-size: 0.82rem; font-weight: 600; color: #59627E;">3 de 4 pasos</span>
+                        </div>
+                        
+                        <div style="background: #E6EDF6; height: 6px; border-radius: 99px; overflow: hidden; margin: 12px 0 16px 0;">
+                            <div id="home_progress_bar" style="width: 75%; height: 100%; background: #0F1B31; border-radius: 99px; transition: width 0.3s ease;"></div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
-                            <div class="source-box" onclick="switchSection('conocimiento')">
-                                <div class="source-box-icon">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <!-- Paso 1: Datos del negocio -->
+                            <div class="home-checklist-row" onclick="switchSection('negocio')">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="home-step-icon done" id="home_step1_icon">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600;">Datos del negocio</strong>
                                 </div>
-                                <div class="source-box-content">
-                                    <h4>Importar desde tu web</h4>
-                                    <p>Extrae catálogo, precios y políticas automáticamente.</p>
-                                </div>
-                            </div>
-
-                            <div class="source-box" onclick="switchSection('apariencia')">
-                                <div class="source-box-icon">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
-                                </div>
-                                <div class="source-box-content">
-                                    <h4>Personalizar diseño</h4>
-                                    <p>Adapta colores de marca, tema y botón flotante.</p>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span id="home_step1_status" style="font-size: 0.78rem; color: #59627E;">Información básica completada</span>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </div>
                             </div>
 
-                            <div class="source-box" onclick="switchSection('instalacion')">
-                                <div class="source-box-icon">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                            <!-- Paso 2: Información del chatbot -->
+                            <div class="home-checklist-row" onclick="switchSection('conocimiento')">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="home-step-icon done" id="home_step2_icon">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600;">Información del chatbot</strong>
                                 </div>
-                                <div class="source-box-content">
-                                    <h4>Copiar script de widget</h4>
-                                    <p>Integra el asistente en WordPress, Shopify o HTML.</p>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span id="home_step2_status" style="font-size: 0.78rem; color: #59627E;">3 servicios añadidos</span>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </div>
                             </div>
+
+                            <!-- Paso 3: Apariencia personalizada -->
+                            <div class="home-checklist-row" onclick="switchSection('apariencia')">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="home-step-icon done" id="home_step3_icon">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </div>
+                                    <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600;">Apariencia personalizada</strong>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span id="home_step3_status" style="font-size: 0.78rem; color: #59627E;">Diseño configurado</span>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </div>
+                            </div>
+
+                            <!-- Paso 4: Probar en tu web -->
+                            <div class="home-checklist-row" onclick="switchSection('instalacion')">
+                                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                    <div class="home-step-icon pending" id="home_step4_icon" style="margin-top: 2px;">
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600; display: block;">Probar en tu web</strong>
+                                        <span style="font-size: 0.76rem; color: #59627E; display: block; margin-top: 2px;">Verifica que tu asistente funciona correctamente en tu sitio web.</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn-check-install" onclick="event.stopPropagation(); switchSection('instalacion')">
+                                        Revisar instalación
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloque: Accesos rápidos -->
+                    <div>
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #020C21; margin: 4px 0 12px 0;">Accesos rápidos</h3>
+                        <div class="home-quick-grid">
+                            <!-- Acceso 1: Actualizar información -->
+                            <div class="home-quick-card" onclick="switchSection('conocimiento')">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="home-quick-icon badge-blue">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 0.86rem; color: #020C21; display: block;">Actualizar información</strong>
+                                        <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;">Edita tus servicios y datos del negocio.</span>
+                                    </div>
+                                </div>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+
+                            <!-- Acceso 2: Personalizar diseño -->
+                            <div class="home-quick-card" onclick="switchSection('apariencia')">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="home-quick-icon badge-purple">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 0.86rem; color: #020C21; display: block;">Personalizar diseño</strong>
+                                        <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;">Cambia los colores y la apariencia.</span>
+                                    </div>
+                                </div>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+
+                            <!-- Acceso 3: Copiar código -->
+                            <div class="home-quick-card" onclick="copyCode()">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="home-quick-icon badge-blue">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                    </div>
+                                    <div>
+                                        <strong style="font-size: 0.86rem; color: #020C21; display: block;">Copiar código</strong>
+                                        <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;">Obtén el código para instalar en tu web.</span>
+                                    </div>
+                                </div>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloque: Conversaciones recientes -->
+                    <div>
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #020C21; margin: 4px 0 12px 0;">Conversaciones recientes</h3>
+                        <div class="card" style="padding: 22px 24px;">
+                            <div id="home_conv_empty" style="display: flex; align-items: center; justify-content: center; gap: 14px; padding: 10px 0;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; color: #94A3B8; flex-shrink: 0;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                </div>
+                                <div>
+                                    <strong style="font-size: 0.9rem; color: #020C21; font-weight: 700; display: block;">Aún no hay conversaciones</strong>
+                                    <span style="font-size: 0.78rem; color: #59627E; display: block; margin-top: 2px;">Cuando alguien escriba desde tu web, aparecerá aquí.</span>
+                                </div>
+                            </div>
+                            <div id="home_conv_list" style="display: none; flex-direction: column; gap: 10px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- ----------------------------------------------------- -->
-            <!-- SECCIÓN: CONOCIMIENTO (ACTIVA POR DEFECTO)             -->
+            <!-- SECCIÓN: CONOCIMIENTO                                 -->
             <!-- ----------------------------------------------------- -->
-            <div id="section_conocimiento" class="content-section">
+            <div id="section_conocimiento" class="content-section" style="display: none;">
                 <div class="section-header">
                     <h2>Conocimiento del chatbot</h2>
                     <p>Revisa la información que tu asistente utilizará para responder y cotizar.</p>
@@ -2263,20 +2610,15 @@
                 </div>
             </div>
 
-            <!-- Estado de publicación (Fiel al Mockup) -->
-            <div class="publish-status-card">
-                <div class="publish-status-info">
-                    <div class="publish-status-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <!-- Estado de publicación (Fiel a la referencia) -->
+            <div class="publish-status-card" id="publish_status_card">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                        <span class="badge-status-dot" id="publish_dot" style="background: #10B981; width: 7px; height: 7px; border-radius: 50%;"></span>
+                        <span style="font-size: 0.74rem; color: #59627E; font-weight: 500;">Estado de publicación</span>
                     </div>
-                    <div class="publish-status-text">
-                        <h4>Estado de publicación</h4>
-                        <p>Los cambios se activan con un clic.</p>
-                    </div>
-                </div>
-                <div class="badge-status">
-                    <span class="badge-status-dot"></span>
-                    <span id="badge_status_label">Listo para guardar</span>
+                    <strong style="font-size: 0.95rem; color: #020C21; font-weight: 700; display: block;" id="badge_status_label">Publicado</strong>
+                    <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;" id="badge_status_sub">Tu asistente está activo en tu web.</span>
                 </div>
             </div>
         </aside>
@@ -2322,9 +2664,163 @@
             const bc = document.getElementById('breadcrumb_current');
             if (bc) bc.innerText = titles[sectionName] || 'Conocimiento';
 
+            if (sectionName === 'inicio') {
+                updateHomeOverview();
+            }
+
             if (sectionName === 'conversaciones') {
                 loadConversations();
             }
+        }
+
+        function openConfiguredSite(event) {
+            if (event) event.stopPropagation();
+            let url = document.getElementById('biz_url')?.value?.trim();
+            if (url) {
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                window.open(url, '_blank');
+            } else {
+                switchSection('conocimiento');
+            }
+        }
+
+        async function updateHomeOverview() {
+            const bizName = document.getElementById('biz_name')?.value?.trim() || '';
+            const bizUrl = document.getElementById('biz_url')?.value?.trim() || '';
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            const services = getCurrentServicesList();
+
+            // 1. Dominio en Tarjeta Sitio Web
+            const siteDomainEl = document.getElementById('home_site_domain');
+            const siteSubEl = document.getElementById('home_site_sub');
+            if (siteDomainEl) {
+                if (bizUrl) {
+                    try {
+                        const u = new URL(bizUrl.startsWith('http') ? bizUrl : 'https://' + bizUrl);
+                        siteDomainEl.innerText = u.hostname.replace(/^www\./, '');
+                        if (siteSubEl) siteSubEl.innerText = 'Conectado a tu dominio.';
+                    } catch (e) {
+                        siteDomainEl.innerText = bizUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+                        if (siteSubEl) siteSubEl.innerText = 'Conectado a tu dominio.';
+                    }
+                } else {
+                    siteDomainEl.innerText = 'Sin configurar';
+                    if (siteSubEl) siteSubEl.innerText = 'Ingresa tu web en Conocimiento.';
+                }
+            }
+
+            // 2. Información (servicios)
+            const srvCountEl = document.getElementById('home_services_count');
+            if (srvCountEl) {
+                const count = services.length;
+                srvCountEl.innerText = count > 0 ? `${count} ${count === 1 ? 'servicio' : 'servicios'}` : 'Sin servicios';
+            }
+
+            // 3. Pasos de configuración
+            let stepsDone = 0;
+            
+            // Paso 1: Datos del negocio
+            const step1Icon = document.getElementById('home_step1_icon');
+            const step1Status = document.getElementById('home_step1_status');
+            if (bizName && bizName !== 'Mi Negocio') {
+                stepsDone++;
+                if (step1Icon) {
+                    step1Icon.className = 'home-step-icon done';
+                    step1Icon.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                }
+                if (step1Status) step1Status.innerText = 'Información básica completada';
+            } else {
+                if (step1Icon) {
+                    step1Icon.className = 'home-step-icon pending';
+                    step1Icon.innerHTML = '';
+                }
+                if (step1Status) step1Status.innerText = 'Pendiente de configurar';
+            }
+
+            // Paso 2: Información del chatbot
+            const step2Icon = document.getElementById('home_step2_icon');
+            const step2Status = document.getElementById('home_step2_status');
+            if (services.length > 0) {
+                stepsDone++;
+                if (step2Icon) {
+                    step2Icon.className = 'home-step-icon done';
+                    step2Icon.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                }
+                if (step2Status) step2Status.innerText = `${services.length} ${services.length === 1 ? 'servicio añadido' : 'servicios añadidos'}`;
+            } else {
+                if (step2Icon) {
+                    step2Icon.className = 'home-step-icon pending';
+                    step2Icon.innerHTML = '';
+                }
+                if (step2Status) step2Status.innerText = '0 servicios añadidos';
+            }
+
+            // Paso 3: Apariencia personalizada
+            const step3Icon = document.getElementById('home_step3_icon');
+            const step3Status = document.getElementById('home_step3_status');
+            stepsDone++;
+            if (step3Icon) {
+                step3Icon.className = 'home-step-icon done';
+                step3Icon.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            }
+            if (step3Status) step3Status.innerText = 'Diseño configurado';
+
+            // Paso 4: Probar en tu web
+            const progressCounter = document.getElementById('home_progress_counter');
+            const progressBar = document.getElementById('home_progress_bar');
+            if (progressCounter) progressCounter.innerText = `${stepsDone} de 4 pasos`;
+            if (progressBar) progressBar.style.width = `${(stepsDone / 4) * 100}%`;
+
+            // 4. Conversaciones y Uso del Plan
+            try {
+                const resp = await fetch(`/api/conversations?tenant_id=${encodeURIComponent(bizId)}`);
+                const data = await resp.json();
+                const convs = data.conversations || [];
+
+                const planTitle = document.getElementById('home_plan_title');
+                const planSub = document.getElementById('home_plan_sub');
+                const convEmpty = document.getElementById('home_conv_empty');
+                const convList = document.getElementById('home_conv_list');
+
+                if (convs.length > 0) {
+                    if (planTitle) planTitle.innerText = `${convs.length} ${convs.length === 1 ? 'sesión' : 'sesiones'}`;
+                    if (planSub) planSub.innerText = `${convs[0].total_messages || 1} mensajes registrados.`;
+
+                    if (convEmpty) convEmpty.style.display = 'none';
+                    if (convList) {
+                        convList.style.display = 'flex';
+                        convList.innerHTML = '';
+                        convs.slice(0, 3).forEach(c => {
+                            const row = document.createElement('div');
+                            row.className = 'conv-item';
+                            row.onclick = () => {
+                                switchSection('conversaciones');
+                            };
+                            const dateStr = c.updated_at ? new Date(c.updated_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Reciente';
+                            row.innerHTML = `
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                    <strong style="font-size:0.84rem; color:var(--text-primary);">Sesión #${c.conversation_id.substring(0, 8)}</strong>
+                                    <span style="font-size:0.72rem; color:var(--text-muted);">${dateStr}</span>
+                                </div>
+                                <div style="font-size:0.78rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.last_message || 'Conversación iniciada'}</div>
+                            `;
+                            convList.appendChild(row);
+                        });
+                        const linkMore = document.createElement('div');
+                        linkMore.style.textAlign = 'right';
+                        linkMore.style.marginTop = '4px';
+                        linkMore.innerHTML = `<button style="background:transparent; border:none; color:var(--accent-steel); font-size:0.8rem; font-weight:600; cursor:pointer;" onclick="switchSection('conversaciones')">Ver todas las conversaciones →</button>`;
+                        convList.appendChild(linkMore);
+                    }
+                } else {
+                    if (planTitle) planTitle.innerText = 'Sin actividad';
+                    if (planSub) planSub.innerText = 'Aún no hay conversaciones.';
+                    if (convEmpty) convEmpty.style.display = 'flex';
+                    if (convList) convList.style.display = 'none';
+                }
+            } catch(e) {}
         }
 
         async function loadConversations() {
@@ -2696,6 +3192,8 @@
             if (container) {
                 container.style.justifyContent = currentPosition === 'bottom-left' ? 'flex-start' : 'flex-end';
             }
+
+            updateHomeOverview();
         }
 
         // -----------------------------------------------------------------
@@ -2899,7 +3397,17 @@
                 if (demoBtn) demoBtn.href = `/demo?tenant=${bizId}`;
 
                 const badge = document.getElementById('badge_status_label');
-                if (badge) badge.innerText = 'Publicado con éxito';
+                if (badge) badge.innerText = 'Publicado';
+                const sub = document.getElementById('badge_status_sub');
+                if (sub) sub.innerText = 'Tu asistente está activo en tu web.';
+                const dot = document.getElementById('publish_dot');
+                if (dot) dot.style.background = '#10B981';
+                const homeDot = document.getElementById('home_status_dot');
+                if (homeDot) homeDot.style.background = '#16A34A';
+                const homeVal = document.getElementById('home_status_val');
+                if (homeVal) homeVal.innerText = 'Publicado';
+                const homeSub = document.getElementById('home_status_sub');
+                if (homeSub) homeSub.innerText = 'Tu asistente está activo y disponible.';
 
                 if (!silent) {
                     alert(`¡Chatbot para "${bizName}" guardado y publicado con éxito!`);
@@ -3005,8 +3513,9 @@
             }
         }
 
-        // Inicializar vista previa al cargar
+        // Inicializar vista previa y resumen al cargar
         updatePreview();
+        updateHomeOverview();
     </script>
 </body>
 </html>
