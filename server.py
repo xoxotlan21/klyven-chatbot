@@ -78,6 +78,7 @@ class CreateTenantRequest(BaseModel):
     bot_avatar: Optional[str] = "🤖"
     brand_color: Optional[str] = "#2563eb"
     theme_mode: Optional[str] = "dark"           # "dark", "light", "glass"
+    header_style: Optional[str] = "brand"         # "brand", "light", "dark"
     bubble_style: Optional[str] = "circle"        # "circle", "pill"
     bubble_text: Optional[str] = "👋 ¿Podemos ayudarte?"
     position: Optional[str] = "bottom-right"      # "bottom-right", "bottom-left"
@@ -465,6 +466,7 @@ def get_tenant_configuration(tenant_id: str):
             "bot_avatar": cfg.get("bot_avatar") or "🤖",
             "brand_color": cfg.get("brand_color") or "#2563eb",
             "theme_mode": cfg.get("theme_mode") or "dark",
+            "header_style": cfg.get("header_style") or "brand",
             "bubble_style": cfg.get("bubble_style") or "circle",
             "bubble_text": cfg.get("bubble_text") or "👋 ¿Podemos ayudarte?",
             "position": cfg.get("position") or "bottom-right",
@@ -493,6 +495,7 @@ def get_tenant_configuration(tenant_id: str):
         "bot_avatar": "https://klyvenstudio.com/assets/logo-dark-C8R5adPP.png" if is_klyven else "/assets/logo-dark.png",
         "brand_color": "#0F1B31" if is_klyven else "#2563eb",
         "theme_mode": "glass",
+        "header_style": "brand",
         "bubble_style": "pill",
         "bubble_text": "Hablemos de tu web" if is_klyven else "¿Podemos ayudarte?",
         "position": "bottom-right",
@@ -563,6 +566,7 @@ def api_create_tenant(req: CreateTenantRequest):
         "bot_avatar": req.bot_avatar,
         "brand_color": req.brand_color,
         "theme_mode": req.theme_mode or "dark",
+        "header_style": req.header_style or "brand",
         "bubble_style": req.bubble_style or "circle",
         "bubble_text": req.bubble_text or "👋 ¿Podemos ayudarte?",
         "position": req.position or "bottom-right",

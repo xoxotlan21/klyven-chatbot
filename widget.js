@@ -35,6 +35,29 @@
         return null;
     }
 
+    function hexToRgb(hex) {
+        hex = String(hex || '#2563eb').replace('#', '').trim();
+        if (hex.length === 3) {
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+        const num = parseInt(hex, 16);
+        if (isNaN(num)) return { r: 37, g: 99, b: 235 };
+        return {
+            r: (num >> 16) & 255,
+            g: (num >> 8) & 255,
+            b: num & 255
+        };
+    }
+
+    function adjustBrightness(hex, percent) {
+        const rgb = hexToRgb(hex);
+        const factor = (100 + percent) / 100;
+        const r = Math.min(255, Math.max(0, Math.round(rgb.r * factor)));
+        const g = Math.min(255, Math.max(0, Math.round(rgb.g * factor)));
+        const b = Math.min(255, Math.max(0, Math.round(rgb.b * factor)));
+        return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
     function initWidget() {
         if (document.getElementById('travelsales-bubble')) return;
 
@@ -724,17 +747,57 @@
                 }
                 activeBrandColor = brandColor;
 
-                // 2. Aplicar Color de Marca
+                // 2. Aplicar Color de Marca Integral
+                const rgb = hexToRgb(brandColor);
+                const darkerBrand = adjustBrightness(brandColor, -25);
+
                 document.documentElement.style.setProperty('--ts-brand-color', brandColor);
-                if (windowDiv) windowDiv.style.setProperty('--ts-brand-color', brandColor);
+                if (windowDiv) {
+                    windowDiv.style.setProperty('--ts-brand-color', brandColor);
+                    windowDiv.style.border = `1.5px solid rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.22)`;
+                    windowDiv.style.boxShadow = `0 18px 45px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.22), 0 2px 10px rgba(0,0,0,0.08)`;
+                }
+
                 const headerEl = document.getElementById('travelsales-header');
                 const sendBtn = document.getElementById('travelsales-send');
-                if (headerEl) headerEl.style.backgroundColor = brandColor;
-                if (bubble) bubble.style.background = brandColor;
-                if (sendBtn) sendBtn.style.backgroundColor = brandColor;
+                const msgBox = document.getElementById('travelsales-messages');
+
+                if (headerEl) {
+                    headerEl.style.background = `linear-gradient(135deg, ${brandColor} 0%, ${darkerBrand} 100%)`;
+                    headerEl.style.borderBottom = '1px solid rgba(255, 255, 255, 0.15)';
+                    headerEl.style.boxShadow = `0 4px 15px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`;
+                }
+
+                if (bubble) {
+                    bubble.style.background = `linear-gradient(135deg, ${brandColor} 0%, ${darkerBrand} 100%)`;
+                    bubble.style.boxShadow = `0 8px 30px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`;
+                }
+
+                if (sendBtn) {
+                    sendBtn.style.background = `linear-gradient(135deg, ${brandColor} 0%, ${darkerBrand} 100%)`;
+                    sendBtn.style.boxShadow = `0 3px 12px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`;
+                }
+
                 document.querySelectorAll('.ts-msg-user').forEach(el => {
-                    el.style.backgroundColor = brandColor;
+                    el.style.background = `linear-gradient(135deg, ${brandColor} 0%, ${darkerBrand} 100%)`;
+                    el.style.boxShadow = `0 3px 10px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`;
                 });
+
+                const welcomeMsgEl = document.querySelector('.ts-first-msg');
+                if (welcomeMsgEl) {
+                    welcomeMsgEl.style.borderLeft = `3.5px solid rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.65)`;
+                }
+
+                if (msgBox) {
+                    const themeMode = cfg.theme_mode || 'dark';
+                    if (themeMode === 'dark') {
+                        msgBox.style.background = `linear-gradient(180deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12) 0%, #0F172A 100%)`;
+                    } else if (themeMode === 'glass') {
+                        msgBox.style.background = `linear-gradient(180deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06) 0%, rgba(240, 244, 248, 0.7) 100%)`;
+                    } else {
+                        msgBox.style.background = `linear-gradient(180deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05) 0%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.01) 40%, #F8FAFC 100%)`;
+                    }
+                }
 
                 // 3. Tema (Dark, Light, Glass)
                 const themeMode = cfg.theme_mode || 'dark';

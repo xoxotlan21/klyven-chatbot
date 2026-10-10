@@ -1063,26 +1063,77 @@
                     }
                 } catch(e) {}
 
-                // Aplicar título y colores
-                const bName = tenantConfig.business_name || 'Klyven Studio';
-                document.title = `${bName} | Chat en Vivo`;
-                document.getElementById('biz_name_display').innerText = bName;
-
-                const color = tenantConfig.brand_color || '#0F1B31';
-                document.documentElement.style.setProperty('--brand-color', color);
-                document.documentElement.style.setProperty('--msg-user-bg', color);
-                if (sendBtn) sendBtn.style.backgroundColor = color;
-
-                // Tema
-                if (tenantConfig.theme_mode === 'dark') {
-                    document.body.className = 'theme-dark';
-                } else if (tenantConfig.theme_mode === 'glass') {
-                    document.body.className = 'theme-glass';
+            function hexToRgb(hex) {
+                hex = String(hex || '#0F1B31').replace('#', '').trim();
+                if (hex.length === 3) {
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
                 }
+                const num = parseInt(hex, 16);
+                if (isNaN(num)) return { r: 15, g: 27, b: 49 };
+                return {
+                    r: (num >> 16) & 255,
+                    g: (num >> 8) & 255,
+                    b: num & 255
+                };
+            }
 
-                // Avatar en cabecera
-                const headerAv = document.getElementById('header_avatar');
-                if (headerAv) headerAv.innerHTML = getAvatarImgHtml();
+            function adjustBrightness(hex, percent) {
+                const rgb = hexToRgb(hex);
+                const factor = (100 + percent) / 100;
+                const r = Math.min(255, Math.max(0, Math.round(rgb.r * factor)));
+                const g = Math.min(255, Math.max(0, Math.round(rgb.g * factor)));
+                const b = Math.min(255, Math.max(0, Math.round(rgb.b * factor)));
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+
+            // Aplicar título y colores
+            const bName = tenantConfig.business_name || 'Klyven Studio';
+            document.title = `${bName} | Chat en Vivo`;
+            document.getElementById('biz_name_display').innerText = bName;
+
+            const color = tenantConfig.brand_color || '#0F1B31';
+            const darkerColor = adjustBrightness(color, -25);
+            const rgb = hexToRgb(color);
+
+            document.documentElement.style.setProperty('--brand-color', color);
+            document.documentElement.style.setProperty('--msg-user-bg', color);
+            if (sendBtn) {
+                sendBtn.style.background = `linear-gradient(135deg, ${color} 0%, ${darkerColor} 100%)`;
+                sendBtn.style.boxShadow = `0 3px 12px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`;
+            }
+
+            // Header completo con color de marca y degradado premium
+            const headerEl = document.querySelector('.chat-header');
+            if (headerEl) {
+                headerEl.style.background = `linear-gradient(135deg, ${color} 0%, ${darkerColor} 100%)`;
+                headerEl.style.borderBottom = '1px solid rgba(255, 255, 255, 0.15)';
+                headerEl.style.boxShadow = `0 4px 15px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`;
+                const bizTitle = document.getElementById('biz_name_display');
+                if (bizTitle) bizTitle.style.color = '#FFFFFF';
+                const statusTxt = document.querySelector('.chat-header-status');
+                if (statusTxt) statusTxt.style.color = 'rgba(255, 255, 255, 0.88)';
+            }
+
+            // Mensajes y atmósfera
+            const msgContainer = document.getElementById('chat_messages');
+            if (msgContainer) {
+                msgContainer.style.background = `linear-gradient(180deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05) 0%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.01) 40%, var(--chat-bg) 100%)`;
+            }
+
+            // Tema
+            if (tenantConfig.theme_mode === 'dark') {
+                document.body.className = 'theme-dark';
+            } else if (tenantConfig.theme_mode === 'glass') {
+                document.body.className = 'theme-glass';
+            }
+
+            // Avatar en cabecera
+            const headerAv = document.getElementById('header_avatar');
+            if (headerAv) {
+                headerAv.innerHTML = getAvatarImgHtml();
+                headerAv.style.border = '2px solid rgba(255, 255, 255, 0.4)';
+                headerAv.style.background = '#FFFFFF';
+            }
 
                 // Botón WhatsApp en cabecera
                 const rawPhone = tenantConfig.support_phone || '';
@@ -1124,3 +1175,4 @@
     </script>
 </body>
 </html>
+
