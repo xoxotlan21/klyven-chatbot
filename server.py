@@ -470,6 +470,20 @@ def api_list_tenants():
     return {"tenants": list_all_tenants()}
 
 
+@app.get("/api/conversations")
+def get_conversations(tenant_id: str = "KLYVEN-STUDIO"):
+    """Lista las conversaciones y sesiones de chat registradas para un tenant."""
+    from database import get_tenant_conversations
+    return {"status": "success", "conversations": get_tenant_conversations(tenant_id)}
+
+
+@app.get("/api/conversations/{conversation_id}/messages")
+def get_conversation_msgs(conversation_id: str):
+    """Obtiene el historial completo de mensajes para una conversación."""
+    from database import get_conversation_history
+    return {"status": "success", "messages": get_conversation_history(conversation_id, limit=50)}
+
+
 # ==============================================================================
 # WIDGET EMBEDDABLE & DEMO PAGE
 # ==============================================================================

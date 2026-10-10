@@ -143,6 +143,26 @@ def get_conversation_history(conversation_id: str, limit: int = 15) -> List[Dict
     return [{"role": r["role"], "content": r["content"]} for r in rows]
 
 
+def get_tenant_conversations(tenant_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+    """Obtiene el listado de conversaciones y el último mensaje de cada sesión para el tenant."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT c.conversation_id, c.tenant_id, c.status, c.created_at, c.updated_at,
+           COUNT(m.message_id) as total_messages,
+           (SELECT content FROM messages WHERE conversation_id = c.conversation_id ORDER BY message_id DESC LIMIT 1) as last_message
+    FROM conversations c
+    LEFT JOIN messages m ON c.conversation_id = m.conversation_id
+    WHERE c.tenant_id = ?
+    GROUP BY c.conversation_id
+    ORDER BY c.updated_at DESC
+    LIMIT ?
+    """, (tenant_id, limit))
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
 def create_db_order(
     tenant_id: str,
     amount: float,

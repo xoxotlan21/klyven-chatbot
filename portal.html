@@ -149,22 +149,62 @@
         }
 
         .sidebar-nav-btn:hover {
-            background: rgba(255, 255, 255, 0.75);
-            color: var(--text-primary);
+            background: rgba(235, 243, 252, 0.6);
+            color: #1849A9;
         }
 
         .sidebar-nav-btn:hover svg {
-            color: var(--text-primary);
+            color: #1849A9;
         }
 
         .sidebar-nav-btn.active {
-            background: #EAEFF7;
-            color: var(--text-primary);
-            font-weight: 600;
+            background: #EBF3FC;
+            color: #1849A9;
+            font-weight: 700;
         }
 
         .sidebar-nav-btn.active svg {
-            color: var(--btn-primary);
+            color: #1849A9;
+        }
+
+        .sidebar-sub-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: #475569;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sidebar-sub-link:hover {
+            background: #F1F5F9;
+            color: #0F1B31;
+        }
+
+        .conv-item {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #F8FAFC;
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .conv-item:hover {
+            background: #FFFFFF;
+            border-color: var(--accent-steel);
+        }
+
+        .conv-item.active {
+            background: #EBF3FC;
+            border-color: #3B82F6;
         }
 
         .sidebar-footer-card {
@@ -1346,46 +1386,71 @@
             <nav>
                 <ul class="sidebar-nav-list">
                     <li>
-                        <button class="sidebar-nav-btn" onclick="switchSection('negocio')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                        <button class="sidebar-nav-btn" data-sec="inicio" onclick="switchSection('inicio')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                            <span>Inicio</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="negocio" onclick="switchSection('negocio')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                             <span>Negocio</span>
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn active" onclick="switchSection('conocimiento')">
+                        <button class="sidebar-nav-btn active" data-sec="conocimiento" onclick="switchSection('conocimiento')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                             <span>Conocimiento</span>
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn" onclick="switchSection('apariencia')">
+                        <button class="sidebar-nav-btn" data-sec="apariencia" onclick="switchSection('apariencia')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
                             <span>Apariencia</span>
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn" onclick="switchSection('comportamiento')">
+                        <button class="sidebar-nav-btn" data-sec="comportamiento" onclick="switchSection('comportamiento')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
                             <span>Comportamiento</span>
                         </button>
                     </li>
                     <li>
-                        <button class="sidebar-nav-btn" onclick="switchSection('instalacion')">
+                        <button class="sidebar-nav-btn" data-sec="instalacion" onclick="switchSection('instalacion')">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                             <span>Instalación</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="conversaciones" onclick="switchSection('conversaciones')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            <span>Conversaciones</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="sidebar-nav-btn" data-sec="plan" onclick="switchSection('plan')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            <span>Uso del plan</span>
                         </button>
                     </li>
                 </ul>
             </nav>
 
-            <div class="sidebar-footer-card">
-                <div class="sidebar-footer-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-                </div>
-                <div class="sidebar-footer-info">
-                    <div class="sidebar-footer-title" id="sidebar_biz_display">Klyven Studio</div>
-                    <div class="sidebar-footer-sub">Plan Activo</div>
-                </div>
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 4px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+                <button class="sidebar-sub-link" onclick="switchSection('negocio')">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                        <span>Mi negocio</span>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <button class="sidebar-sub-link" onclick="switchSection('comportamiento')">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <span>Ajustes</span>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
             </div>
         </aside>
 
@@ -1406,6 +1471,99 @@
                         <span>Guardar y publicar</span>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
                     </button>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: INICIO (PANEL DE CONTROL)                    -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_inicio" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Panel de control</h2>
+                    <p>Visión general y estado en tiempo real del asistente para tu negocio.</p>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 14px;">
+                    <!-- KPI Cards Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+                        <div class="card" style="padding: 18px;">
+                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Estado del Asistente</span>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                                <span style="width: 10px; height: 10px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+                                <strong style="font-size: 1.15rem; color: var(--text-primary);">En línea</strong>
+                            </div>
+                            <span style="font-size: 0.72rem; color: #10B981; margin-top: 4px;">Listo para atender prospectos</span>
+                        </div>
+
+                        <div class="card" style="padding: 18px;">
+                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Servicios entrenados</span>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                                <strong style="font-size: 1.15rem; color: var(--text-primary);" id="kpi_services_count">3 activos</strong>
+                            </div>
+                            <span style="font-size: 0.72rem; color: var(--accent-steel); margin-top: 4px;">Cotización determinista</span>
+                        </div>
+
+                        <div class="card" style="padding: 18px;">
+                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Motor de Inteligencia</span>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                                <strong style="font-size: 1.15rem; color: var(--text-primary);">Google Gemini</strong>
+                            </div>
+                            <span style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">Respuestas en ~650 ms</span>
+                        </div>
+
+                        <div class="card" style="padding: 18px;">
+                            <span style="font-size: 0.78rem; color: var(--text-secondary); font-weight: 500;">Integración Web</span>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                                <strong style="font-size: 1.15rem; color: var(--text-primary);">Widget Listo</strong>
+                            </div>
+                            <span style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 4px;">Una línea de código</span>
+                        </div>
+                    </div>
+
+                    <!-- Acciones rápidas -->
+                    <div class="card">
+                        <div class="card-header-row">
+                            <div class="card-icon-badge">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            </div>
+                            <div class="card-header-titles">
+                                <h3>Acciones y accesos rápidos</h3>
+                                <p>Configura y pon en marcha tu chatbot paso a paso.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                            <div class="source-box" onclick="switchSection('conocimiento')">
+                                <div class="source-box-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                                </div>
+                                <div class="source-box-content">
+                                    <h4>Importar desde tu web</h4>
+                                    <p>Extrae catálogo, precios y políticas automáticamente.</p>
+                                </div>
+                            </div>
+
+                            <div class="source-box" onclick="switchSection('apariencia')">
+                                <div class="source-box-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
+                                </div>
+                                <div class="source-box-content">
+                                    <h4>Personalizar diseño</h4>
+                                    <p>Adapta colores de marca, tema y botón flotante.</p>
+                                </div>
+                            </div>
+
+                            <div class="source-box" onclick="switchSection('instalacion')">
+                                <div class="source-box-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                </div>
+                                <div class="source-box-content">
+                                    <h4>Copiar script de widget</h4>
+                                    <p>Integra el asistente en WordPress, Shopify o HTML.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1932,6 +2090,94 @@
                 </div>
             </div>
 
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: CONVERSACIONES                               -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_conversaciones" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Conversaciones de clientes</h2>
+                    <p>Historial de consultas e interacciones de usuarios en tu página web.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin-top: 14px;">
+                    <!-- Lista de sesiones -->
+                    <div class="card" style="padding: 16px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <strong style="font-size:0.9rem; color:var(--text-primary);">Sesiones</strong>
+                            <button class="btn-secondary" style="padding:4px 8px; font-size:0.75rem;" onclick="loadConversations()">Actualizar</button>
+                        </div>
+                        <div id="conversations_list" style="display:flex; flex-direction:column; gap:8px; max-height:450px; overflow-y:auto;">
+                            <!-- Cargado dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Mensajes de la sesión seleccionada -->
+                    <div class="card" style="padding: 18px; display:flex; flex-direction:column;">
+                        <div style="border-bottom:1px solid var(--border-subtle); padding-bottom:10px; margin-bottom:12px;">
+                            <strong style="font-size:0.95rem; color:var(--text-primary);">Transcripción de la conversación</strong>
+                            <div style="font-size:0.78rem; color:var(--text-secondary);">Mensajes directos entre el cliente y el asistente IA.</div>
+                        </div>
+                        <div id="conv_messages_detail" style="flex:1; max-height:400px; overflow-y:auto; padding:8px 4px;">
+                            <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                                Selecciona una conversación a la izquierda para inspeccionar los mensajes.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------------------- -->
+            <!-- SECCIÓN: USO DEL PLAN                                 -->
+            <!-- ----------------------------------------------------- -->
+            <div id="section_plan" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Uso del plan</h2>
+                    <p>Monitorea el consumo de consultas IA, disponibilidad y estado del servicio.</p>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 14px;">
+                    <div class="card">
+                        <div class="card-header-row">
+                            <div class="card-icon-badge">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            </div>
+                            <div class="card-header-titles">
+                                <h3>Plan Klyven Studio Activo</h3>
+                                <p>Suscripción con capacidad ilimitada de consultas y procesamiento inteligente.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 6px;">
+                            <div style="padding: 14px; background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: var(--radius-control);">
+                                <span style="font-size: 0.76rem; color: var(--text-secondary);">Nivel de Servicio</span>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-top: 4px;">Klyven Pro / Unlimited</div>
+                                <span style="font-size: 0.72rem; color: #10B981; font-weight: 600;">Suscripción activa</span>
+                            </div>
+
+                            <div style="padding: 14px; background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: var(--radius-control);">
+                                <span style="font-size: 0.76rem; color: var(--text-secondary);">Tiempo de respuesta promedio</span>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-top: 4px;">~650 ms</div>
+                                <span style="font-size: 0.72rem; color: var(--accent-steel);">Streaming ultra rápido</span>
+                            </div>
+
+                            <div style="padding: 14px; background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: var(--radius-control);">
+                                <span style="font-size: 0.76rem; color: var(--text-secondary);">Disponibilidad SLA</span>
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-top: 4px;">99.98%</div>
+                                <span style="font-size: 0.72rem; color: #10B981; font-weight: 600;">Servidores operativos</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 12px; padding: 14px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: var(--radius-control); display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <strong style="font-size: 0.88rem; color: #1E40AF;">¿Necesitas soporte técnico o integración personalizada?</strong>
+                                <p style="font-size: 0.78rem; color: #3B82F6; margin-top: 2px;">El equipo de Klyven Studio puede asistirte en la integración a medida en tu infraestructura.</p>
+                            </div>
+                            <a href="https://klyvenstudio.com" target="_blank" class="btn-topbar-save" style="text-decoration: none; padding: 8px 16px; font-size: 0.82rem;">Contactar soporte</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="code_box" style="display: none;"></div>
 
         </main>
@@ -2068,13 +2314,16 @@
         // CAMBIO DE SECCIÓN EN LA NAVEGACIÓN LATERAL
         // -----------------------------------------------------------------
         function switchSection(sectionName) {
-            const sections = ['negocio', 'conocimiento', 'apariencia', 'comportamiento', 'instalacion'];
+            const sections = ['inicio', 'negocio', 'conocimiento', 'apariencia', 'comportamiento', 'instalacion', 'conversaciones', 'plan'];
             const titles = {
+                'inicio': 'Inicio',
                 'negocio': 'Negocio',
                 'conocimiento': 'Conocimiento',
                 'apariencia': 'Apariencia',
                 'comportamiento': 'Comportamiento',
-                'instalacion': 'Instalación'
+                'instalacion': 'Instalación',
+                'conversaciones': 'Conversaciones',
+                'plan': 'Uso del plan'
             };
 
             sections.forEach(sec => {
@@ -2083,12 +2332,96 @@
             });
 
             document.querySelectorAll('.sidebar-nav-btn').forEach(btn => {
-                const text = btn.querySelector('span')?.innerText?.toLowerCase() || '';
-                btn.classList.toggle('active', text.includes(sectionName));
+                const idAttr = btn.getAttribute('data-sec');
+                btn.classList.toggle('active', idAttr === sectionName);
             });
 
             const bc = document.getElementById('breadcrumb_current');
             if (bc) bc.innerText = titles[sectionName] || 'Conocimiento';
+
+            if (sectionName === 'conversaciones') {
+                loadConversations();
+            }
+        }
+
+        async function loadConversations() {
+            const listEl = document.getElementById('conversations_list');
+            if (!listEl) return;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            listEl.innerHTML = '<div style="padding: 16px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">Cargando sesiones...</div>';
+
+            try {
+                const resp = await fetch(`/api/conversations?tenant_id=${encodeURIComponent(bizId)}`);
+                const data = await resp.json();
+                if (data.conversations && data.conversations.length > 0) {
+                    listEl.innerHTML = '';
+                    data.conversations.forEach((c, idx) => {
+                        const item = document.createElement('div');
+                        item.className = 'conv-item' + (idx === 0 ? ' active' : '');
+                        item.onclick = () => selectConversation(c.conversation_id, item);
+                        const dateStr = c.updated_at ? new Date(c.updated_at).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : 'Reciente';
+                        item.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                <strong style="font-size:0.84rem; color:var(--text-primary);">Sesión #${c.conversation_id.substring(0, 8)}</strong>
+                                <span style="font-size:0.72rem; color:var(--text-muted);">${dateStr}</span>
+                            </div>
+                            <div style="font-size:0.78rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.last_message || 'Conversación iniciada'}</div>
+                            <div style="font-size:0.72rem; color:#10B981; margin-top:4px; font-weight:600;">${c.total_messages || 1} mensajes</div>
+                        `;
+                        listEl.appendChild(item);
+                    });
+                    selectConversation(data.conversations[0].conversation_id, listEl.children[0]);
+                } else {
+                    listEl.innerHTML = `
+                        <div style="padding: 24px; text-align: center; color: var(--text-secondary);">
+                            <div style="font-size: 0.85rem; margin-bottom: 6px;">No hay conversaciones guardadas aún.</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">Usa el chat de prueba a la derecha para generar una sesión.</div>
+                        </div>
+                    `;
+                    document.getElementById('conv_messages_detail').innerHTML = `
+                        <div style="padding: 30px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                            Escribe una pregunta de prueba para ver el historial aquí.
+                        </div>
+                    `;
+                }
+            } catch(e) {
+                listEl.innerHTML = '<div style="padding: 16px; color: #EF4444; text-align: center; font-size: 0.82rem;">Error al cargar conversaciones.</div>';
+            }
+        }
+
+        async function selectConversation(convId, itemEl) {
+            document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+            if (itemEl) itemEl.classList.add('active');
+
+            const detailEl = document.getElementById('conv_messages_detail');
+            if (!detailEl) return;
+            detailEl.innerHTML = '<div style="padding: 20px; color: var(--text-secondary); text-align: center; font-size: 0.85rem;">Cargando mensajes...</div>';
+
+            try {
+                const resp = await fetch(`/api/conversations/${encodeURIComponent(convId)}/messages`);
+                const data = await resp.json();
+                if (data.messages && data.messages.length > 0) {
+                    detailEl.innerHTML = '';
+                    data.messages.forEach(m => {
+                        const isUser = m.role === 'user';
+                        const row = document.createElement('div');
+                        row.style.display = 'flex';
+                        row.style.justifyContent = isUser ? 'flex-end' : 'flex-start';
+                        row.style.margin = '8px 0';
+                        row.innerHTML = `
+                            <div style="max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; line-height: 1.45; ${isUser ? 'background: var(--brand-dynamic, #0F1B31); color: white;' : 'background: #F1F5F9; color: var(--text-primary); border: 1px solid #E2E8F0;'}">
+                                <strong>${isUser ? 'Cliente' : 'Asistente'}:</strong><br>
+                                ${formatRichText(m.content)}
+                            </div>
+                        `;
+                        detailEl.appendChild(row);
+                    });
+                } else {
+                    detailEl.innerHTML = '<div style="padding: 20px; color: var(--text-muted); text-align: center; font-size: 0.85rem;">Sin mensajes en esta sesión.</div>';
+                }
+            } catch(e) {
+                detailEl.innerHTML = '<div style="padding: 20px; color: #EF4444; text-align: center; font-size: 0.82rem;">Error al cargar mensajes.</div>';
+            }
         }
 
         function switchKnowledgeTab(tabName) {
