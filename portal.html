@@ -184,56 +184,282 @@
             font-weight: 500;
         }
 
-        /* Selector de Empresa Activa (Fiel al mockup) */
+        /* Selector de Empresa Activa (Custom SaaS Dropdown) */
         .tenant-switcher-container {
-            margin: 2px 0 6px 0;
+            margin: 2px 0 8px 0;
             display: flex;
             flex-direction: column;
             gap: 6px;
+            position: relative;
         }
 
         .tenant-switcher-label {
-            font-size: 0.66rem;
+            font-size: 0.64rem;
             font-weight: 700;
             color: var(--text-muted);
-            letter-spacing: 0.6px;
-            padding-left: 6px;
+            letter-spacing: 0.7px;
+            padding-left: 4px;
             text-transform: uppercase;
         }
 
-        .tenant-switcher-box {
+        .custom-tenant-trigger {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
-            padding: 9px 12px;
+            padding: 8px 10px;
             background: var(--surface-card);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            box-shadow: 0 1px 4px rgba(2, 12, 33, 0.03);
-            transition: border-color 0.15s ease;
-        }
-
-        .tenant-switcher-box:hover {
-            border-color: var(--border-subtle-strong);
-        }
-
-        .tenant-switcher-select {
+            box-shadow: 0 1px 3px rgba(2, 12, 33, 0.04);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
             width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 0.84rem;
+        }
+
+        .custom-tenant-trigger:hover {
+            border-color: var(--border-subtle-strong);
+            background: var(--surface-card-hover, var(--surface-card));
+        }
+
+        .custom-tenant-trigger.active {
+            border-color: var(--accent-steel);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .tenant-trigger-main {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .tenant-avatar-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(37, 99, 235, 0.22));
+            color: var(--accent-steel);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            overflow: hidden;
+        }
+
+        .tenant-avatar-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tenant-trigger-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            text-align: left;
+        }
+
+        .tenant-trigger-name {
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--text-primary);
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
         }
 
-        .tenant-switcher-select option {
+        .tenant-trigger-sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+            margin-top: 1px;
+        }
+
+        .tenant-chevron-icon {
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-tenant-trigger.active .tenant-chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Popover Menu */
+        .custom-tenant-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            z-index: 9999;
             background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            box-shadow: 0 12px 36px rgba(2, 12, 33, 0.14), 0 2px 6px rgba(2, 12, 33, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            max-height: 380px;
+            overflow-y: auto;
+            animation: tenantDropdownFadeIn 0.15s ease-out forwards;
+        }
+
+        @keyframes tenantDropdownFadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .custom-tenant-menu.open {
+            display: flex;
+        }
+
+        .tenant-menu-header {
+            padding: 6px 8px 4px 8px;
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .tenant-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .tenant-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background 0.12s ease;
+            gap: 8px;
+            position: relative;
+        }
+
+        .tenant-menu-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .tenant-menu-item.active {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .tenant-menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .tenant-menu-item-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .tenant-menu-item-name {
+            font-size: 0.8rem;
+            font-weight: 600;
             color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tenant-menu-item.active .tenant-menu-item-name {
+            font-weight: 700;
+            color: var(--accent-steel);
+        }
+
+        .tenant-menu-item-id {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tenant-menu-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .tenant-check-icon {
+            color: var(--accent-steel);
+        }
+
+        .tenant-del-btn {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.12s ease;
+            padding: 0;
+        }
+
+        .tenant-menu-item:hover .tenant-del-btn {
+            display: flex;
+        }
+
+        .tenant-del-btn:hover {
+            background: rgba(239, 68, 68, 0.12);
+            color: #EF4444;
+        }
+
+        .tenant-menu-divider {
+            height: 1px;
+            background: var(--border-subtle);
+            margin: 4px 0;
+        }
+
+        .tenant-menu-add-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 9px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-steel);
+            background: transparent;
+            border: 1px dashed rgba(37, 99, 235, 0.3);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+        .tenant-menu-add-btn:hover {
+            background: rgba(37, 99, 235, 0.08);
+            border-style: solid;
         }
 
         /* Grupos y Lista de Navegación */
@@ -3478,29 +3704,64 @@
             border: 1px solid rgba(255, 255, 255, 0.10) !important;
         }
 
-        /* Selector de Empresa Activa en Barra Lateral */
-        body.dark-mode .tenant-switcher-container {
-            background: transparent !important;
-            border: none !important;
-            padding: 0 !important;
-        }
-
-        body.dark-mode .tenant-switcher-box {
-            background: #141414 !important;
+        /* Selector de Empresa Activa en Barra Lateral (Pitch Black Dark Mode) */
+        body.dark-mode .custom-tenant-trigger {
+            background: #0D0D0D !important;
             border: 1px solid rgba(255, 255, 255, 0.10) !important;
         }
 
-        body.dark-mode .tenant-switcher-select {
-            color: #FFFFFF !important;
-            background: transparent !important;
-            appearance: none !important;
-            -webkit-appearance: none !important;
-            -moz-appearance: none !important;
+        body.dark-mode .custom-tenant-trigger:hover {
+            background: #151515 !important;
+            border-color: rgba(255, 255, 255, 0.20) !important;
         }
 
-        body.dark-mode .tenant-switcher-select option {
-            background: #141414 !important;
-            color: #FFFFFF !important;
+        body.dark-mode .custom-tenant-trigger.active {
+            border-color: #3B82F6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+        }
+
+        body.dark-mode .custom-tenant-menu {
+            background: #0D0D0D !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85) !important;
+        }
+
+        body.dark-mode .tenant-menu-item:hover {
+            background: #181818 !important;
+        }
+
+        body.dark-mode .tenant-menu-item.active {
+            background: rgba(59, 130, 246, 0.14) !important;
+        }
+
+        body.dark-mode .tenant-menu-item-name {
+            color: #EDEDED !important;
+        }
+
+        body.dark-mode .tenant-menu-item.active .tenant-menu-item-name {
+            color: #60A5FA !important;
+        }
+
+        body.dark-mode .tenant-menu-item-id {
+            color: #888888 !important;
+        }
+
+        body.dark-mode .tenant-del-btn:hover {
+            background: rgba(239, 68, 68, 0.22) !important;
+            color: #F87171 !important;
+        }
+
+        body.dark-mode .tenant-menu-divider {
+            background: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body.dark-mode .tenant-menu-add-btn {
+            border-color: rgba(59, 130, 246, 0.3) !important;
+            color: #60A5FA !important;
+        }
+
+        body.dark-mode .tenant-menu-add-btn:hover {
+            background: rgba(59, 130, 246, 0.12) !important;
         }
 
         /* Tarjetas de opciones pill-toggle (Forma, Posición, Geometría) */
@@ -3917,16 +4178,36 @@
             </div>
 
             <!-- SELECTOR DE NEGOCIO (RESOLVIENDO CONFUSIÓN DE 'MI NEGOCIO') -->
-            <div class="tenant-switcher-container">
+            <div class="tenant-switcher-container" id="custom_tenant_switcher_wrapper">
                 <span class="tenant-switcher-label">EMPRESA ACTIVA</span>
-                <div class="tenant-switcher-box">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-steel); flex-shrink: 0;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                    <select id="tenant_switcher" class="tenant-switcher-select" onchange="onSwitchTenantSelected(this.value)">
-                        <option value="KLYVEN-STUDIO">Klyven Studio</option>
-                        <option value="TRM">Traslados Riviera Maya</option>
-                    </select>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); flex-shrink: 0;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                
+                <!-- Trigger Button -->
+                <div class="custom-tenant-trigger" id="custom_tenant_trigger" onclick="toggleTenantDropdown(event)" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false">
+                    <div class="tenant-trigger-main">
+                        <div class="tenant-avatar-badge" id="tenant_trigger_badge">KS</div>
+                        <div class="tenant-trigger-info">
+                            <span class="tenant-trigger-name" id="tenant_trigger_name">Klyven Studio</span>
+                            <span class="tenant-trigger-sub" id="tenant_trigger_id">KLYVEN-STUDIO</span>
+                        </div>
+                    </div>
+                    <svg class="tenant-chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
+
+                <!-- Custom Popover Menu -->
+                <div class="custom-tenant-menu" id="custom_tenant_menu" role="listbox">
+                    <div class="tenant-menu-header">EMPRESAS REGISTRADAS</div>
+                    <div class="tenant-menu-list" id="tenant_menu_list">
+                        <!-- Items renderizados dinámicamente con JS -->
+                    </div>
+                    <div class="tenant-menu-divider"></div>
+                    <button type="button" class="tenant-menu-add-btn" onclick="addNewTenantPrompt(event)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <span>Registrar nueva empresa</span>
+                    </button>
+                </div>
+
+                <!-- Hidden native select para compatibilidad retroactiva -->
+                <select id="tenant_switcher" style="display:none;" onchange="onSwitchTenantSelected(this.value)"></select>
             </div>
 
             <nav class="sidebar-nav-scroll">
@@ -7270,41 +7551,218 @@
         }
 
         // =================================================================
-        // SELECTOR DE NEGOCIO & PERFIL DE USUARIO
+        // SELECTOR DE NEGOCIO & PERFIL DE USUARIO (CUSTOM SAAS DROPDOWN)
         // =================================================================
+        let allTenantsCache = [];
+
+        function getTenantInitials(name, tenantId) {
+            if (!name && !tenantId) return 'KS';
+            if (tenantId === 'KLYVEN-STUDIO') return 'KS';
+            const clean = (name || tenantId).trim();
+            const words = clean.split(/\s+/).filter(Boolean);
+            if (words.length >= 2) {
+                return (words[0][0] + words[1][0]).toUpperCase();
+            }
+            return clean.substring(0, 2).toUpperCase();
+        }
+
         async function loadTenantsDropdown() {
-            const sel = document.getElementById('tenant_switcher');
-            if (!sel) return;
             const urlParams = new URLSearchParams(window.location.search);
             const currentTenant = (urlParams.get('tenant') || document.getElementById('biz_id')?.value || 'KLYVEN-STUDIO').toUpperCase();
 
             try {
                 const resp = await fetch('/api/tenants');
                 const data = await resp.json();
-                const tenants = data.tenants || [];
-                if (tenants.length > 0) {
-                    sel.innerHTML = tenants.map(t => `
-                        <option value="${t.tenant_id}" ${t.tenant_id.toUpperCase() === currentTenant ? 'selected' : ''}>
-                            ${t.business_name} (${t.tenant_id})
-                        </option>
-                    `).join('');
-                    sel.innerHTML += '<option value="__NEW__">+ Registrar nueva empresa...</option>';
+                allTenantsCache = data.tenants || [];
+            } catch(e) {
+                console.warn('Error loading tenants:', e);
+                allTenantsCache = [
+                    { tenant_id: 'KLYVEN-STUDIO', business_name: 'Klyven Studio' }
+                ];
+            }
+
+            // Sincronizar select nativo oculto para compatibilidad
+            const sel = document.getElementById('tenant_switcher');
+            if (sel) {
+                sel.innerHTML = allTenantsCache.map(t => `
+                    <option value="${t.tenant_id}" ${t.tenant_id.toUpperCase() === currentTenant ? 'selected' : ''}>
+                        ${t.business_name} (${t.tenant_id})
+                    </option>
+                `).join('');
+            }
+
+            // Identificar empresa activa
+            let activeTenant = allTenantsCache.find(t => t.tenant_id.toUpperCase() === currentTenant);
+            if (!activeTenant) {
+                activeTenant = allTenantsCache.find(t => t.tenant_id.toUpperCase() === 'KLYVEN-STUDIO') || {
+                    tenant_id: currentTenant,
+                    business_name: currentTenant
+                };
+            }
+
+            updateTenantTriggerDisplay(activeTenant);
+            renderTenantMenuList(activeTenant.tenant_id);
+        }
+
+        function updateTenantTriggerDisplay(tenant) {
+            const nameEl = document.getElementById('tenant_trigger_name');
+            const idEl = document.getElementById('tenant_trigger_id');
+            const badgeEl = document.getElementById('tenant_trigger_badge');
+
+            if (nameEl) nameEl.textContent = tenant.business_name || tenant.tenant_id;
+            if (idEl) idEl.textContent = tenant.tenant_id;
+            if (badgeEl) {
+                if (tenant.tenant_id.toUpperCase() === 'KLYVEN-STUDIO') {
+                    badgeEl.innerHTML = '<img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="KS" onerror="this.parentElement.textContent=\'KS\'" style="width:100%;height:100%;object-fit:cover;border-radius:7px;" />';
+                } else {
+                    badgeEl.textContent = getTenantInitials(tenant.business_name, tenant.tenant_id);
                 }
-            } catch(e) {}
+            }
+        }
+
+        function renderTenantMenuList(activeId) {
+            const listEl = document.getElementById('tenant_menu_list');
+            if (!listEl) return;
+
+            if (allTenantsCache.length === 0) {
+                listEl.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text-muted);font-size:0.75rem;">No hay empresas registradas</div>';
+                return;
+            }
+
+            listEl.innerHTML = allTenantsCache.map(t => {
+                const isActive = t.tenant_id.toUpperCase() === (activeId || '').toUpperCase();
+                const isKlyven = t.tenant_id.toUpperCase() === 'KLYVEN-STUDIO';
+                const initials = getTenantInitials(t.business_name, t.tenant_id);
+                const avatarContent = isKlyven
+                    ? '<img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="KS" onerror="this.parentElement.textContent=\'KS\'" style="width:100%;height:100%;object-fit:cover;border-radius:7px;" />'
+                    : initials;
+
+                return `
+                    <div class="tenant-menu-item ${isActive ? 'active' : ''}" onclick="selectTenantItem('${t.tenant_id}')" role="option" aria-selected="${isActive}">
+                        <div class="tenant-menu-item-left">
+                            <div class="tenant-avatar-badge">${avatarContent}</div>
+                            <div class="tenant-menu-item-info">
+                                <span class="tenant-menu-item-name">${escapeHtml(t.business_name)}</span>
+                                <span class="tenant-menu-item-id">${t.tenant_id}</span>
+                            </div>
+                        </div>
+                        <div class="tenant-menu-item-actions">
+                            ${isActive ? '<svg class="tenant-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                            ${!isKlyven ? `
+                                <button type="button" class="tenant-del-btn" title="Eliminar empresa" onclick="deleteTenantItem(event, '${t.tenant_id}', '${escapeHtml(t.business_name || t.tenant_id)}')">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleTenantDropdown(e) {
+            if (e) e.stopPropagation();
+            const trigger = document.getElementById('custom_tenant_trigger');
+            const menu = document.getElementById('custom_tenant_menu');
+            if (!trigger || !menu) return;
+
+            const isOpen = menu.classList.contains('open');
+            if (isOpen) {
+                closeTenantDropdown();
+            } else {
+                menu.classList.add('open');
+                trigger.classList.add('active');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        function closeTenantDropdown() {
+            const trigger = document.getElementById('custom_tenant_trigger');
+            const menu = document.getElementById('custom_tenant_menu');
+            if (trigger) {
+                trigger.classList.remove('active');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+            if (menu) {
+                menu.classList.remove('open');
+            }
+        }
+
+        function selectTenantItem(tenantId) {
+            closeTenantDropdown();
+            onSwitchTenantSelected(tenantId);
+        }
+
+        async function deleteTenantItem(e, tenantId, tenantName) {
+            if (e) e.stopPropagation();
+            
+            const confirmed = await showConfirmModal({
+                title: '¿Eliminar empresa?',
+                message: `¿Estás seguro de que deseas eliminar permanentemente "${tenantName}" (${tenantId})? Se borrarán sus datos, conversaciones y configuraciones asociadas.`,
+                confirmText: 'Sí, eliminar',
+                cancelText: 'Cancelar',
+                isDestructive: true,
+                icon: 'trash'
+            });
+
+            if (!confirmed) return;
+
+            try {
+                const resp = await fetch(`/api/tenants/${encodeURIComponent(tenantId)}`, {
+                    method: 'DELETE'
+                });
+                const res = await resp.json();
+                if (res.ok) {
+                    showToast(`Empresa "${tenantName}" eliminada correctamente.`, 'success');
+                    
+                    // Si se eliminó la empresa activa, redirigir a KLYVEN-STUDIO
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const currentTenant = (urlParams.get('tenant') || 'KLYVEN-STUDIO').toUpperCase();
+                    if (currentTenant === tenantId.toUpperCase()) {
+                        window.location.search = '?tenant=KLYVEN-STUDIO';
+                    } else {
+                        await loadTenantsDropdown();
+                    }
+                } else {
+                    showToast(res.error || 'No se pudo eliminar la empresa.', 'error');
+                }
+            } catch(err) {
+                showToast('Error de red al eliminar la empresa.', 'error');
+            }
+        }
+
+        function addNewTenantPrompt(e) {
+            if (e) e.stopPropagation();
+            closeTenantDropdown();
+            const name = prompt('Nombre de la nueva empresa o cliente:');
+            if (!name || !name.trim()) return;
+            const newId = name.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+            const bName = document.getElementById('biz_name');
+            const bId = document.getElementById('biz_id');
+            if (bName) bName.value = name.trim();
+            if (bId) bId.value = newId;
+            window.location.search = `?tenant=${encodeURIComponent(newId)}`;
         }
 
         function onSwitchTenantSelected(val) {
             if (val === '__NEW__') {
-                const name = prompt('Nombre de la nueva empresa o cliente:');
-                if (!name) return loadTenantsDropdown();
-                const newId = name.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
-                document.getElementById('biz_name').value = name;
-                document.getElementById('biz_id').value = newId;
-                window.location.search = `?tenant=${encodeURIComponent(newId)}`;
-                return;
+                return addNewTenantPrompt();
             }
             window.location.search = `?tenant=${encodeURIComponent(val)}`;
         }
+
+        // Cierre de dropdown al hacer clic fuera o pulsar Escape
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('custom_tenant_switcher_wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeTenantDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeTenantDropdown();
+            }
+        });
 
         function openBillingModal() {
             document.getElementById('modal_facturacion').style.display = 'flex';

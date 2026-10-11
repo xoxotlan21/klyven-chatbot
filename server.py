@@ -1020,6 +1020,16 @@ def api_list_tenants():
     return {"tenants": list_all_tenants()}
 
 
+@app.delete("/api/tenants/{tenant_id}")
+def api_delete_tenant(tenant_id: str):
+    """Elimina un tenant de prueba (protege KLYVEN-STUDIO)."""
+    from database import delete_tenant
+    ok = delete_tenant(tenant_id)
+    if ok:
+        return {"status": "success", "message": f"Tenant {tenant_id} eliminado exitosamente"}
+    return {"status": "error", "message": f"No se pudo eliminar el tenant {tenant_id}"}
+
+
 @app.get("/api/conversations")
 def get_conversations(tenant_id: str = "KLYVEN-STUDIO"):
     """Lista las conversaciones y sesiones de chat registradas para un tenant."""
