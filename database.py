@@ -407,6 +407,28 @@ def get_tenant_leads(tenant_id: str, limit: int = 100) -> List[Dict[str, Any]]:
     return [dict(r) for r in rows]
 
 
+def delete_lead(lead_id: int) -> bool:
+    """Elimina un prospecto por su ID."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM leads WHERE lead_id = ?", (lead_id,))
+    deleted = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return deleted
+
+
+def clear_tenant_leads(tenant_id: str) -> int:
+    """Limpia todos los prospectos de un tenant."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM leads WHERE tenant_id = ?", (tenant_id,))
+    count = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return count
+
+
 # ==============================================================================
 # 6. OPERACIONES DE PREGUNTAS SIN RESOLVER (KNOWLEDGE GAPS)
 # ==============================================================================

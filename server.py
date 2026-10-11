@@ -57,6 +57,8 @@ from database import (
     list_all_tenants,
     save_lead,
     get_tenant_leads,
+    delete_lead,
+    clear_tenant_leads,
     save_unresolved_question,
     get_unresolved_questions,
     resolve_unresolved_question,
@@ -837,6 +839,21 @@ def api_get_leads(tenant_id: str = "KLYVEN-STUDIO"):
     leads = get_tenant_leads(tenant_id)
     return {"status": "success", "leads": leads, "count": len(leads)}
 
+@app.delete("/api/leads/{lead_id}")
+def api_delete_lead(lead_id: int):
+    """Elimina un prospecto por su ID."""
+    ok = delete_lead(lead_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Lead no encontrado")
+    return {"status": "success", "message": "Prospecto eliminado con éxito"}
+
+@app.post("/api/leads/clear-all")
+def api_clear_leads(tenant_id: str = "KLYVEN-STUDIO"):
+    """Limpia todos los prospectos de un tenant."""
+    t_id = tenant_id.strip().upper()
+    count = clear_tenant_leads(t_id)
+    return {"status": "success", "message": f"{count} prospectos eliminados"}
+
 @app.get("/api/leads/export-csv")
 def api_export_leads_csv(tenant_id: str = "KLYVEN-STUDIO"):
     """Descarga un archivo CSV con formato UTF-8 listo para abrir directamente en Microsoft Excel."""
@@ -1352,13 +1369,17 @@ def api_chat(payload: ChatRequest):
     msg_text = payload.message
     email_m = re.search(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', msg_text)
     phone_m = re.search(r'(?:\+?52\s?)?(?:\(?\d{2,3}\)?[-.\s]?)?\d{3,4}[-.\s]?\d{4}', msg_text)
+    name_m = re.search(r'(?:me llamo|mi nombre es|soy)\s+([A-Za-záéíóúÁÉÍÓÚñÑ]+(?:\s+[A-Za-záéíóúÁÉÍÓÚñÑ]+)?)', msg_text, re.IGNORECASE)
+    extracted_name = name_m.group(1).strip().title() if name_m else None
+    resolved_lead_name = datos_operativos.get("nombre_cliente") or extracted_name or "Prospecto Web"
+
     if email_m or phone_m:
         contact_str = email_m.group(0) if email_m else phone_m.group(0)
         try:
             lead_id = save_lead(
                 tenant_id=matched_tenant.business_id,
                 session_id=session_id,
-                customer_name=datos_operativos.get("nombre_cliente") or "",
+                customer_name=resolved_lead_name,
                 contact_info=contact_str,
                 service_interest=datos_operativos.get("id_sku_seleccionado") or "",
                 notes=msg_text[:200]
@@ -1368,7 +1389,7 @@ def api_chat(payload: ChatRequest):
                 lead_data={
                     "lead_id": lead_id,
                     "session_id": session_id,
-                    "customer_name": datos_operativos.get("nombre_cliente") or "",
+                    "customer_name": resolved_lead_name,
                     "contact_info": contact_str,
                     "service_interest": datos_operativos.get("id_sku_seleccionado") or "",
                     "notes": msg_text[:200]

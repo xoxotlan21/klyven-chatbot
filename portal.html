@@ -3936,9 +3936,14 @@
                                 <strong style="font-size: 0.95rem; color: var(--text-primary);">Prospectos registrados</strong>
                                 <span id="leads_count_label" style="font-size: 0.8rem; color: var(--text-secondary); margin-left: 6px;">(0 registrados)</span>
                             </div>
-                            <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadLeads()">
-                                Actualizar lista
-                            </button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadLeads()">
+                                    Actualizar lista
+                                </button>
+                                <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; color: #DC2626;" onclick="clearAllLeads()">
+                                    🧹 Limpiar prospectos de prueba
+                                </button>
+                            </div>
                         </div>
 
                         <div id="leads_empty_box" style="padding: 40px 20px; text-align: center; color: var(--text-secondary);">
@@ -3957,7 +3962,8 @@
                                         <th style="padding: 10px 14px;">Nombre</th>
                                         <th style="padding: 10px 14px;">Contacto</th>
                                         <th style="padding: 10px 14px;">Interés</th>
-                                        <th style="padding: 10px 14px; border-radius: 0 8px 8px 0;">Mensaje / Consulta</th>
+                                        <th style="padding: 10px 14px;">Mensaje / Consulta</th>
+                                        <th style="padding: 10px 14px; text-align: right; border-radius: 0 8px 8px 0;">Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="leads_tbody"></tbody>
@@ -6803,6 +6809,9 @@
                                 <td style="padding: 12px 14px;">${contactHtml}</td>
                                 <td style="padding: 12px 14px; color: var(--text-secondary);"><span style="background:#F1F5F9; padding:2px 8px; border-radius:10px; font-size:0.78rem;">${escapeHtml(l.service_interest || 'General')}</span></td>
                                 <td style="padding: 12px 14px; color: var(--text-secondary); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(l.notes || '')}">${escapeHtml(l.notes || '-')}</td>
+                                <td style="padding: 12px 14px; text-align: right;">
+                                    <button class="btn-bk-action btn-bk-delete" onclick="deleteLead(${l.lead_id})" title="Eliminar prospecto">🗑️</button>
+                                </td>
                             `;
                             tbody.appendChild(tr);
                         });
@@ -6813,6 +6822,40 @@
                 }
             } catch(e) {
                 if (emptyBox) emptyBox.innerHTML = '<div style="color:#EF4444; padding:20px;">Error al cargar lista de prospectos.</div>';
+            }
+        }
+
+        async function deleteLead(leadId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este prospecto?')) return;
+            try {
+                const resp = await fetch(`/api/leads/${encodeURIComponent(leadId)}`, {
+                    method: 'DELETE'
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadLeads();
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function clearAllLeads() {
+            if (!confirm('¿Deseas limpiar todos los prospectos de prueba para iniciar en limpio con tus clientes reales?')) return;
+            const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
+            try {
+                const resp = await fetch(`/api/leads/clear-all?tenant_id=${encodeURIComponent(bizId)}`, {
+                    method: 'POST'
+                });
+                const res = await resp.json();
+                if (res.status === 'success') {
+                    await loadLeads();
+                    alert('Prospectos limpiados con éxito.');
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
             }
         }
 
