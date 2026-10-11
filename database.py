@@ -352,6 +352,55 @@ def seed_default_users():
         )
 
 
+def login_or_create_google_user(email: str, full_name: str, picture: str = "") -> Dict[str, Any]:
+    """Inicia sesión o registra automáticamente un usuario a través de Google OAuth."""
+    email_clean = email.strip().lower()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE LOWER(email) = ?", (email_clean,))
+    row = cursor.fetchone()
+
+    new_token = generate_session_token()
+
+    if row:
+        # Usuario ya existe: rotar y asignar nuevo token
+        user = dict(row)
+        cursor.execute("UPDATE users SET session_token = ? WHERE user_id = ?", (new_token, user["user_id"]))
+        conn.commit()
+        conn.close()
+        user["token"] = new_token
+        user["subscription_status"] = user.get("subscription_status") or ("active" if user.get("role") == "superadmin" else "inactive")
+        user.pop("password_hash", None)
+        user.pop("salt", None)
+        return user
+    else:
+        conn.close()
+        # Usuario nuevo: crear tenant y cuenta automáticamente
+        safe_name = full_name.strip() or email_clean.split("@")[0].capitalize()
+        slug = re.sub(r"[^A-Za-z0-9]+", "-", safe_name).strip("-").upper()
+        if not slug:
+            slug = "BIZ"
+        tenant_id = f"{slug[:10]}-{uuid.uuid4().hex[:4].upper()}"
+
+        save_or_update_tenant(
+            tenant_id=tenant_id,
+            business_name=f"Negocio de {safe_name}",
+            industry="Servicios",
+            currency="USD"
+        )
+
+        random_pwd = secrets.token_urlsafe(18)
+        user = create_user(
+            email=email_clean,
+            password=random_pwd,
+            full_name=safe_name,
+            tenant_id=tenant_id,
+            role="admin",
+            subscription_status="inactive"
+        )
+        return user
+
+
 def get_subscription_status(tenant_id: str) -> str:
     """Obtiene el estado de suscripción de un tenant ('active', 'inactive')."""
     if not tenant_id:

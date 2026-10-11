@@ -76,7 +76,8 @@ from database import (
     logout_user,
     get_tenant_by_whatsapp,
     get_subscription_status,
-    update_subscription_status
+    update_subscription_status,
+    login_or_create_google_user
 )
 
 class RegisterRequest(BaseModel):
@@ -89,6 +90,12 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+class GoogleLoginRequest(BaseModel):
+    credential: Optional[str] = None
+    email: Optional[str] = None
+    name: Optional[str] = None
+    picture: Optional[str] = None
 
 class ChatRequest(BaseModel):
     tenant_id: str
@@ -506,6 +513,48 @@ def api_login_user(req: LoginRequest):
     return {
         "status": "success",
         "message": "Inicio de sesión exitoso",
+        "token": user["token"],
+        "user": user,
+        "tenant_id": user["tenant_id"],
+        "subscription_status": sub_status,
+        "business_name": tenant.get("business_name", user["tenant_id"])
+    }
+
+
+@app.post("/api/auth/google")
+def api_google_auth(req: GoogleLoginRequest):
+    """Autentica o registra a un usuario instantáneamente con su cuenta de Google."""
+    email = req.email
+    name = req.name or ""
+    picture = req.picture or ""
+
+    if req.credential:
+        try:
+            import base64
+            parts = req.credential.split(".")
+            if len(parts) >= 2:
+                payload_b64 = parts[1]
+                payload_b64 += "=" * (-len(payload_b64) % 4)
+                payload_json = json.loads(base64.urlsafe_b64decode(payload_b64).decode("utf-8"))
+                email = payload_json.get("email")
+                name = payload_json.get("name") or (email.split("@")[0] if email else "")
+                picture = payload_json.get("picture") or ""
+        except Exception as e:
+            print(f"[Google Auth Decode Error] {e}")
+
+    if not email or "@" not in email:
+        raise HTTPException(status_code=400, detail="Credenciales de Google no válidas")
+
+    user = login_or_create_google_user(email=email, full_name=name, picture=picture)
+    if not user:
+        raise HTTPException(status_code=500, detail="No se pudo procesar el inicio de sesión con Google")
+
+    tenant = get_tenant_by_id(user["tenant_id"]) or {}
+    sub_status = user.get("subscription_status") or get_subscription_status(user["tenant_id"])
+
+    return {
+        "status": "success",
+        "message": "Autenticación con Google exitosa",
         "token": user["token"],
         "user": user,
         "tenant_id": user["tenant_id"],
