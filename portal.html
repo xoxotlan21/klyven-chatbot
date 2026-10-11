@@ -8,6 +8,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('klyven_portal_theme') === 'dark') {
+                    document.documentElement.classList.add('dark-mode');
+                }
+            } catch(e) {}
+        })();
+    </script>
     <style>
         :root {
             --bg-page: #E6EDF6;
@@ -43,34 +52,43 @@
             --brand-dynamic: #0F1B31;
         }
 
+        html {
+            background-color: var(--bg-page);
+            min-height: 100%;
+        }
+
+        html.dark-mode {
+            background-color: #000000;
+        }
+
         body.dark-mode {
-            --bg-page: #020C21;
+            --bg-page: #000000;
             --bg-wallpaper: url('/assets/bg-dark.png');
-            --surface-card: rgba(15, 27, 49, 0.94);
-            --surface-card-hover: rgba(20, 36, 65, 0.98);
-            --surface-white: #0F1B31;
-            --surface-translucent: rgba(15, 27, 49, 0.92);
-            --surface-glass: rgba(15, 27, 49, 0.88);
-            --surface-nested: rgba(8, 16, 31, 0.65);
-            --surface-input: rgba(8, 16, 31, 0.85);
-            --text-primary: #F4F7FC;
-            --text-secondary: #B2BED2;
-            --text-muted: #73829C;
+            --surface-card: #0D0D0D;
+            --surface-card-hover: #141414;
+            --surface-white: #0D0D0D;
+            --surface-translucent: rgba(13, 13, 13, 0.94);
+            --surface-glass: rgba(13, 13, 13, 0.92);
+            --surface-nested: #171717;
+            --surface-input: #151515;
+            --text-primary: #F5F5F5;
+            --text-secondary: #A3A3A3;
+            --text-muted: #737373;
             --btn-primary: #FFFFFF;
-            --btn-primary-hover: #E2E8F0;
-            --btn-primary-text: #020C21;
-            --nav-active-bg: #1E2D4A;
+            --btn-primary-hover: #E5E5E5;
+            --btn-primary-text: #000000;
+            --nav-active-bg: #222222;
             --nav-active-text: #FFFFFF;
-            --accent-steel: #4A78B0;
-            --accent-soft: rgba(74, 120, 176, 0.2);
-            --accent-icon-box: rgba(59, 130, 246, 0.18);
-            --accent-icon-color: #60A5FA;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-subtle-strong: rgba(255, 255, 255, 0.16);
+            --accent-steel: #5282B8;
+            --accent-soft: rgba(255, 255, 255, 0.08);
+            --accent-icon-box: #1C1C1C;
+            --accent-icon-color: #E5E5E5;
+            --border-subtle: rgba(255, 255, 255, 0.10);
+            --border-subtle-strong: rgba(255, 255, 255, 0.20);
             --border-translucent: rgba(255, 255, 255, 0.12);
-            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
-            --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45);
-            --shadow-floating: 0 12px 36px rgba(0, 0, 0, 0.5);
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.7);
+            --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.85);
+            --shadow-floating: 0 12px 36px rgba(0, 0, 0, 0.9);
             --brand-dynamic: #FFFFFF;
         }
 
@@ -507,7 +525,7 @@
 
         .btn-topbar-save {
             background: var(--btn-primary);
-            color: #FFFFFF;
+            color: var(--btn-primary-text, #FFFFFF);
             border: none;
             padding: 10px 20px;
             border-radius: var(--radius-control);
@@ -3254,6 +3272,523 @@
             filter: brightness(0.9);
             transform: translateY(-1px);
         }
+
+        /* ============================================================= */
+        /* MODO OSCURO NEGRO PURO (PITCH BLACK OVERHAUL & DARK CONTROLS) */
+        /* ============================================================= */
+
+        /* 1. Entradas de formulario, selectores y áreas de texto */
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="url"],
+        body.dark-mode input[type="number"],
+        body.dark-mode input[type="password"],
+        body.dark-mode input[type="search"],
+        body.dark-mode input[type="email"],
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background: #141414 !important;
+            color: #F5F5F5 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+
+        body.dark-mode input[type="text"]:focus,
+        body.dark-mode input[type="url"]:focus,
+        body.dark-mode input[type="number"]:focus,
+        body.dark-mode input[type="password"]:focus,
+        body.dark-mode input[type="search"]:focus,
+        body.dark-mode input[type="email"]:focus,
+        body.dark-mode select:focus,
+        body.dark-mode textarea:focus {
+            background: #1C1C1C !important;
+            color: #FFFFFF !important;
+            border-color: rgba(255, 255, 255, 0.38) !important;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body.dark-mode input[readonly] {
+            background: #101010 !important;
+            color: #A3A3A3 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body.dark-mode select option {
+            background: #141414 !important;
+            color: #F5F5F5 !important;
+        }
+
+        body.dark-mode .url-action-bar input,
+        body.dark-mode #direct_chat_url_input {
+            background: #141414 !important;
+            color: #FFFFFF !important;
+        }
+
+        /* 2. Botón principal Guardar y publicar y botones de acción */
+        body.dark-mode .btn-topbar-save {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        body.dark-mode .btn-topbar-save:hover {
+            background: #E5E5E5 !important;
+            color: #000000 !important;
+        }
+
+        body.dark-mode .btn-topbar-save svg {
+            stroke: #000000 !important;
+        }
+
+        body.dark-mode .btn-talk-web,
+        body.dark-mode .btn-check-install {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        body.dark-mode .btn-talk-web svg,
+        body.dark-mode .btn-check-install svg {
+            stroke: #000000 !important;
+        }
+
+        body.dark-mode .btn-analyze {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+        }
+
+        body.dark-mode .btn-analyze svg {
+            stroke: #000000 !important;
+        }
+
+        body.dark-mode .btn-secondary {
+            background: #1E1E1E !important;
+            color: #D4D4D4 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        }
+
+        body.dark-mode .btn-secondary:hover {
+            background: #282828 !important;
+            color: #FFFFFF !important;
+        }
+
+        /* 3. Barra lateral (Sidebar) en negro y gris carbón */
+        body.dark-mode .sidebar {
+            background: rgba(10, 10, 10, 0.94) !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7) !important;
+        }
+
+        body.dark-mode .sidebar-nav-btn.active {
+            background: #222222 !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        body.dark-mode .sidebar-nav-btn.active svg {
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .sidebar-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #FFFFFF;
+        }
+
+        body.dark-mode .sidebar-nav-btn:hover svg {
+            color: #FFFFFF;
+        }
+
+        body.dark-mode .tenant-switcher-box {
+            background: #141414 !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .tenant-switcher-select {
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .tenant-switcher-select option {
+            background: #141414 !important;
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .sidebar-profile-card {
+            background: #121212 !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        body.dark-mode .profile-action-btn {
+            background: #1A1A1A !important;
+            color: #D4D4D4 !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body.dark-mode .profile-action-btn:hover {
+            background: #262626 !important;
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .profile-action-btn.logout:hover {
+            background: rgba(239, 68, 68, 0.15) !important;
+            color: #F87171 !important;
+        }
+
+        body.dark-mode .sidebar-theme-btn {
+            background: #161616 !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            color: #D4D4D4 !important;
+        }
+
+        body.dark-mode .sidebar-theme-btn:hover {
+            background: #222222 !important;
+            color: #FFFFFF !important;
+        }
+
+        /* 4. Vista previa de Chatbot (Columna derecha) */
+        body.dark-mode .preview-card-wrapper {
+            background: #0D0D0D !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7) !important;
+        }
+
+        body.dark-mode .device-toggle-group {
+            background: #1A1A1A !important;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.dark-mode .device-toggle-btn {
+            color: #A3A3A3;
+        }
+
+        body.dark-mode .device-toggle-btn.active {
+            background: #2A2A2A !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .mockup-window {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75) !important;
+        }
+
+        body.dark-mode .btn-send-mock {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+        }
+
+        body.dark-mode .btn-send-mock svg {
+            stroke: #000000 !important;
+        }
+
+        body.dark-mode #test_input {
+            background: #141414 !important;
+            border-color: rgba(255, 255, 255, 0.14) !important;
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode #test_input:focus {
+            background: #1C1C1C !important;
+            border-color: rgba(255, 255, 255, 0.40) !important;
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .mock-chip-btn {
+            background: #1A1A1A !important;
+            border-color: rgba(255, 255, 255, 0.14) !important;
+            color: #F5F5F5 !important;
+        }
+
+        body.dark-mode .mock-chip-btn:hover {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            border-color: #FFFFFF !important;
+        }
+
+        body.dark-mode .mock-theme-dark,
+        body.dark-mode .mock-theme-dark .mock-header,
+        body.dark-mode .mock-theme-dark .mock-input-wrap {
+            background: #121212 !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .mock-theme-dark .mock-body {
+            background: #080808 !important;
+        }
+
+        body.dark-mode .mock-theme-dark .mock-bubble-bot {
+            background: #1A1A1A !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            color: #F5F5F5 !important;
+        }
+
+        body.dark-mode .publish-status-card {
+            background: #0D0D0D !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        /* 5. Tarjetas, listas y componentes en todas las pestañas */
+        body.dark-mode .card {
+            background: #0D0D0D !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+        }
+
+        body.dark-mode .service-row {
+            background: #141414 !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .service-row:hover {
+            background: #1A1A1A !important;
+            border-color: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        body.dark-mode .service-row input {
+            background: #0D0D0D !important;
+            color: #FFFFFF !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        body.dark-mode .source-box {
+            background: #141414 !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .source-box:hover {
+            background: #1C1C1C !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        body.dark-mode .source-box-icon {
+            background: #1E1E1E !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .subtab-btn {
+            background: transparent;
+            color: #A3A3A3;
+            border-color: rgba(255, 255, 255, 0.10);
+        }
+
+        body.dark-mode .subtab-btn:hover {
+            background: #1A1A1A;
+            color: #FFFFFF;
+        }
+
+        body.dark-mode .subtab-btn.active {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            border-color: #FFFFFF !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        body.dark-mode .subtab-btn.active .subtab-count-badge {
+            background: #000000 !important;
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .subtab-count-badge {
+            background: #262626 !important;
+            color: #E5E5E5 !important;
+        }
+
+        body.dark-mode .theme-item-card {
+            background: #141414 !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .theme-item-card.active {
+            background: #1E1E1E !important;
+            border-color: #FFFFFF !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        body.dark-mode .booking-card {
+            background: #141414 !important;
+            border: 1px solid rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .booking-card:hover {
+            background: #1A1A1A !important;
+            border-color: rgba(255, 255, 255, 0.22) !important;
+        }
+
+        body.dark-mode .conv-item {
+            padding: 12px 14px;
+            background: #141414 !important;
+            border: 1px solid rgba(255, 255, 255, 0.09) !important;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.16s ease;
+        }
+
+        body.dark-mode .conv-item:hover {
+            background: #1C1C1C !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        body.dark-mode .conv-item.active {
+            background: #222222 !important;
+            border-color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        body.dark-mode table thead tr {
+            background: #141414 !important;
+            color: #D4D4D4 !important;
+        }
+
+        body.dark-mode table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        body.dark-mode table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        /* 6. Modales, alertas y ventanas emergentes */
+        body.dark-mode .custom-modal-overlay {
+            background: rgba(0, 0, 0, 0.85) !important;
+        }
+
+        body.dark-mode .custom-modal-window {
+            background: #121212 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85) !important;
+            color: #F5F5F5 !important;
+        }
+
+        body.dark-mode .modal-header-bar,
+        body.dark-mode .modal-footer-bar {
+            border-color: rgba(255, 255, 255, 0.10) !important;
+        }
+
+        body.dark-mode .paywall-window {
+            background: rgba(14, 14, 14, 0.96) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95) !important;
+            color: #F5F5F5 !important;
+        }
+
+        body.dark-mode .paywall-benefit-icon {
+            background: #1C1C1C !important;
+            color: #8EB8EB !important;
+        }
+
+        body.dark-mode .paywall-btn-stripe {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        body.dark-mode .paywall-btn-stripe svg {
+            stroke: #000000 !important;
+        }
+
+        body.dark-mode .paywall-btn-whatsapp {
+            background: #181818 !important;
+            color: #FFFFFF !important;
+            border-color: rgba(255, 255, 255, 0.20) !important;
+        }
+
+        body.dark-mode .paywall-btn-whatsapp:hover {
+            background: #242424 !important;
+        }
+
+        body.dark-mode .klyven-confirm-card {
+            background: #141414 !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9) !important;
+        }
+
+        body.dark-mode .klyven-confirm-title {
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .klyven-confirm-desc {
+            color: #A3A3A3 !important;
+        }
+
+        body.dark-mode .klyven-confirm-btn-cancel {
+            background: #1E1E1E !important;
+            color: #D4D4D4 !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        body.dark-mode .klyven-toast {
+            background: #141414 !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8) !important;
+        }
+
+        body.dark-mode .klyven-toast-title {
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode .klyven-toast-msg {
+            color: #A3A3A3 !important;
+        }
+
+        /* 7. Selectores de atributos para estilos en línea claros */
+        body.dark-mode [style*="background:#F0FDF4"],
+        body.dark-mode [style*="background: #F0FDF4"] {
+            background: rgba(16, 185, 129, 0.12) !important;
+            border-color: rgba(16, 185, 129, 0.25) !important;
+            color: #34D399 !important;
+        }
+
+        body.dark-mode [style*="background:#F8FAFC"],
+        body.dark-mode [style*="background: #F8FAFC"],
+        body.dark-mode [style*="background:#F1F5F9"],
+        body.dark-mode [style*="background: #F1F5F9"],
+        body.dark-mode [style*="background:#F0F4FA"],
+        body.dark-mode [style*="background: #F0F4FA"] {
+            background: #141414 !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            color: #E5E5E5 !important;
+        }
+
+        body.dark-mode [style*="background:#FFFFFF"],
+        body.dark-mode [style*="background: #FFFFFF"],
+        body.dark-mode [style*="background:#ffffff"],
+        body.dark-mode [style*="background: #ffffff"] {
+            background: #121212 !important;
+            border-color: rgba(255, 255, 255, 0.10) !important;
+            color: #F5F5F5 !important;
+        }
+
+        body.dark-mode [style*="color:#020C21"],
+        body.dark-mode [style*="color: #020C21"],
+        body.dark-mode [style*="color:#0F1B31"],
+        body.dark-mode [style*="color: #0F1B31"] {
+            color: #FFFFFF !important;
+        }
+
+        body.dark-mode [style*="color:#59627E"],
+        body.dark-mode [style*="color: #59627E"],
+        body.dark-mode [style*="color:#475569"],
+        body.dark-mode [style*="color: #475569"] {
+            color: #A3A3A3 !important;
+        }
+
+        body.dark-mode [style*="background: #EEF2FF"],
+        body.dark-mode [style*="background:#EEF2FF"] {
+            background: rgba(79, 70, 229, 0.15) !important;
+            color: #818CF8 !important;
+        }
+
+        body.dark-mode [style*="background: #FEF3C7"],
+        body.dark-mode [style*="background:#FEF3C7"] {
+            background: rgba(217, 119, 6, 0.15) !important;
+            color: #FBBF24 !important;
+        }
+
+        body.dark-mode #btn_google_signin {
+            background: #1C1C1C !important;
+            color: #FFFFFF !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+        }
     </style>
 </head>
 <body>
@@ -5497,6 +6032,7 @@
         function applyPortalTheme(theme) {
             const isDark = (theme === 'dark');
             document.body.classList.toggle('dark-mode', isDark);
+            document.documentElement.classList.toggle('dark-mode', isDark);
             
             const btnText = document.getElementById('portal_theme_text');
             const btnIcon = document.getElementById('portal_theme_icon');
