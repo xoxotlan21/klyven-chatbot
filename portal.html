@@ -2558,6 +2558,141 @@
             gap: 10px;
             background: #F8FAFC;
         }
+
+        /* ------------------------------------------------------------- */
+        /* REDISEÑO MODAL PAYWALL (LIQUID GLASS ELEGANTE KLYVEN STUDIO)   */
+        /* ------------------------------------------------------------- */
+        #modal_paywall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 27, 49, 0.28);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99998;
+            padding: 24px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .paywall-window {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 24px 60px rgba(15, 27, 49, 0.12), 0 2px 8px rgba(15, 27, 49, 0.04);
+            border-radius: 28px;
+            max-width: 960px;
+            width: 100%;
+            padding: 40px 44px 24px 44px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        .paywall-grid {
+            display: grid;
+            grid-template-columns: 1.16fr 0.94fr;
+            gap: 36px;
+            align-items: stretch;
+        }
+
+        .paywall-benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .paywall-benefit-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #EEF4FC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4A78B0;
+            flex-shrink: 0;
+        }
+
+        .paywall-btn-stripe {
+            width: 100%;
+            height: 52px;
+            background: #0F1B31;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 13px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(15, 27, 49, 0.16);
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .paywall-btn-stripe:hover {
+            background: #020C21;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(15, 27, 49, 0.24);
+        }
+
+        .paywall-btn-stripe:active {
+            transform: translateY(0);
+        }
+
+        .paywall-btn-whatsapp {
+            width: 100%;
+            height: 50px;
+            background: #FFFFFF;
+            color: #0F1B31;
+            border: 1.5px solid #0F1B31;
+            border-radius: 13px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            transition: all 0.2s ease;
+            margin-bottom: 14px;
+            font-family: inherit;
+        }
+
+        .paywall-btn-whatsapp:hover {
+            background: #F8FAFC;
+            transform: translateY(-1px);
+            border-color: #020C21;
+        }
+
+        .paywall-btn-whatsapp:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 860px) {
+            .paywall-window {
+                padding: 28px 20px 20px 20px;
+                border-radius: 22px;
+                max-height: 94vh;
+            }
+            .paywall-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -4514,68 +4649,133 @@
             </div>
 
             <!-- 5. Modal Paywall de Activación / Cobro Obligatorio (Stripe + WhatsApp) -->
-            <div id="modal_paywall" class="custom-modal-overlay" style="display: none; z-index: 99998; background: rgba(15, 27, 49, 0.88); backdrop-filter: blur(12px);">
-                <div class="custom-modal-window" style="max-width: 520px; width: 94%; padding: 32px 28px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center;">
-                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; font-size: 1.6rem; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);">
-                        🔒
-                    </div>
-                    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0; letter-spacing: -0.4px;">
-                        Activa tu Chatbot con Inteligencia Artificial
-                    </h2>
-                    <p style="font-size: 0.86rem; color: var(--text-muted); margin: 0 auto 20px auto; max-width: 420px; line-height: 1.5;">
-                        Tu cuenta ha sido creada exitosamente. Para conectar el bot a tu sitio web, vincular WhatsApp y recibir clientes 24/7, activa tu membresía de negocio.
-                    </p>
-
-                    <!-- Tarjeta de Plan y Precio -->
-                    <div style="background: #F8FAFC; border: 2px solid #2563EB; border-radius: 14px; padding: 18px 20px; text-align: left; margin-bottom: 22px; position: relative;">
-                        <span style="position: absolute; top: -11px; right: 16px; background: #2563EB; color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 10px; border-radius: 12px; letter-spacing: 0.5px;">PLAN PROFESIONAL</span>
-                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <div id="modal_paywall">
+                <div class="paywall-window">
+                    
+                    <div class="paywall-grid">
+                        <!-- COLUMNA IZQUIERDA: Marca, Beneficios e Ilustración -->
+                        <div style="display: flex; flex-direction: column; justify-content: space-between;">
                             <div>
-                                <div style="font-weight: 800; font-size: 1.1rem; color: #0F1B31;">Klyven Studio IA Pro</div>
-                                <span style="font-size: 0.74rem; color: var(--text-muted);">Suscripción mensual todo incluido</span>
+                                <!-- Logotipo y Marca -->
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 22px;">
+                                    <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Klyven Studio" onerror="this.src='/assets/logo-main.png'" style="width: 26px; height: 26px; object-fit: contain;" />
+                                    <span style="font-size: 1.05rem; font-weight: 800; color: #020C21; letter-spacing: -0.2px;">Klyven Studio</span>
+                                </div>
+
+                                <!-- Etiqueta y Título -->
+                                <div style="font-size: 0.7rem; font-weight: 800; color: #59627E; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">
+                                    ACTIVA TU ASISTENTE
+                                </div>
+                                <h2 style="font-size: 1.85rem; font-weight: 800; color: #020C21; line-height: 1.15; letter-spacing: -0.5px; margin: 0 0 10px 0;">
+                                    Tu chatbot,<br>listo para tu negocio.
+                                </h2>
+                                <p style="font-size: 0.88rem; color: #59627E; line-height: 1.5; margin: 0 0 22px 0; max-width: 420px;">
+                                    Tu cuenta ya está creada. Activa tu membresía para publicar tu asistente y empezar a atender consultas.
+                                </p>
+
+                                <!-- Lista de Beneficios Reales del Plan -->
+                                <ul style="list-style: none; padding: 0; margin: 0 0 18px 0; display: flex; flex-direction: column; gap: 12px;">
+                                    <li class="paywall-benefit-item">
+                                        <div class="paywall-benefit-icon">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                        </div>
+                                        <span style="font-size: 0.88rem; font-weight: 600; color: #020C21;">Atención con IA 24/7</span>
+                                    </li>
+                                    <li class="paywall-benefit-item">
+                                        <div class="paywall-benefit-icon">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                        </div>
+                                        <span style="font-size: 0.88rem; font-weight: 600; color: #020C21;">Personalización para tu marca</span>
+                                    </li>
+                                    <li class="paywall-benefit-item">
+                                        <div class="paywall-benefit-icon">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                        </div>
+                                        <span style="font-size: 0.88rem; font-weight: 600; color: #020C21;">Gestión de prospectos y reservas</span>
+                                    </li>
+                                    <li class="paywall-benefit-item">
+                                        <div class="paywall-benefit-icon">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                        </div>
+                                        <span style="font-size: 0.88rem; font-weight: 600; color: #020C21;">Revisión de preguntas sin resolver</span>
+                                    </li>
+                                </ul>
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 1.5rem; font-weight: 900; color: #0F1B31;">$49 <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">USD / mes</span></div>
+
+                            <!-- Ilustración Decorativa Discreta de Burbujas de Conversación -->
+                            <div style="margin-top: 6px; overflow: hidden; border-radius: 18px; max-width: 390px;">
+                                <img src="/assets/paywall-illustration.png" alt="Asistente de tu negocio" style="width: 100%; height: auto; display: block; object-fit: contain;" />
                             </div>
                         </div>
 
-                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; font-size: 0.82rem; color: #334155;">
-                            <li style="display: flex; align-items: center; gap: 8px;">
-                                <span style="color: #10B981; font-weight: 800;">✓</span> Asistente IA activo 24/7 entrenado con tu negocio
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px;">
-                                <span style="color: #10B981; font-weight: 800;">✓</span> Integración en 1 línea para tu sitio web + WhatsApp Cloud
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px;">
-                                <span style="color: #10B981; font-weight: 800;">✓</span> Captura y exportación ilimitada de prospectos y reservas
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 8px;">
-                                <span style="color: #10B981; font-weight: 800;">✓</span> Módulo de autoaprendizaje con preguntas sin resolver
-                            </li>
-                        </ul>
+                        <!-- COLUMNA DERECHA: Tarjeta de Plan y Acciones -->
+                        <div style="background: #F0F4FA; border: 1px solid #DCE5F0; border-radius: 22px; padding: 28px 26px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                            <div>
+                                <!-- Píldora Plan Profesional -->
+                                <div style="display: inline-block; background: #0F1B31; color: #FFFFFF; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.8px; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; margin-bottom: 14px;">
+                                    PLAN PROFESIONAL
+                                </div>
+
+                                <!-- Nombre del Plan -->
+                                <div style="font-size: 1.35rem; font-weight: 800; color: #020C21; letter-spacing: -0.3px; margin-bottom: 14px;">
+                                    Klyven Studio IA Pro
+                                </div>
+
+                                <!-- Precio y Moneda -->
+                                <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px;">
+                                    <span style="font-size: 2.45rem; font-weight: 900; color: #020C21; letter-spacing: -0.8px; line-height: 1;">$49</span>
+                                    <span style="font-size: 0.86rem; font-weight: 600; color: #59627E;">USD / mes</span>
+                                </div>
+
+                                <!-- Periodicidad -->
+                                <div style="font-size: 0.82rem; color: #59627E; margin-bottom: 18px;">
+                                    Suscripción mensual.
+                                </div>
+
+                                <!-- Divisor Suave -->
+                                <div style="border-top: 1px solid #DFE7F2; margin-bottom: 16px;"></div>
+
+                                <div style="font-size: 0.82rem; font-weight: 600; color: #59627E; margin-bottom: 18px;">
+                                    Activa tu asistente para tu negocio.
+                                </div>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div>
+                                <!-- Botón Principal: Tarjeta -->
+                                <button id="btn_pay_stripe" type="button" onclick="startStripeCheckout()" class="paywall-btn-stripe">
+                                    <span style="display: flex; align-items: center; gap: 10px;">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                        Activar con tarjeta
+                                    </span>
+                                    <span style="font-size: 1.15rem; font-weight: 600;">→</span>
+                                </button>
+
+                                <!-- Botón Secundario: WhatsApp o Transferencia -->
+                                <button id="btn_pay_whatsapp" type="button" onclick="contactWhatsAppForActivation()" class="paywall-btn-whatsapp">
+                                    <span style="display: flex; align-items: center; gap: 10px;">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                        WhatsApp o transferencia
+                                    </span>
+                                    <span style="font-size: 1.15rem; font-weight: 600;">→</span>
+                                </button>
+
+                                <!-- Nota de Procesamiento -->
+                                <div style="font-size: 0.74rem; color: #59627E; text-align: center; line-height: 1.4;">
+                                    Pago con tarjeta procesado por Stripe.
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Botones de Acción (Stripe y WhatsApp) -->
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button id="btn_pay_stripe" type="button" onclick="startStripeCheckout()" class="btn-topbar-save" style="width: 100%; padding: 13px; font-size: 0.94rem; justify-content: center; font-weight: 700; border-radius: 10px; background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
-                            💳 Pagar y Activar Ahora con Tarjeta
-                        </button>
-                        
-                        <button id="btn_pay_whatsapp" type="button" onclick="contactWhatsAppForActivation()" style="width: 100%; padding: 11px; font-size: 0.86rem; justify-content: center; font-weight: 700; border-radius: 10px; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.15s ease;">
-                            <span>💬</span> Activar por WhatsApp o Transferencia
-                        </button>
-                    </div>
-
-                    <div style="margin-top: 14px; font-size: 0.74rem; color: var(--text-muted);">
-                        Pagos cifrados y seguros procesados con Stripe • Cancela cuando quieras
-                    </div>
-
-                    <div style="margin-top: 14px; border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                        <span id="paywall_biz_label" style="font-size: 0.74rem; color: var(--text-muted);">Negocio: -</span>
-                        <button type="button" onclick="handleLogout()" style="background: none; border: none; color: #EF4444; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                    <!-- PIE DE LA VENTANA -->
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #E6EDF6; display: flex; justify-content: space-between; align-items: center;">
+                        <span id="paywall_biz_label" style="font-size: 0.8rem; color: #59627E; font-weight: 500;">Cuenta de negocio: -</span>
+                        <button type="button" onclick="handleLogout()" style="background: none; border: none; color: #59627E; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 4px 8px; border-radius: 6px; transition: color 0.15s ease;">
                             Cerrar sesión
                         </button>
                     </div>
+
                 </div>
             </div>
 
@@ -7149,7 +7349,7 @@
             if (modal) {
                 modal.style.display = 'flex';
                 const lbl = document.getElementById('paywall_biz_label');
-                if (lbl && bizName) lbl.textContent = `Negocio: ${bizName}`;
+                if (lbl && bizName) lbl.textContent = `Cuenta de negocio: ${bizName}`;
             }
         }
 
@@ -7161,7 +7361,7 @@
         async function startStripeCheckout() {
             const btn = document.getElementById('btn_pay_stripe');
             btn.disabled = true;
-            btn.textContent = 'Conectando con pasarela segura...';
+            btn.innerHTML = '<span style="display: flex; align-items: center; gap: 10px;">Conectando con pasarela segura...</span><span>...</span>';
 
             try {
                 const resp = await fetch('/api/subscription/create-checkout-session', { method: 'POST' });
@@ -7177,7 +7377,11 @@
                 contactWhatsAppForActivation();
             } finally {
                 btn.disabled = false;
-                btn.textContent = '💳 Pagar y Activar Ahora con Tarjeta';
+                btn.innerHTML = `<span style="display: flex; align-items: center; gap: 10px;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    Activar con tarjeta
+                </span>
+                <span style="font-size: 1.15rem; font-weight: 600;">→</span>`;
             }
         }
 
