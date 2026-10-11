@@ -568,13 +568,18 @@ def api_google_auth(req: GoogleLoginRequest):
     }
 
 
+def _build_oauth_redirect_uri(request: Request) -> str:
+    host = request.headers.get("host", "localhost:8000")
+    proto = request.headers.get("x-forwarded-proto", "")
+    scheme = "https" if ("https" in proto or "trycloudflare.com" in host or "klyven" in host) else "http"
+    return f"{scheme}://{host}/api/auth/google/callback"
+
+
 @app.get("/api/auth/google/login")
 def google_login_redirect(request: Request):
     """Redirige directamente a la pantalla oficial de Google Accounts para iniciar sesión."""
     client_id = os.environ.get("GOOGLE_CLIENT_ID")
-    host = request.headers.get("host", "localhost:8000")
-    scheme = "https" if "https" in request.headers.get("x-forwarded-proto", "") or "klyven" in host else "http"
-    redirect_uri = f"{scheme}://{host}/api/auth/google/callback"
+    redirect_uri = _build_oauth_redirect_uri(request)
 
     if not client_id:
         return HTMLResponse(content=f"""
@@ -639,9 +644,8 @@ def google_callback(request: Request, code: Optional[str] = None, error: Optiona
 
     client_id = os.environ.get("GOOGLE_CLIENT_ID")
     client_secret = os.environ.get("GOOGLE_CLIENT_SECRET")
-    host = request.headers.get("host", "localhost:8000")
-    scheme = "https" if "https" in request.headers.get("x-forwarded-proto", "") or "klyven" in host else "http"
-    redirect_uri = f"{scheme}://{host}/api/auth/google/callback"
+    redirect_uri = _build_oauth_redirect_uri(request)
+
 
     token_url = "https://oauth2.googleapis.com/token"
     token_data = {
