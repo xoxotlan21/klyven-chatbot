@@ -338,10 +338,10 @@ Tu objetivo es analizar profundamente de qué trata el negocio para que el Chatb
 3. Propuesta de valor y descripción no genérica (qué hacen y qué resuelven con exactitud).
 4. Moneda en la que cobran (USD, MXN, EUR, etc.).
 5. Catálogo de servicios / productos / unidades reales:
-   - Si es transporte/turismo: unidades (ej: Sedán Ejecutivo, Van Privada, Suburban VIP) con sus capacidades y precios si los hay.
-   - Si es diseño/agencia: paquetes de desarrollo, landing pages o tiendas online con precios.
-   - Si es salud/clínica: tratamientos o consultas con precios.
-   - Si no hay precios numéricos en el texto, coloca precios de mercado razonables.
+   - Si es transporte/turismo: unidades (ej: Sedán Ejecutivo, Van Privada, Suburban VIP) con sus capacidades y precios si aparecen de forma explícita.
+   - Si es diseño/agencia: paquetes de desarrollo, landing pages o tiendas online con precios si aparecen de forma explícita.
+   - Si es salud/clínica: tratamientos o consultas con precios si aparecen de forma explícita.
+   - REGLA ESTRICTA DE PRECIOS: Si en el sitio web NO se mencionan precios explícitos o tarifas numéricas para los servicios, NUNCA INVENTES UN PRECIO. En ese caso coloca null en el campo "price". Está TOTALMENTE PROHIBIDO inventar precios de mercado, suponer costos o colocar tarifas estimadas que no provengan del texto extraído.
 6. Políticas, horarios de atención, garantías y ubicación mencionadas.
 7. Nombre sugerido para el Asistente y un Mensaje de Bienvenida cordial y orientado a vender.
 8. Color de marca dominante / característico en hexadecimal (#HEX), como el color de los botones principales o logo.
@@ -361,7 +361,7 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
   "services": [
     {{
       "name": "Nombre del Servicio o Unidad",
-      "price": 100.0,
+      "price": null,
       "description": "Detalles específicos de qué incluye"
     }}
   ],
@@ -390,6 +390,20 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
                 data = resp.json()
                 raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
                 parsed = json.loads(raw_text)
+
+                # Sanitizar servicios: asegurar que nunca haya precios inventados o nulos falsos
+                if isinstance(parsed.get("services"), list):
+                    for s in parsed["services"]:
+                        if isinstance(s, dict):
+                            p = s.get("price")
+                            if p in (None, 0, "0", "null", "", "None") or str(p).strip().lower() in ("a cotizar", "consultar", "n/a", "none"):
+                                s["price"] = None
+                            else:
+                                try:
+                                    val = float(p)
+                                    s["price"] = round(val, 2) if val > 0 else None
+                                except (ValueError, TypeError):
+                                    s["price"] = None
 
                 # Priorizar color detectado del HTML/CSS si es vibrante, o el sugerido por IA
                 final_color = html_detected_color
@@ -1532,7 +1546,7 @@ Analiza el siguiente documento ({filename}) subido por el negocio {tenant_id}:
 --- FIN CONTENIDO ---
 
 Extrae con exactitud:
-1. Lista de servicios o productos reales mencionados, con precio numérico si existe (o 0 si no lo especifica) y qué incluye.
+1. Lista de servicios o productos reales mencionados. REGLA ESTRICTA DE PRECIOS: Solo coloca precio numérico en "price" si está explícitamente indicado en el documento. Si no se menciona precio explícito o es a cotizar, coloca null en "price". Está TOTALMENTE PROHIBIDO inventar precios o suponer tarifas que no estén en el documento.
 2. Políticas relevantes, garantías, formas de pago y horarios.
 3. Breve resumen de lo descubierto.
 
@@ -1541,7 +1555,7 @@ Responde ÚNICAMENTE en JSON válido con este formato:
   "services": [
     {{
       "name": "Nombre del servicio/producto",
-      "price": 100.0,
+      "price": null,
       "description": "Detalle de lo que incluye"
     }}
   ],
@@ -1560,6 +1574,21 @@ Responde ÚNICAMENTE en JSON válido con este formato:
         if resp.status_code == 200:
             raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
             parsed = json.loads(raw_text)
+
+            # Sanitización estricta: asegurar que nunca haya precios inventados
+            if isinstance(parsed, dict) and isinstance(parsed.get("services"), list):
+                for s in parsed["services"]:
+                    if isinstance(s, dict):
+                        p = s.get("price")
+                        if p in (None, 0, "0", "null", "", "None") or str(p).strip().lower() in ("a cotizar", "consultar", "n/a", "none"):
+                            s["price"] = None
+                        else:
+                            try:
+                                val = float(p)
+                                s["price"] = round(val, 2) if val > 0 else None
+                            except (ValueError, TypeError):
+                                s["price"] = None
+
             return {
                 "status": "success",
                 "filename": filename,
