@@ -7710,8 +7710,9 @@
                 const resp = await fetch(`/api/tenants/${encodeURIComponent(tenantId)}`, {
                     method: 'DELETE'
                 });
-                const res = await resp.json();
-                if (res.ok) {
+                const res = await resp.json().catch(() => ({}));
+                const isSuccess = resp.ok && (res.ok === true || res.status === 'success');
+                if (isSuccess) {
                     showToast(`Empresa "${tenantName}" eliminada correctamente.`, 'success');
                     
                     // Si se eliminó la empresa activa, redirigir a KLYVEN-STUDIO
@@ -7723,7 +7724,7 @@
                         await loadTenantsDropdown();
                     }
                 } else {
-                    showToast(res.error || 'No se pudo eliminar la empresa.', 'error');
+                    showToast(res.message || res.error || 'No se pudo eliminar la empresa.', 'error');
                 }
             } catch(err) {
                 showToast('Error de red al eliminar la empresa.', 'error');

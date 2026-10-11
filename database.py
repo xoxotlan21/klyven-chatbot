@@ -683,19 +683,20 @@ def list_all_tenants() -> List[Dict[str, Any]]:
 
 def delete_tenant(tenant_id: str) -> bool:
     """Elimina una empresa/tenant y sus registros asociados (protege KLYVEN-STUDIO)."""
-    if not tenant_id or tenant_id.strip().upper() == "KLYVEN-STUDIO":
+    clean_id = (tenant_id or "").strip().upper()
+    if not clean_id or clean_id == "KLYVEN-STUDIO":
         return False
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM tenants WHERE tenant_id = ?", (tenant_id,))
-    deleted = cursor.rowcount > 0
-    cursor.execute("DELETE FROM conversations WHERE tenant_id = ?", (tenant_id,))
-    cursor.execute("DELETE FROM leads WHERE tenant_id = ?", (tenant_id,))
-    cursor.execute("DELETE FROM bookings WHERE tenant_id = ?", (tenant_id,))
-    cursor.execute("DELETE FROM unresolved_questions WHERE tenant_id = ?", (tenant_id,))
+    cursor.execute("DELETE FROM tenants WHERE UPPER(TRIM(tenant_id)) = ?", (clean_id,))
+    cursor.execute("DELETE FROM conversations WHERE UPPER(TRIM(tenant_id)) = ?", (clean_id,))
+    cursor.execute("DELETE FROM leads WHERE UPPER(TRIM(tenant_id)) = ?", (clean_id,))
+    cursor.execute("DELETE FROM bookings WHERE UPPER(TRIM(tenant_id)) = ?", (clean_id,))
+    cursor.execute("DELETE FROM unresolved_questions WHERE UPPER(TRIM(tenant_id)) = ?", (clean_id,))
+    cursor.execute("DELETE FROM orders WHERE UPPER(TRIM(tenant_id)) = ?", (clean_id,))
     conn.commit()
     conn.close()
-    return deleted
+    return True
 
 
 def save_lead(tenant_id: str, session_id: str = "", customer_name: str = "", contact_info: str = "", service_interest: str = "", notes: str = "") -> int:

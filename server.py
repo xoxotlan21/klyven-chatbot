@@ -1026,8 +1026,8 @@ def api_delete_tenant(tenant_id: str):
     from database import delete_tenant
     ok = delete_tenant(tenant_id)
     if ok:
-        return {"status": "success", "message": f"Tenant {tenant_id} eliminado exitosamente"}
-    return {"status": "error", "message": f"No se pudo eliminar el tenant {tenant_id}"}
+        return {"status": "success", "ok": True, "message": f"Tenant {tenant_id} eliminado exitosamente"}
+    return {"status": "error", "ok": False, "message": f"No se pudo eliminar el tenant {tenant_id}"}
 
 
 @app.get("/api/conversations")
