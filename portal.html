@@ -10402,11 +10402,9 @@
                     if (data.teaser_delay && document.getElementById('teaser_delay_select')) {
                         document.getElementById('teaser_delay_select').value = String(data.teaser_delay);
                     }
-                    // Renderizar el chat de prueba con el mensaje y catálogo cargados
                     renderPreviewChat(data.welcome_message, data.services);
                 }
             } catch(e) {}
-            // Asegurar que el chat de prueba y colores se actualicen
             renderPreviewChat(
                 document.getElementById('bot_welcome')?.value,
                 getCurrentServicesList()
