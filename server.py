@@ -114,16 +114,16 @@ class CreateTenantRequest(BaseModel):
     currency: Optional[str] = "USD"
     support_phone: Optional[str] = ""
     bot_name: Optional[str] = "Asistente IA"
-    bot_avatar: Optional[str] = "🤖"
+    bot_avatar: Optional[str] = "K"
     brand_color: Optional[str] = "#2563eb"
     theme_mode: Optional[str] = "dark"           # "dark", "light", "glass"
     header_style: Optional[str] = "brand"         # "brand", "light", "dark"
     bubble_style: Optional[str] = "circle"        # "circle", "pill"
-    bubble_text: Optional[str] = "👋 ¿Podemos ayudarte?"
+    bubble_text: Optional[str] = "¿Podemos ayudarte?"
     position: Optional[str] = "bottom-right"      # "bottom-right", "bottom-left"
     border_radius: Optional[int] = 16
     teaser_enabled: Optional[bool] = False
-    teaser_text: Optional[str] = "👋 ¿Tienes alguna duda? Escríbenos aquí"
+    teaser_text: Optional[str] = "¿Tienes alguna duda? Escríbenos aquí"
     teaser_delay: Optional[int] = 4
     welcome_message: Optional[str] = "¡Hola! ¿En qué te podemos asesorar hoy?"
     input_placeholder: Optional[str] = "Escribe tu consulta o pedido..."
@@ -618,7 +618,7 @@ def google_login_redirect(request: Request):
         </head>
         <body>
             <div class="card">
-                <div style="font-size: 2.2rem; margin-bottom: 12px;">🔑</div>
+                <div style="margin-bottom: 12px;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"></circle><path d="m21 2-9.6 9.6"></path><path d="m15.5 7.5 3 3L22 7l-3-3"></path></svg></div>
                 <h2>Conectar con Google Accounts</h2>
                 <p>Para abrir la pantalla oficial de Google Accounts (<b>accounts.google.com</b>), necesitas ingresar tu <b>Google Client ID</b> gratuito de Google Cloud:</p>
                 <div class="steps">
@@ -830,7 +830,7 @@ def get_tenant_configuration(tenant_id: str):
             "name": "Landing Page",
             "price": 450,
             "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%",
-            "badge": "⭐ Más pedido",
+            "badge": "Más pedido",
             "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
         },
         {
@@ -881,16 +881,16 @@ def get_tenant_configuration(tenant_id: str):
             "currency": db_tenant.get("currency") or "USD",
             "support_phone": db_tenant.get("support_phone") or "",
             "bot_name": cfg.get("bot_name") or "Asistente Virtual",
-            "bot_avatar": cfg.get("bot_avatar") or "🤖",
+            "bot_avatar": cfg.get("bot_avatar") or "K",
             "brand_color": cfg.get("brand_color") or "#2563eb",
             "theme_mode": cfg.get("theme_mode") or "dark",
             "header_style": cfg.get("header_style") or "brand",
             "bubble_style": cfg.get("bubble_style") or "circle",
-            "bubble_text": cfg.get("bubble_text") or "👋 ¿Podemos ayudarte?",
+            "bubble_text": cfg.get("bubble_text") or "¿Podemos ayudarte?",
             "position": cfg.get("position") or "bottom-right",
             "border_radius": cfg.get("border_radius", 16),
             "teaser_enabled": cfg.get("teaser_enabled", False),
-            "teaser_text": cfg.get("teaser_text") or "👋 ¿Tienes alguna duda? Escríbenos aquí",
+            "teaser_text": cfg.get("teaser_text") or "¿Tienes alguna duda? Escríbenos aquí",
             "teaser_delay": cfg.get("teaser_delay", 4),
             "welcome_message": cfg.get("welcome_message") or f"¡Hola! Bienvenido a {db_tenant['business_name']}. ¿En qué te podemos asesorar hoy?",
             "input_placeholder": cfg.get("input_placeholder") or "Escribe tu consulta o pedido...",
@@ -919,7 +919,7 @@ def get_tenant_configuration(tenant_id: str):
         "position": "bottom-right",
         "border_radius": 16,
         "teaser_enabled": True,
-        "teaser_text": "👋 ¿Tienes dudas sobre tu web? Pregúntame aquí",
+        "teaser_text": "¿Tienes dudas sobre tu web? Pregúntame aquí",
         "teaser_delay": 4,
         "welcome_message": "¡Hola! Bienvenido a Klyven Studio. ¿Qué tipo de sitio web o proyecto te gustaría cotizar hoy?" if is_klyven else "¡Hola! ¿En qué destino o traslado te podemos apoyar hoy?",
         "input_placeholder": "Cuéntame de tu proyecto o idea..." if is_klyven else "Escribe tu consulta o ruta...",
@@ -933,7 +933,7 @@ def get_tenant_configuration(tenant_id: str):
                 "name": "Landing Page",
                 "price": 450,
                 "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%",
-                "badge": "⭐ Más pedido",
+                "badge": "Más pedido",
                 "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
             },
             {
@@ -986,11 +986,11 @@ def api_create_tenant(req: CreateTenantRequest):
         "theme_mode": req.theme_mode or "dark",
         "header_style": req.header_style or "brand",
         "bubble_style": req.bubble_style or "circle",
-        "bubble_text": req.bubble_text or "👋 ¿Podemos ayudarte?",
+        "bubble_text": req.bubble_text or "¿Podemos ayudarte?",
         "position": req.position or "bottom-right",
         "border_radius": req.border_radius or 16,
         "teaser_enabled": req.teaser_enabled if req.teaser_enabled is not None else False,
-        "teaser_text": req.teaser_text or "👋 ¿Tienes alguna duda? Escríbenos aquí",
+        "teaser_text": req.teaser_text or "¿Tienes alguna duda? Escríbenos aquí",
         "teaser_delay": req.teaser_delay or 4,
         "welcome_message": req.welcome_message,
         "input_placeholder": req.input_placeholder,
@@ -1129,7 +1129,7 @@ def dispatch_lead_webhook(tenant_id: str, lead_data: Dict[str, Any]):
 
             if "discord.com/api/webhooks" in webhook_url:
                 discord_payload = {
-                    "content": f"🔥 **Nuevo Lead capturado en tu web: {biz_name}**",
+                    "content": f"**Nuevo Lead capturado en tu web: {biz_name}**",
                     "embeds": [{
                         "title": f"Prospecto: {cust_name}",
                         "color": 3447003,
@@ -1144,7 +1144,7 @@ def dispatch_lead_webhook(tenant_id: str, lead_data: Dict[str, Any]):
                 requests.post(webhook_url, json=discord_payload, timeout=6)
             elif "hooks.slack.com" in webhook_url:
                 slack_payload = {
-                    "text": f"🔥 *Nuevo Lead en tu web ({biz_name})*\n• *Nombre:* {cust_name}\n• *Contacto:* {contact}\n• *Interés:* {interest}\n• *Mensaje:* {notes}"
+                    "text": f"*Nuevo Lead en tu web ({biz_name})*\n• *Nombre:* {cust_name}\n• *Contacto:* {contact}\n• *Interés:* {interest}\n• *Mensaje:* {notes}"
                 }
                 requests.post(webhook_url, json=slack_payload, timeout=6)
             else:
@@ -1206,7 +1206,7 @@ def api_test_webhook(req: Dict[str, Any]):
     try:
         if "discord.com/api/webhooks" in webhook_url:
             body = {
-                "content": "✅ **Prueba de Webhook Exitosa** desde el Panel de Klyven Studio",
+                "content": "**Prueba de Webhook Exitosa** desde el Panel de Klyven Studio",
                 "embeds": [{
                     "title": "Conexión de Notificaciones en Tiempo Real Verificada",
                     "description": "Tu webhook está activo y recibirá cada prospecto que deje su contacto en el chatbot.",
@@ -1215,7 +1215,7 @@ def api_test_webhook(req: Dict[str, Any]):
             }
             resp = requests.post(webhook_url, json=body, timeout=6)
         elif "hooks.slack.com" in webhook_url:
-            body = {"text": "✅ *Prueba de Webhook Exitosa* desde el Panel de Klyven Studio. Las alertas están activas."}
+            body = {"text": "*Prueba de Webhook Exitosa* desde el Panel de Klyven Studio. Las alertas están activas."}
             resp = requests.post(webhook_url, json=body, timeout=6)
         else:
             payload = {
@@ -1866,7 +1866,7 @@ def api_chat(payload: ChatRequest):
             if created_bk and created_bk.get("booking_id"):
                 b_code = created_bk["booking_id"]
                 if b_code not in cliente_msg:
-                    cliente_msg += f"\n\n📅 **Solicitud registrada en tu agenda:** Folio `#{b_code}`. Nuestro equipo la revisará y confirmará a la brevedad."
+                    cliente_msg += f"\n\n**Solicitud registrada en tu agenda:** Folio `#{b_code}`. Nuestro equipo la revisará y confirmará a la brevedad."
         except Exception:
             pass
 
@@ -1900,7 +1900,7 @@ def api_chat(payload: ChatRequest):
             encoded_txt = urllib.parse.quote(f"Hola {biz_display}, estoy en su página web y me gustaría hablar con un asesor.")
             wa_link = f"https://wa.me/{clean_phone}?text={encoded_txt}"
             if "wa.me" not in cliente_msg:
-                cliente_msg += f"\n\n[💬 Hablar por WhatsApp]({wa_link})"
+                cliente_msg += f"\n\n[Hablar por WhatsApp]({wa_link})"
 
     # Agendamiento directo de citas o llamadas (Calendly / Cal.com / Google Calendar)
     book_url = (payload.preview_config.get("booking_url") if payload.preview_config else "") or getattr(matched_tenant, "booking_url", "") or ""
@@ -1917,7 +1917,7 @@ def api_chat(payload: ChatRequest):
         low_msg = payload.message.lower()
         if any(w in low_msg for w in ["agendar", "cita", "llamada", "reunión", "reunion", "calendario", "reservar", "horario", "demo", "junta", "meet", "videollamada"]):
             if clean_book_url not in cliente_msg:
-                cliente_msg += f"\n\n[📅 Agendar Cita o Llamada]({clean_book_url})"
+                cliente_msg += f"\n\n[Agendar Cita o Llamada]({clean_book_url})"
 
     # 7. Inyección de Carrusel Visual de Tarjetas si el usuario consulta el catálogo, unidades, flota, precios o fotos
     services_for_carousel = []
@@ -1935,7 +1935,7 @@ def api_chat(payload: ChatRequest):
         is_klyv_check = "KLYVEN" in matched_tenant.business_id.upper()
         if is_klyv_check:
             services_for_carousel = [
-                {"name": "Landing Page", "price": 450, "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%", "badge": "⭐ Más pedido", "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"},
+                {"name": "Landing Page", "price": 450, "description": "Entrega 3 días, 1 página, Ilimitadas revisiones | Alta conversión, Copy persuasivo, Responsive 100%", "badge": "Más pedido", "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"},
                 {"name": "Business Website", "price": 850, "description": "Entrega 7 días, 5 secciones, CMS + SEO | Blog dinámico, Optimización SEO, Dominio y SSL", "badge": "Corporativo", "image_url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80"},
                 {"name": "Website Redesign", "price": 700, "description": "Auditoría UX, UI Premium, +Ventas | Rediseño total, Identidad digital, Carga ultra-rápida", "badge": "Renovación", "image_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80"}
             ]

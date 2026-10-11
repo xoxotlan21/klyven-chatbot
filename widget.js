@@ -685,7 +685,7 @@
         const teaser = document.createElement('div');
         teaser.id = 'travelsales-teaser';
         teaser.innerHTML = `
-            <span id="travelsales-teaser-text">👋 ¿Tienes dudas sobre tu web? Pregúntame aquí</span>
+            <span id="travelsales-teaser-text">¿Tienes dudas sobre tu web? Pregúntame aquí</span>
             <button id="travelsales-teaser-close" title="Cerrar">×</button>
         `;
 
