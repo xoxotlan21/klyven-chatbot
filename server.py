@@ -466,7 +466,9 @@ def resolve_request_tenant(request: Request, requested_tenant_id: str) -> str:
     if user:
         if user.get("role") == "superadmin":
             return (requested_tenant_id or user.get("tenant_id") or "KLYVEN-STUDIO").strip().upper()
-        return (user.get("tenant_id") or requested_tenant_id).strip().upper()
+        # Usuario de negocio estándar: ESTRICTAMENTE su propio tenant
+        user_tenant = (user.get("tenant_id") or "").strip().upper()
+        return user_tenant if user_tenant else "KLYVEN-STUDIO"
     return (requested_tenant_id or "KLYVEN-STUDIO").strip().upper()
 
 
@@ -821,9 +823,9 @@ def portal_page():
 
 
 @app.get("/api/tenant-config")
-def get_tenant_configuration(tenant_id: str):
-    """Devuelve la configuración visual completa, estilo, posición y avatar del bot."""
-    clean_id = (tenant_id or "").strip()
+def get_tenant_configuration(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
+    """Devuelve la configuración visual completa, estilo, posición y avatar del bot con aislamiento."""
+    clean_id = resolve_request_tenant(request, tenant_id)
     is_klyven = "KLYVEN" in clean_id.upper()
     default_services = [
         {
@@ -977,8 +979,14 @@ def get_tenant_configuration(tenant_id: str):
 
 
 @app.post("/api/tenants")
-def api_create_tenant(req: CreateTenantRequest):
-    """Registra o actualiza un negocio con su catálogo real y configuración de bot."""
+def api_create_tenant(request: Request, req: CreateTenantRequest):
+    """Registra o actualiza un negocio con su catálogo real y configuración de bot con aislamiento."""
+    user = get_auth_user(request)
+    target_tenant_id = req.tenant_id.strip().upper()
+    if user and user.get("role") != "superadmin":
+        user_tenant = (user.get("tenant_id") or "").strip().upper()
+        if user_tenant and target_tenant_id != user_tenant:
+            target_tenant_id = user_tenant
     config_dict = {
         "bot_name": req.bot_name,
         "bot_avatar": req.bot_avatar,
@@ -1004,7 +1012,7 @@ def api_create_tenant(req: CreateTenantRequest):
         "tone_style": "Profesional, cordial, empático y enfocado en asesorar y cerrar ventas."
     }
     saved = save_or_update_tenant(
-        tenant_id=req.tenant_id.strip().upper(),
+        tenant_id=target_tenant_id,
         business_name=req.business_name.strip(),
         industry=req.industry.strip(),
         currency=req.currency or "USD",
@@ -1015,14 +1023,30 @@ def api_create_tenant(req: CreateTenantRequest):
 
 
 @app.get("/api/tenants")
-def api_list_tenants():
-    """Lista todos los negocios registrados."""
-    return {"tenants": list_all_tenants()}
+def api_list_tenants(request: Request):
+    """Lista los negocios: superadmin ve todos; usuario regular solo ve su propio negocio."""
+    user = get_auth_user(request)
+    all_tenants = list_all_tenants()
+    is_super = True
+    if user:
+        if user.get("role") != "superadmin":
+            is_super = False
+            u_tenant = (user.get("tenant_id") or "").strip().upper()
+            filtered = [t for t in all_tenants if t.get("tenant_id", "").strip().upper() == u_tenant]
+            if not filtered and u_tenant:
+                t_obj = get_tenant_by_id(u_tenant)
+                if t_obj:
+                    filtered = [t_obj]
+            return {"tenants": filtered, "is_superadmin": False, "role": user.get("role", "admin")}
+    return {"tenants": all_tenants, "is_superadmin": is_super, "role": user.get("role") if user else "superadmin"}
 
 
 @app.delete("/api/tenants/{tenant_id}")
-def api_delete_tenant(tenant_id: str):
-    """Elimina un tenant de prueba (protege KLYVEN-STUDIO)."""
+def api_delete_tenant(request: Request, tenant_id: str):
+    """Elimina un tenant de prueba (solo permitido para superadmin)."""
+    user = get_auth_user(request)
+    if user and user.get("role") != "superadmin":
+        raise HTTPException(status_code=403, detail="Solo el administrador general de Klyven Studio puede eliminar empresas")
     from database import delete_tenant
     ok = delete_tenant(tenant_id)
     if ok:
@@ -1031,10 +1055,11 @@ def api_delete_tenant(tenant_id: str):
 
 
 @app.get("/api/conversations")
-def get_conversations(tenant_id: str = "KLYVEN-STUDIO"):
-    """Lista las conversaciones y sesiones de chat registradas para un tenant."""
+def get_conversations(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
+    """Lista las conversaciones y sesiones de chat registradas para un tenant asegurando aislamiento."""
     from database import get_tenant_conversations
-    return {"status": "success", "conversations": get_tenant_conversations(tenant_id)}
+    t_id = resolve_request_tenant(request, tenant_id)
+    return {"status": "success", "conversations": get_tenant_conversations(t_id), "tenant_id": t_id}
 
 
 @app.get("/api/conversations/{conversation_id}/messages")

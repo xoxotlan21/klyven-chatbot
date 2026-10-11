@@ -7566,6 +7566,8 @@
             return clean.substring(0, 2).toUpperCase();
         }
 
+        let isSuperadminUser = true;
+
         async function loadTenantsDropdown() {
             const urlParams = new URLSearchParams(window.location.search);
             const currentTenant = (urlParams.get('tenant') || document.getElementById('biz_id')?.value || 'KLYVEN-STUDIO').toUpperCase();
@@ -7574,11 +7576,13 @@
                 const resp = await fetch('/api/tenants');
                 const data = await resp.json();
                 allTenantsCache = data.tenants || [];
+                isSuperadminUser = data.is_superadmin !== false;
             } catch(e) {
                 console.warn('Error loading tenants:', e);
                 allTenantsCache = [
                     { tenant_id: 'KLYVEN-STUDIO', business_name: 'Klyven Studio' }
                 ];
+                isSuperadminUser = false;
             }
 
             // Sincronizar select nativo oculto para compatibilidad
@@ -7594,7 +7598,7 @@
             // Identificar empresa activa
             let activeTenant = allTenantsCache.find(t => t.tenant_id.toUpperCase() === currentTenant);
             if (!activeTenant) {
-                activeTenant = allTenantsCache.find(t => t.tenant_id.toUpperCase() === 'KLYVEN-STUDIO') || {
+                activeTenant = allTenantsCache[0] || {
                     tenant_id: currentTenant,
                     business_name: currentTenant
                 };
@@ -7602,6 +7606,25 @@
 
             updateTenantTriggerDisplay(activeTenant);
             renderTenantMenuList(activeTenant.tenant_id);
+
+            // Bloquear dropdown para clientes regulares (solo Superadmin puede alternar empresas)
+            const trigger = document.getElementById('custom_tenant_trigger');
+            const chevron = document.querySelector('.tenant-chevron-icon');
+            const addBtn = document.querySelector('.tenant-menu-add-btn');
+            if (trigger) {
+                if (!isSuperadminUser) {
+                    trigger.style.cursor = 'default';
+                    trigger.title = 'Tu empresa activa';
+                    if (chevron) chevron.style.display = 'none';
+                } else {
+                    trigger.style.cursor = 'pointer';
+                    trigger.title = 'Cambiar empresa activa';
+                    if (chevron) chevron.style.display = 'block';
+                }
+            }
+            if (addBtn) {
+                addBtn.style.display = isSuperadminUser ? 'flex' : 'none';
+            }
         }
 
         function updateTenantTriggerDisplay(tenant) {
@@ -7648,7 +7671,7 @@
                         </div>
                         <div class="tenant-menu-item-actions">
                             ${isActive ? '<svg class="tenant-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
-                            ${!isKlyven ? `
+                            ${!isKlyven && isSuperadminUser ? `
                                 <button type="button" class="tenant-del-btn" title="Eliminar empresa" onclick="deleteTenantItem(event, '${t.tenant_id}', '${escapeHtml(t.business_name || t.tenant_id)}')">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                 </button>
@@ -7661,6 +7684,7 @@
 
         function toggleTenantDropdown(e) {
             if (e) e.stopPropagation();
+            if (!isSuperadminUser) return; // Clientes normales tienen bloqueado desplegar otras empresas
             const trigger = document.getElementById('custom_tenant_trigger');
             const menu = document.getElementById('custom_tenant_menu');
             if (!trigger || !menu) return;
@@ -9537,8 +9561,14 @@
                     tenantParam = urlParams.get('tenant') || user.tenant_id || 'KLYVEN-STUDIO';
                 } else {
                     tenantParam = user.tenant_id;
-                    const selector = document.getElementById('tenant_selector');
-                    if (selector) selector.style.display = 'none';
+                    // Limpiar intentos de acceder a tenants ajenos por URL
+                    const currentUrl = new URL(window.location.href);
+                    if (currentUrl.searchParams.has('tenant') && currentUrl.searchParams.get('tenant') !== user.tenant_id) {
+                        currentUrl.searchParams.set('tenant', user.tenant_id);
+                        window.history.replaceState({}, '', currentUrl.toString());
+                    }
+                    const switcherLabel = document.querySelector('.tenant-switcher-label');
+                    if (switcherLabel) switcherLabel.textContent = 'TU NEGOCIO';
                 }
             }
 
