@@ -333,6 +333,24 @@ def logout_user(token: str) -> bool:
     return affected > 0
 
 
+def update_user_tenant(user_id: str, new_tenant_id: str, new_business_name: Optional[str] = None) -> bool:
+    """Actualiza el tenant_id y opcionalmente el nombre del negocio asociado a un usuario."""
+    if not user_id or not new_tenant_id:
+        return False
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    clean_tenant = new_tenant_id.strip().upper()
+    if new_business_name and new_business_name.strip():
+        cursor.execute("UPDATE users SET tenant_id = ?, full_name = ? WHERE user_id = ?", (clean_tenant, new_business_name.strip(), user_id))
+    else:
+        cursor.execute("UPDATE users SET tenant_id = ? WHERE user_id = ?", (clean_tenant, user_id))
+    affected = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return affected > 0
+
+
+
 def seed_default_users():
     """Crea el usuario maestro inicial para Klyven Studio si no existe en la base de datos."""
     conn = get_db_connection()

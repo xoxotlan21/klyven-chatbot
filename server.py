@@ -78,7 +78,8 @@ from database import (
     get_tenant_by_whatsapp,
     get_subscription_status,
     update_subscription_status,
-    login_or_create_google_user
+    login_or_create_google_user,
+    update_user_tenant
 )
 
 class RegisterRequest(BaseModel):
@@ -985,8 +986,14 @@ def api_create_tenant(request: Request, req: CreateTenantRequest):
     """Registra o actualiza un negocio con su catálogo real y configuración de bot con aislamiento."""
     user = get_auth_user(request)
     target_tenant_id = req.tenant_id.strip().upper()
+    user_tenant = None
     if user and user.get("role") != "superadmin":
         user_tenant = (user.get("tenant_id") or "").strip().upper()
+        # Si el usuario es cliente y cambia o analiza un nuevo nombre de negocio/tenant,
+        # actualizamos su tenant_id en su cuenta de usuario para que nunca se desincronice
+        if target_tenant_id and target_tenant_id != user_tenant and user.get("user_id"):
+            update_user_tenant(user["user_id"], target_tenant_id, req.business_name)
+
     existing_t = get_tenant_by_id(target_tenant_id)
     existing_cfg = existing_t.get("config", {}) if existing_t else {}
     inst_verified = req.installation_verified if req.installation_verified is not None else existing_cfg.get("installation_verified", False)
@@ -1023,6 +1030,21 @@ def api_create_tenant(request: Request, req: CreateTenantRequest):
         support_phone=req.support_phone or "",
         config_data=config_dict
     )
+
+    # Si el cliente tenía un user_tenant anterior, guardar también en él como respaldo para que no haya desalineación
+    if user_tenant and user_tenant != target_tenant_id:
+        try:
+            save_or_update_tenant(
+                tenant_id=user_tenant,
+                business_name=req.business_name.strip(),
+                industry=req.industry.strip(),
+                currency=req.currency or "USD",
+                support_phone=req.support_phone or "",
+                config_data=config_dict
+            )
+        except Exception:
+            pass
+
     return {"status": "success", "tenant": saved}
 
 

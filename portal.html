@@ -9383,10 +9383,19 @@
                     const d = res.data;
                     if (d.brand_color) {
                         document.getElementById('brand_color').value = d.brand_color;
-                        updatePreview();
+                    }
+                    if (d.theme_mode) {
+                        setTheme(d.theme_mode);
+                    }
+                    if (d.header_style) {
+                        setHeaderStyle(d.header_style);
                     }
                     if (d.business_name) document.getElementById('biz_name').value = d.business_name;
-                    if (d.tenant_id) document.getElementById('biz_id').value = d.tenant_id.toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+                    if (currentUser && currentUser.role !== 'superadmin' && currentUser.tenant_id) {
+                        document.getElementById('biz_id').value = currentUser.tenant_id;
+                    } else if (d.tenant_id) {
+                        document.getElementById('biz_id').value = d.tenant_id.toUpperCase().replace(/[^A-Z0-9_-]/g, '-');
+                    }
                     if (d.industry) {
                         const indSelect = document.getElementById('biz_industry');
                         indSelect.value = d.industry;
@@ -9502,6 +9511,15 @@
                     body: JSON.stringify(payload)
                 });
                 const res = await resp.json();
+
+                localStorage.setItem('klyven_active_tenant', bizId);
+                if (currentUser && currentUser.role === 'superadmin') {
+                    const currentUrl = new URL(window.location.href);
+                    if (currentUrl.searchParams.get('tenant') !== bizId) {
+                        currentUrl.searchParams.set('tenant', bizId);
+                        window.history.replaceState({}, '', currentUrl.toString());
+                    }
+                }
 
                 updateInstallationLinks(bizId);
 
@@ -10284,9 +10302,9 @@
             if (!tenantParam) {
                 if (user.role === 'superadmin') {
                     const urlParams = new URLSearchParams(window.location.search);
-                    tenantParam = urlParams.get('tenant') || user.tenant_id || 'KLYVEN-STUDIO';
+                    tenantParam = urlParams.get('tenant') || localStorage.getItem('klyven_active_tenant') || user.tenant_id || 'KLYVEN-STUDIO';
                 } else {
-                    tenantParam = user.tenant_id;
+                    tenantParam = user.tenant_id || localStorage.getItem('klyven_active_tenant') || 'DEMO-CLIENTE';
                     // Limpiar intentos de acceder a tenants ajenos por URL
                     const currentUrl = new URL(window.location.href);
                     if (currentUrl.searchParams.has('tenant') && currentUrl.searchParams.get('tenant') !== user.tenant_id) {
@@ -10384,8 +10402,15 @@
                     if (data.teaser_delay && document.getElementById('teaser_delay_select')) {
                         document.getElementById('teaser_delay_select').value = String(data.teaser_delay);
                     }
+                    // Renderizar el chat de prueba con el mensaje y catálogo cargados
+                    renderPreviewChat(data.welcome_message, data.services);
                 }
             } catch(e) {}
+            // Asegurar que el chat de prueba y colores se actualicen
+            renderPreviewChat(
+                document.getElementById('bot_welcome')?.value,
+                getCurrentServicesList()
+            );
             updatePreview();
             updateHomeOverview();
             updateInstallationLinks();

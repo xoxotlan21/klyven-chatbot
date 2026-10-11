@@ -491,6 +491,32 @@ class ConversationEngine:
 
         compiled_prompt = self.compile_system_prompt(tenant, conversation_history)
 
+        # Construir contents multi-turno estructurados para que Gemini mantenga memoria natural y no se repita
+        gemini_contents = []
+        if conversation_history:
+            for msg in conversation_history:
+                raw_role = msg.get("role", "user")
+                role = "user" if raw_role == "user" else "model"
+                txt = (msg.get("content") or "").strip()
+                if not txt:
+                    continue
+                if gemini_contents and gemini_contents[-1]["role"] == role:
+                    gemini_contents[-1]["parts"][0]["text"] += "\n" + txt
+                else:
+                    gemini_contents.append({"role": role, "parts": [{"text": txt}]})
+
+        # Gemini requiere que el primer turno sea 'user'
+        while gemini_contents and gemini_contents[0]["role"] != "user":
+            gemini_contents.pop(0)
+
+        # Asegurar que el turno final sea el mensaje actual del usuario
+        if not gemini_contents or gemini_contents[-1]["role"] != "user":
+            gemini_contents.append({"role": "user", "parts": [{"text": user_message}]})
+        else:
+            last_text = gemini_contents[-1]["parts"][0]["text"]
+            if user_message not in last_text:
+                gemini_contents[-1]["parts"][0]["text"] += "\n" + user_message
+
         # Mapear modelos ultra-rápidos verificados
         candidate_models = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
 
@@ -503,13 +529,10 @@ class ConversationEngine:
                 "system_instruction": {
                     "parts": [{"text": compiled_prompt}]
                 },
-                "contents": [
-                    {
-                        "parts": [{"text": user_message}]
-                    }
-                ],
+                "contents": gemini_contents,
                 "generationConfig": {
-                    "temperature": 0.2,
+                    "temperature": 0.7,
+                    "topP": 0.95,
                     "response_mime_type": "application/json"
                 }
             }
