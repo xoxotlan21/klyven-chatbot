@@ -7188,55 +7188,9 @@
             window.open(`https://wa.me/525541696850?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        async function handleGoogleSignIn() {
-            const btn = document.getElementById('btn_google_signin');
-            if (btn) btn.style.opacity = '0.7';
-
-            // Si Google Identity Services One-Tap o Prompt está inicializado
-            if (window.google && window.google.accounts && window.google.accounts.id) {
-                try {
-                    window.google.accounts.id.prompt((notification) => {
-                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                            promptDirectGoogleLogin();
-                        }
-                    });
-                    if (btn) btn.style.opacity = '1';
-                    return;
-                } catch(e) {}
-            }
-
-            promptDirectGoogleLogin();
-            if (btn) btn.style.opacity = '1';
-        }
-
-        async function promptDirectGoogleLogin() {
-            const email = prompt("Continuar con Google - Ingresa tu correo de cuenta Google:", "andrew@klyvenstudio.com");
-            if (!email || !email.trim()) return;
-
-            const name = email.split('@')[0];
-            try {
-                const resp = await fetch('/api/auth/google', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email.trim(), name: name })
-                });
-                const data = await resp.json();
-                if (resp.ok && data.status === 'success' && data.token) {
-                    localStorage.setItem('klyven_auth_token', data.token);
-                    updateProfileCard(data.user);
-                    hideAuthModal();
-                    if (data.tenant_id) {
-                        document.getElementById('biz_id').value = data.tenant_id;
-                        await loadInitialTenantData(data.tenant_id);
-                    } else {
-                        await loadInitialTenantData();
-                    }
-                } else {
-                    alert(data.detail || data.message || 'No se pudo iniciar sesión con Google');
-                }
-            } catch(e) {
-                alert('Error al conectar con el servidor de autenticación');
-            }
+        function handleGoogleSignIn() {
+            // Redirige directamente al flujo oficial de Google Accounts (accounts.google.com)
+            window.location.href = '/api/auth/google/login';
         }
 
         function switchAuthTab(tab) {
@@ -7351,6 +7305,31 @@
         }
 
         async function checkAuthSession() {
+            // Manejar retorno de Google OAuth desde la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const googleToken = urlParams.get('google_token');
+            const googleError = urlParams.get('google_error');
+
+            if (googleToken) {
+                localStorage.setItem('klyven_auth_token', googleToken);
+                urlParams.delete('google_token');
+                const cleanQuery = urlParams.toString() ? '?' + urlParams.toString() : '';
+                window.history.replaceState({}, document.title, window.location.pathname + cleanQuery);
+            } else if (googleError) {
+                urlParams.delete('google_error');
+                const cleanQuery = urlParams.toString() ? '?' + urlParams.toString() : '';
+                window.history.replaceState({}, document.title, window.location.pathname + cleanQuery);
+                const msg = googleError === 'unregistered_origin' 
+                    ? 'El origen o puerto actual no está configurado en Google Cloud Console.'
+                    : (googleError === 'server_error' ? 'Error al autenticar con Google.' : googleError);
+                showAuthModal('login');
+                const errDiv = document.getElementById('login_error');
+                if (errDiv) {
+                    errDiv.textContent = 'Error Google: ' + msg;
+                    errDiv.style.display = 'block';
+                }
+            }
+
             const token = localStorage.getItem('klyven_auth_token');
             if (!token) {
                 showAuthModal('login');

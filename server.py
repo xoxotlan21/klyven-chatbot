@@ -9,10 +9,11 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import urllib.parse
 import requests
 from fastapi import FastAPI, HTTPException, Request, Response, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, RedirectResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -433,11 +434,15 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
 # ==============================================================================
 
 def get_auth_user(request: Request) -> Optional[Dict[str, Any]]:
-    """Extrae y valida el usuario desde el header Authorization Bearer."""
+    """Extrae y valida el usuario desde el header Authorization Bearer, cookie o query param."""
     auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bearer "):
+    token = None
+    if auth_header.startswith("Bearer "):
+        token = auth_header.replace("Bearer ", "").strip()
+    if not token:
+        token = request.cookies.get("klyven_auth_token") or request.query_params.get("token")
+    if not token:
         return None
-    token = auth_header.replace("Bearer ", "").strip()
     return get_user_by_token(token)
 
 
@@ -561,6 +566,121 @@ def api_google_auth(req: GoogleLoginRequest):
         "subscription_status": sub_status,
         "business_name": tenant.get("business_name", user["tenant_id"])
     }
+
+
+@app.get("/api/auth/google/login")
+def google_login_redirect(request: Request):
+    """Redirige directamente a la pantalla oficial de Google Accounts para iniciar sesión."""
+    client_id = os.environ.get("GOOGLE_CLIENT_ID")
+    host = request.headers.get("host", "localhost:8000")
+    scheme = "https" if "https" in request.headers.get("x-forwarded-proto", "") or "klyven" in host else "http"
+    redirect_uri = f"{scheme}://{host}/api/auth/google/callback"
+
+    if not client_id:
+        return HTMLResponse(content=f"""
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Configuración de Google OAuth</title>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+            <style>
+                body {{ font-family: 'Inter', sans-serif; background: #0F1B31; color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }}
+                .card {{ background: #1E293B; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; max-width: 540px; padding: 36px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; }}
+                h2 {{ margin: 0 0 12px 0; font-size: 1.4rem; }}
+                p {{ color: #94A3B8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }}
+                code {{ background: #0F172A; padding: 4px 8px; border-radius: 6px; font-size: 0.82rem; color: #38BDF8; font-family: monospace; word-break: break-all; }}
+                .btn {{ display: inline-flex; align-items: center; gap: 8px; background: #2563EB; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.9rem; margin-top: 10px; }}
+                .btn-back {{ display: block; margin-top: 18px; color: #94A3B8; text-decoration: underline; font-size: 0.85rem; }}
+                .steps {{ text-align: left; background: #0F172A; padding: 18px 20px; border-radius: 12px; margin-bottom: 20px; font-size: 0.84rem; color: #CBD5E1; }}
+                .steps ol {{ margin: 0; padding-left: 20px; }}
+                .steps li {{ margin-bottom: 10px; }}
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <div style="font-size: 2.2rem; margin-bottom: 12px;">🔑</div>
+                <h2>Conectar con Google Accounts</h2>
+                <p>Para abrir la pantalla oficial de Google Accounts (<b>accounts.google.com</b>), necesitas ingresar tu <b>Google Client ID</b> gratuito de Google Cloud:</p>
+                <div class="steps">
+                    <ol>
+                        <li>Entra a <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color: #60A5FA;">Google Cloud Console</a>.</li>
+                        <li>Crea un <b>ID de cliente de OAuth</b> (Tipo: <i>Aplicación web</i>).</li>
+                        <li>En <b>URI de redireccionamiento autorizados</b>, ingresa:<br><code>{redirect_uri}</code></li>
+                        <li>Agrega tu clave en el archivo <code>.env</code>:<br><code>GOOGLE_CLIENT_ID=tu-id.apps.googleusercontent.com</code><br><code>GOOGLE_CLIENT_SECRET=tu-secret</code></li>
+                    </ol>
+                </div>
+                <a href="https://console.cloud.google.com/apis/credentials" target="_blank" class="btn">
+                    Abrir Google Cloud Console →
+                </a>
+                <a href="/portal" class="btn-back">← Volver al Panel y entrar con correo/contraseña</a>
+            </div>
+        </body>
+        </html>
+        """)
+
+    google_url = (
+        f"https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={urllib.parse.quote(client_id)}&"
+        f"redirect_uri={urllib.parse.quote(redirect_uri)}&"
+        f"response_type=code&"
+        f"scope=openid%20email%20profile&"
+        f"access_type=offline&"
+        f"prompt=select_account"
+    )
+    return RedirectResponse(url=google_url)
+
+
+@app.get("/api/auth/google/callback")
+def google_callback(request: Request, code: Optional[str] = None, error: Optional[str] = None):
+    """Callback de Google OAuth 2.0: intercambia el código por tokens y autentica al usuario."""
+    if error or not code:
+        return RedirectResponse(url="/portal?google_error=cancelled")
+
+    client_id = os.environ.get("GOOGLE_CLIENT_ID")
+    client_secret = os.environ.get("GOOGLE_CLIENT_SECRET")
+    host = request.headers.get("host", "localhost:8000")
+    scheme = "https" if "https" in request.headers.get("x-forwarded-proto", "") or "klyven" in host else "http"
+    redirect_uri = f"{scheme}://{host}/api/auth/google/callback"
+
+    token_url = "https://oauth2.googleapis.com/token"
+    token_data = {
+        "code": code,
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uri": redirect_uri,
+        "grant_type": "authorization_code"
+    }
+
+    try:
+        t_res = requests.post(token_url, data=token_data, timeout=10)
+        t_json = t_res.json()
+        access_token = t_json.get("access_token")
+
+        if not access_token:
+            return RedirectResponse(url="/portal?google_error=token_failed")
+
+        user_res = requests.get("https://www.googleapis.com/oauth2/v3/userinfo", headers={"Authorization": f"Bearer {access_token}"}, timeout=10)
+        user_info = user_res.json()
+
+        email = user_info.get("email")
+        name = user_info.get("name") or (email.split("@")[0] if email else "Usuario")
+        picture = user_info.get("picture") or ""
+
+        if not email:
+            return RedirectResponse(url="/portal?google_error=no_email")
+
+        user = login_or_create_google_user(email=email, full_name=name, picture=picture)
+        token = user["token"]
+        tenant_id = user["tenant_id"]
+
+        resp = RedirectResponse(url=f"/portal?google_token={token}&tenant={tenant_id}")
+        resp.set_cookie(key="klyven_auth_token", value=token, max_age=30*86400, httponly=False, samesite="lax")
+        return resp
+
+    except Exception as e:
+        print(f"[Google Callback Error] {e}")
+        return RedirectResponse(url="/portal?google_error=server_error")
 
 
 @app.get("/api/auth/me")
