@@ -2782,6 +2782,114 @@
                 opacity: 1;
             }
         }
+
+        /* ------------------------------------------------------------- */
+        /* MODAL DE CONFIRMACIÓN PERSONALIZADO (CERO CONFIRM NATIVO)     */
+        /* ------------------------------------------------------------- */
+        .klyven-confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 27, 49, 0.38);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999999;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .klyven-confirm-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 24px 60px rgba(15, 27, 49, 0.18), 0 2px 8px rgba(15, 27, 49, 0.04);
+            border-radius: 24px;
+            max-width: 440px;
+            width: 100%;
+            padding: 32px 28px 24px 28px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .klyven-confirm-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .klyven-confirm-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #020C21;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.3px;
+        }
+
+        .klyven-confirm-desc {
+            font-size: 0.88rem;
+            color: #59627E;
+            line-height: 1.5;
+            margin: 0 0 24px 0;
+        }
+
+        .klyven-confirm-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .klyven-confirm-btn-cancel {
+            flex: 1;
+            height: 46px;
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #CBD5E1;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            font-family: inherit;
+        }
+
+        .klyven-confirm-btn-cancel:hover {
+            background: #E2E8F0;
+            color: #0F172A;
+        }
+
+        .klyven-confirm-btn-ok {
+            flex: 1;
+            height: 46px;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            box-shadow: 0 4px 12px rgba(15, 27, 49, 0.14);
+            font-family: inherit;
+        }
+
+        .klyven-confirm-btn-ok:hover {
+            filter: brightness(0.9);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -5047,6 +5155,57 @@
             showToast(text, type);
         };
 
+        // Modal de confirmación elegante Klyven (reemplazo moderno para confirm())
+        function showConfirmModal({ title = '¿Estás seguro?', message = '', confirmText = 'Confirmar', cancelText = 'Cancelar', isDestructive = false, icon = 'help' } = {}) {
+            return new Promise((resolve) => {
+                let overlay = document.getElementById('klyven_confirm_modal');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.id = 'klyven_confirm_modal';
+                    overlay.className = 'klyven-confirm-overlay';
+                    document.body.appendChild(overlay);
+                }
+
+                const iconHtml = icon === 'logout'
+                    ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
+                    : (isDestructive
+                        ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>'
+                        : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>');
+
+                const iconBg = icon === 'logout' ? '#EFF6FF' : (isDestructive ? '#FEF2F2' : '#EFF6FF');
+                const confirmBg = isDestructive ? '#DC2626' : '#0F1B31';
+
+                overlay.innerHTML = `
+                    <div class="klyven-confirm-card">
+                        <div class="klyven-confirm-icon-box" style="background: ${iconBg};">
+                            ${iconHtml}
+                        </div>
+                        <h3 class="klyven-confirm-title">${title}</h3>
+                        <p class="klyven-confirm-desc">${message}</p>
+                        <div class="klyven-confirm-actions">
+                            <button id="klyven_confirm_cancel_btn" type="button" class="klyven-confirm-btn-cancel">
+                                ${cancelText}
+                            </button>
+                            <button id="klyven_confirm_ok_btn" type="button" class="klyven-confirm-btn-ok" style="background: ${confirmBg};">
+                                ${confirmText}
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                overlay.style.display = 'flex';
+
+                function clean(res) {
+                    overlay.style.display = 'none';
+                    overlay.innerHTML = '';
+                    resolve(res);
+                }
+
+                document.getElementById('klyven_confirm_cancel_btn').onclick = () => clean(false);
+                document.getElementById('klyven_confirm_ok_btn').onclick = () => clean(true);
+            });
+        }
+
         let currentTheme = 'glass';
         let currentHeaderStyle = 'brand';
         let currentBubbleStyle = 'pill';
@@ -5564,7 +5723,14 @@
         }
 
         async function deleteUnresolved(qId) {
-            if (!confirm('¿Estás seguro de que deseas eliminar esta pregunta?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Eliminar pregunta?',
+                message: '¿Estás seguro de que deseas eliminar esta pregunta no resuelta?',
+                confirmText: 'Eliminar',
+                cancelText: 'Cancelar',
+                isDestructive: true
+            });
+            if (!ok) return;
             try {
                 const resp = await fetch(`/api/unresolved-questions/${encodeURIComponent(qId)}`, {
                     method: 'DELETE'
@@ -5581,7 +5747,14 @@
         }
 
         async function clearAllUnresolved() {
-            if (!confirm('¿Deseas limpiar todas las preguntas de prueba para ver únicamente las preguntas de tus clientes reales?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Limpiar preguntas?',
+                message: '¿Deseas limpiar todas las preguntas de prueba para ver únicamente las de tus clientes reales?',
+                confirmText: 'Limpiar preguntas',
+                cancelText: 'Cancelar',
+                isDestructive: true
+            });
+            if (!ok) return;
             const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
             try {
                 const resp = await fetch(`/api/unresolved-questions/clear-all?tenant_id=${encodeURIComponent(bizId)}`, {
@@ -5751,7 +5924,14 @@
         }
 
         async function deleteBooking(bookingId) {
-            if (!confirm('¿Estás seguro de que deseas eliminar esta reserva?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Eliminar reserva?',
+                message: '¿Estás seguro de que deseas eliminar esta reserva?',
+                confirmText: 'Eliminar',
+                cancelText: 'Cancelar',
+                isDestructive: true
+            });
+            if (!ok) return;
             try {
                 const resp = await fetch(`/api/bookings/${encodeURIComponent(bookingId)}`, {
                     method: 'DELETE'
@@ -5768,7 +5948,14 @@
         }
 
         async function clearAllBookings() {
-            if (!confirm('¿Deseas limpiar las reservas de prueba para iniciar en limpio con tus reservas reales?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Limpiar reservas?',
+                message: '¿Deseas limpiar las reservas de prueba para iniciar en limpio con tus reservas reales?',
+                confirmText: 'Limpiar reservas',
+                cancelText: 'Cancelar',
+                isDestructive: true
+            });
+            if (!ok) return;
             const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
             try {
                 const resp = await fetch(`/api/bookings/clear-all?tenant_id=${encodeURIComponent(bizId)}`, {
@@ -6013,13 +6200,22 @@
         }
 
         async function handleLogout() {
-            if (!confirm('¿Estás seguro de que deseas cerrar sesión en el Panel de Klyven Studio?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Cerrar sesión?',
+                message: '¿Estás seguro de que deseas salir del Panel de Klyven Studio?',
+                confirmText: 'Cerrar sesión',
+                cancelText: 'Cancelar',
+                icon: 'logout'
+            });
+            if (!ok) return;
+
             try {
                 await fetch('/api/auth/logout', { method: 'POST' });
             } catch(e) {}
             localStorage.removeItem('klyven_auth_token');
             currentUser = null;
             showAuthModal('login');
+            showToast('Has cerrado sesión correctamente.', 'info');
         }
 
         function switchKnowledgeTab(tabName) {
@@ -7353,7 +7549,14 @@
         }
 
         async function deleteLead(leadId) {
-            if (!confirm('¿Estás seguro de que deseas eliminar este prospecto?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Eliminar prospecto?',
+                message: '¿Estás seguro de que deseas eliminar este prospecto?',
+                confirmText: 'Eliminar',
+                cancelText: 'Cancelar',
+                isDestructive: true
+            });
+            if (!ok) return;
             try {
                 const resp = await fetch(`/api/leads/${encodeURIComponent(leadId)}`, {
                     method: 'DELETE'
@@ -7370,7 +7573,14 @@
         }
 
         async function clearAllLeads() {
-            if (!confirm('¿Deseas limpiar todos los prospectos de prueba para iniciar en limpio con tus clientes reales?')) return;
+            const ok = await showConfirmModal({
+                title: '¿Limpiar prospectos?',
+                message: '¿Deseas limpiar todos los prospectos de prueba para iniciar en limpio con tus clientes reales?',
+                confirmText: 'Limpiar prospectos',
+                cancelText: 'Cancelar',
+                isDestructive: true
+            });
+            if (!ok) return;
             const bizId = document.getElementById('biz_id')?.value?.trim()?.toUpperCase() || 'KLYVEN-STUDIO';
             try {
                 const resp = await fetch(`/api/leads/clear-all?tenant_id=${encodeURIComponent(bizId)}`, {
