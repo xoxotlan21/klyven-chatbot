@@ -3050,7 +3050,7 @@
             flex-direction: row;
             max-width: 1020px;
             width: 100%;
-            min-height: 620px;
+            min-height: 660px;
             border-radius: 26px;
             background: #FFFFFF;
             border: 1px solid rgba(255, 255, 255, 0.85);
@@ -3068,22 +3068,22 @@
 
         .auth-portal-hero {
             flex: 0 0 42%;
-            min-width: 340px;
-            background-color: #E6EDF6;
+            min-width: 350px;
+            background-color: #E2EBF5;
             background-image: url('/assets/auth-hero-light.png');
             background-repeat: no-repeat;
             background-position: center bottom;
             background-size: cover;
-            padding: 44px 40px;
+            padding: 44px 44px 36px 44px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-between;
             box-sizing: border-box;
             position: relative;
             border-right: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        .auth-hero-content {
+        .auth-hero-header {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -3095,7 +3095,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 26px;
+            margin-bottom: 22px;
         }
 
         .auth-brand-logo {
@@ -3109,49 +3109,48 @@
         }
 
         .auth-brand-name {
-            font-size: 1.12rem;
+            font-size: 1.15rem;
             font-weight: 800;
             letter-spacing: -0.4px;
             color: #020C21;
         }
 
         .auth-hero-tag {
-            display: inline-block;
-            font-size: 0.68rem;
-            font-weight: 800;
-            letter-spacing: 1.2px;
+            font-size: 0.70rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: #4A78B0;
-            background: rgba(74, 120, 176, 0.12);
-            border: 1px solid rgba(74, 120, 176, 0.22);
-            padding: 4px 12px;
-            border-radius: 999px;
-            margin-bottom: 14px;
+            color: #5E7A9C;
+            margin-bottom: 12px;
+            display: block;
         }
 
         .auth-hero-title {
-            font-size: 2.35rem;
+            font-size: 2.25rem;
             font-weight: 800;
             line-height: 1.12;
             letter-spacing: -0.8px;
             color: #020C21;
-            margin: 0 0 12px 0;
+            margin: 0 0 14px 0;
         }
 
         .auth-hero-desc {
-            font-size: 0.92rem;
+            font-size: 0.90rem;
             color: #59627E;
-            line-height: 1.5;
-            margin: 0 0 16px 0;
-            max-width: 320px;
+            line-height: 1.45;
+            margin: 0;
+            max-width: 290px;
         }
 
         .auth-hero-footer {
-            font-size: 0.8rem;
+            font-size: 0.80rem;
             color: #59627E;
             font-weight: 600;
             letter-spacing: 0.2px;
-            opacity: 0.9;
+            opacity: 0.95;
+            position: relative;
+            z-index: 2;
+            margin-top: auto;
         }
 
         .auth-portal-form-col {
@@ -6653,7 +6652,7 @@
                 <div class="auth-portal-card">
                     <!-- COLUMNA IZQUIERDA: Identidad Klyven Studio e Ilustración -->
                     <div class="auth-portal-hero">
-                        <div class="auth-hero-content">
+                        <div class="auth-hero-header">
                             <!-- 1. Logotipo original de Klyven Studio -->
                             <div class="auth-hero-brand">
                                 <img src="https://klyvenstudio.com/assets/logo-Ze6ecQUw.png" alt="Klyven Studio" onerror="this.src='/assets/logo-main.png'" class="auth-brand-logo auth-portal-logo-main" />
@@ -6669,10 +6668,10 @@
 
                             <!-- 4. Descripción -->
                             <p class="auth-hero-desc">Accede para personalizar tu chatbot y gestionar tu negocio.</p>
-
-                            <!-- 5. Texto discreto inferior -->
-                            <div class="auth-hero-footer">Diseñado para tu negocio.</div>
                         </div>
+
+                        <!-- 5. Texto discreto inferior -->
+                        <div class="auth-hero-footer">Diseñado para tu negocio.</div>
                     </div>
 
                     <!-- COLUMNA DERECHA: Formulario de Acceso -->
