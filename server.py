@@ -133,6 +133,7 @@ class CreateTenantRequest(BaseModel):
     auto_adapt: Optional[bool] = False
     booking_url: Optional[str] = ""
     webhook_url: Optional[str] = ""
+    installation_verified: Optional[bool] = False
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -898,11 +899,12 @@ def get_tenant_configuration(request: Request, tenant_id: str = "KLYVEN-STUDIO")
             "input_placeholder": cfg.get("input_placeholder") or "Escribe tu consulta o pedido...",
             "business_description": cfg.get("business_description") or "",
             "website_url": cfg.get("website_url") or "",
-            "services": cfg.get("services") if (cfg.get("services") and len(cfg.get("services")) > 0) else default_services,
+            "services": cfg.get("services") if ("services" in cfg and cfg.get("services") is not None) else default_services,
             "faqs": cfg.get("faqs") or "",
             "auto_adapt": cfg.get("auto_adapt", False),
             "booking_url": cfg.get("booking_url") or "",
-            "webhook_url": cfg.get("webhook_url") or ""
+            "webhook_url": cfg.get("webhook_url") or "",
+            "installation_verified": cfg.get("installation_verified", False)
         }
 
     # Defaults para Klyven u otros presets
@@ -985,8 +987,9 @@ def api_create_tenant(request: Request, req: CreateTenantRequest):
     target_tenant_id = req.tenant_id.strip().upper()
     if user and user.get("role") != "superadmin":
         user_tenant = (user.get("tenant_id") or "").strip().upper()
-        if user_tenant and target_tenant_id != user_tenant:
-            target_tenant_id = user_tenant
+    existing_t = get_tenant_by_id(target_tenant_id)
+    existing_cfg = existing_t.get("config", {}) if existing_t else {}
+    inst_verified = req.installation_verified if req.installation_verified is not None else existing_cfg.get("installation_verified", False)
     config_dict = {
         "bot_name": req.bot_name,
         "bot_avatar": req.bot_avatar,
@@ -1009,6 +1012,7 @@ def api_create_tenant(request: Request, req: CreateTenantRequest):
         "auto_adapt": req.auto_adapt or False,
         "booking_url": req.booking_url or "",
         "webhook_url": req.webhook_url or "",
+        "installation_verified": inst_verified,
         "tone_style": "Profesional, cordial, empático y enfocado en asesorar y cerrar ventas."
     }
     saved = save_or_update_tenant(
@@ -1103,6 +1107,20 @@ def api_verify_installation(req: VerifyInstallRequest):
         has_tenant = req.tenant_id.upper() in html.upper() if req.tenant_id else False
 
         if has_widget and has_tenant:
+            # Persistir estado de verificación en SQLite para que no se pierda al recargar
+            from database import get_tenant_by_id, save_or_update_tenant
+            db_t = get_tenant_by_id(req.tenant_id)
+            if db_t:
+                t_cfg = db_t.get("config", {})
+                t_cfg["installation_verified"] = True
+                save_or_update_tenant(
+                    tenant_id=req.tenant_id,
+                    business_name=db_t.get("business_name", ""),
+                    industry=db_t.get("industry", ""),
+                    currency=db_t.get("currency", "USD"),
+                    support_phone=db_t.get("support_phone", ""),
+                    config_data=t_cfg
+                )
             return {
                 "status": "success",
                 "installed": True,

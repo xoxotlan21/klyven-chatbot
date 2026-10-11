@@ -4366,7 +4366,11 @@
                     <span>/</span>
                     <strong id="breadcrumb_current">Inicio</strong>
                 </div>
-                <div class="topbar-actions">
+                <div class="topbar-actions" style="display: flex; align-items: center; gap: 12px;">
+                    <span id="autosave_indicator" style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; opacity: 0; transition: opacity 0.3s ease;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #10B981;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Guardado</span>
+                    </span>
                     <button class="btn-topbar-save" onclick="saveTenant()">
                         <span>Guardar y publicar</span>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
@@ -6633,6 +6637,13 @@
             const bc = document.getElementById('breadcrumb_current');
             if (bc) bc.innerText = titles[sectionName] || 'Inicio';
 
+            try {
+                localStorage.setItem('klyven_active_section', sectionName);
+                if (window.location.hash !== '#' + sectionName) {
+                    history.replaceState(null, '', '#' + sectionName);
+                }
+            } catch(e) {}
+
             if (sectionName === 'inicio') {
                 updateHomeOverview();
             }
@@ -8810,8 +8821,15 @@
                 business_description: desc,
                 services: services,
                 faqs: faqs,
-                auto_adapt: autoAdapt
+                auto_adapt: autoAdapt,
+                installation_verified: isInstallationVerified
             };
+
+            const ind = document.getElementById('autosave_indicator');
+            if (ind) {
+                ind.innerHTML = '<span style="color:var(--text-muted);">Guardando...</span>';
+                ind.style.opacity = '1';
+            }
 
             try {
                 const resp = await fetch('/api/tenants', {
@@ -8836,15 +8854,46 @@
                 const homeSub = document.getElementById('home_status_sub');
                 if (homeSub) homeSub.innerText = 'Tu asistente está activo y disponible.';
 
+                if (ind) {
+                    ind.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#10B981;"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#10B981;">Guardado</span>';
+                    ind.style.opacity = '1';
+                    setTimeout(() => { if (ind) ind.style.opacity = '0'; }, 2200);
+                }
+
                 if (!silent) {
-                    alert(`¡Chatbot para "${bizName}" guardado y publicado con éxito!`);
+                    showToast(`¡Configuración de "${bizName}" guardada y publicada!`, 'success');
                 }
             } catch (e) {
+                if (ind) {
+                    ind.innerHTML = '<span style="color:#EF4444;">Error al guardar</span>';
+                    setTimeout(() => { if (ind) ind.style.opacity = '0'; }, 3000);
+                }
                 if (!silent) {
-                    alert('Error al guardar: ' + e.message);
+                    showToast('Error al guardar: ' + e.message, 'error');
                 }
             }
         }
+
+        // Auto-guardado en segundo plano con debounce para que el cliente no pierda su progreso al recargar
+        let autoSaveTimer = null;
+        function triggerAutoSave() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                const bId = document.getElementById('biz_id')?.value?.trim();
+                if (bId) {
+                    saveTenant(true);
+                }
+            }, 1800);
+        }
+
+        document.addEventListener('input', function(e) {
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
+                const id = e.target.id || '';
+                if (!id.includes('search') && !id.includes('chat_input') && !id.includes('login_') && !id.includes('reg_')) {
+                    triggerAutoSave();
+                }
+            }
+        });
 
         function updateInstallationLinks(bizId) {
             if (!bizId) {
@@ -9598,7 +9647,28 @@
                     if (data.welcome_message) {
                         document.getElementById('bot_welcome').value = data.welcome_message;
                     }
-                    if (data.services && data.services.length > 0) {
+                    if (data.industry && document.getElementById('biz_industry')) {
+                        document.getElementById('biz_industry').value = data.industry;
+                    }
+                    if (data.currency && document.getElementById('biz_currency')) {
+                        document.getElementById('biz_currency').value = data.currency;
+                    }
+                    if (data.bot_name && document.getElementById('bot_name')) {
+                        document.getElementById('bot_name').value = data.bot_name;
+                    }
+                    if (data.bot_avatar && document.getElementById('bot_avatar_url')) {
+                        document.getElementById('bot_avatar_url').value = data.bot_avatar;
+                    }
+                    if (data.bubble_text && document.getElementById('bubble_text')) {
+                        document.getElementById('bubble_text').value = data.bubble_text;
+                    }
+                    if (data.auto_adapt !== undefined && document.getElementById('auto_adapt_check')) {
+                        document.getElementById('auto_adapt_check').checked = Boolean(data.auto_adapt);
+                    }
+                    if (data.installation_verified !== undefined) {
+                        isInstallationVerified = Boolean(data.installation_verified);
+                    }
+                    if (Array.isArray(data.services)) {
                         const container = document.getElementById('services_container');
                         if (container) {
                             container.innerHTML = '';
@@ -9646,6 +9716,18 @@
             loadUnresolvedQuestions();
             loadBookings();
             loadStats('7d');
+
+            // Restaurar pestaña o sección activa donde el usuario estaba trabajando al recargar
+            const hashSec = (window.location.hash || '').replace('#', '');
+            const savedSec = hashSec || localStorage.getItem('klyven_active_section') || 'inicio';
+            const validSections = [
+                'inicio', 'negocio', 'conocimiento', 'apariencia',
+                'comportamiento', 'agenda', 'conversaciones', 'leads',
+                'estadisticas', 'integraciones', 'instalacion', 'ayuda', 'plan'
+            ];
+            if (savedSec && validSections.includes(savedSec)) {
+                switchSection(savedSec);
+            }
         }
 
         // Inicializar vista previa, datos y autenticación al cargar
