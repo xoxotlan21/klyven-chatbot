@@ -1173,6 +1173,173 @@ def api_verify_installation(req: VerifyInstallRequest):
 
 
 # ==============================================================================
+# DESCARGA DE PLUGIN WORDPRESS, CONTENEDOR GTM Y DELEGACIÓN A PROGRAMADORES
+# ==============================================================================
+@app.get("/api/download-wordpress-plugin")
+def api_download_wordpress_plugin(tenant_id: str = "KLYVEN-STUDIO"):
+    """Genera y descarga un plugin oficial de WordPress (.zip) preconfigurado para el negocio."""
+    import zipfile
+    import io
+
+    clean_tenant = tenant_id.strip().upper()
+    php_code = f"""<?php
+/**
+ * Plugin Name: Klyven Studio Chatbot
+ * Plugin URI: https://klyvenstudio.com
+ * Description: Asistente virtual con Inteligencia Artificial oficial de Klyven Studio para atención al cliente y ventas.
+ * Version: 1.0.0
+ * Author: Klyven Studio
+ * Author URI: https://klyvenstudio.com
+ * License: GPL2
+ */
+
+if (!defined('ABSPATH')) exit;
+
+function klyven_chatbot_enqueue() {{
+    $tenant = get_option('klyven_tenant_id', '{clean_tenant}');
+    if (!empty($tenant)) {{
+        echo "\\n<!-- Klyven Studio AI Chatbot -->\\n";
+        echo '<script src="https://klyven-chatbot.onrender.com/widget.js" data-tenant="' . esc_attr($tenant) . '" defer></script>' . "\\n";
+    }}
+}}
+add_action('wp_footer', 'klyven_chatbot_enqueue');
+
+function klyven_chatbot_menu() {{
+    add_options_page('Klyven Chatbot', 'Klyven Chatbot', 'manage_options', 'klyven-chatbot', 'klyven_chatbot_page');
+}}
+add_action('admin_menu', 'klyven_chatbot_menu');
+
+function klyven_chatbot_page() {{
+    if (isset($_POST['klyven_tenant_id']) && check_admin_referer('klyven_save_action')) {{
+        update_option('klyven_tenant_id', sanitize_text_field($_POST['klyven_tenant_id']));
+        echo '<div class="updated"><p><b>¡Configuración guardada!</b> Tu chatbot de Klyven Studio está activo.</p></div>';
+    }}
+    $current = get_option('klyven_tenant_id', '{clean_tenant}');
+    ?>
+    <div class="wrap">
+        <h2><span style="color:#0F1B31;">Klyven Studio</span> &bull; Asistente Virtual</h2>
+        <p>Tu chatbot está instalado y activo en tu sitio web WordPress.</p>
+        <form method="post" action="">
+            <?php wp_nonce_field('klyven_save_action'); ?>
+            <table class="form-table">
+                <tr>
+                    <th scope="row">Identificador de Negocio (Tenant ID)</th>
+                    <td>
+                        <input type="text" name="klyven_tenant_id" value="<?php echo esc_attr($current); ?>" class="regular-text" />
+                        <p class="description">Identificador único asignado en tu portal de Klyven Studio.</p>
+                    </td>
+                </tr>
+            </table>
+            <?php submit_button('Guardar cambios'); ?>
+        </form>
+    </div>
+    <?php
+}}
+"""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr("klyven-chatbot/klyven-chatbot.php", php_code)
+
+    buf.seek(0)
+    return Response(
+        content=buf.getvalue(),
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="klyven-chatbot-{clean_tenant.lower()}.zip"'}
+    )
+
+
+@app.get("/api/download-gtm-container")
+def api_download_gtm_container(tenant_id: str = "KLYVEN-STUDIO"):
+    """Genera y descarga un archivo JSON de contenedor listo para importar en Google Tag Manager."""
+    clean_tenant = tenant_id.strip().upper()
+    gtm_data = {
+        "exportFormatVersion": 2,
+        "exportTime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "containerVersion": {
+            "container": {
+                "name": f"Klyven Chatbot - {clean_tenant}",
+                "publicId": "GTM-KLYVEN",
+                "usageContext": ["WEB"]
+            },
+            "tag": [
+                {
+                    "name": f"Klyven Studio AI Chatbot - {clean_tenant}",
+                    "type": "html",
+                    "parameter": [
+                        {
+                            "type": "template",
+                            "key": "html",
+                            "value": f'<script src="https://klyven-chatbot.onrender.com/widget.js" data-tenant="{clean_tenant}" defer></script>'
+                        },
+                        {
+                            "type": "boolean",
+                            "key": "supportDocumentWrite",
+                            "value": "false"
+                        }
+                    ],
+                    "firingTriggerId": ["2147479553"]
+                }
+            ]
+        }
+    }
+    return Response(
+        content=json.dumps(gtm_data, indent=2),
+        media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="gtm-klyven-{clean_tenant.lower()}.json"'}
+    )
+
+
+class DeveloperInstructionsRequest(BaseModel):
+    developer_email: str
+    tenant_id: str
+    custom_note: Optional[str] = ""
+
+@app.post("/api/send-developer-instructions")
+def api_send_developer_instructions(req: DeveloperInstructionsRequest):
+    """Genera los enlaces de compartir (Email, WhatsApp) e instrucciones para el programador del cliente."""
+    clean_tenant = req.tenant_id.strip().upper()
+    email_clean = req.developer_email.strip().lower()
+
+    db_t = get_tenant_by_id(clean_tenant)
+    biz_name = db_t.get("business_name", clean_tenant) if db_t else clean_tenant
+
+    script_snippet = f'<script src="https://klyven-chatbot.onrender.com/widget.js" data-tenant="{clean_tenant}"></script>'
+    demo_url = f"https://klyven-chatbot.onrender.com/chat/{clean_tenant}"
+
+    email_subject = urllib.parse.quote(f"Instrucciones de integración de Chatbot IA para {biz_name}")
+    note_text = f"Nota del cliente:\n\"{req.custom_note}\"\n\n" if req.custom_note else ""
+    email_body = urllib.parse.quote(
+        f"Hola,\n\n{note_text}"
+        f"Por favor integra el asistente virtual de Klyven Studio en nuestro sitio web.\n\n"
+        f"1. Código a insertar (antes del cierre de </body>):\n"
+        f"{script_snippet}\n\n"
+        f"2. Identificador de negocio:\n"
+        f"ID: {clean_tenant}\n\n"
+        f"3. Demostración en vivo:\n"
+        f"{demo_url}\n\n"
+        f"Cualquier duda técnica pueden contactar al soporte de Klyven Studio.\n\n¡Gracias!"
+    )
+
+    wa_text = urllib.parse.quote(
+        f"Hola! Te comparto las instrucciones para integrar nuestro chatbot de Klyven Studio en la web:\n\n"
+        f"Script para pegar antes de </body>:\n"
+        f"{script_snippet}\n\n"
+        f"Demo en vivo: {demo_url}\n"
+        f"Tenant ID: {clean_tenant}"
+    )
+
+    mailto_url = f"mailto:{email_clean}?subject={email_subject}&body={email_body}"
+    wa_url = f"https://api.whatsapp.com/send?text={wa_text}"
+
+    return {
+        "status": "success",
+        "mailto_url": mailto_url,
+        "whatsapp_url": wa_url,
+        "message": f"Instrucciones preparadas para {email_clean}"
+    }
+
+
+# ==============================================================================
 # 2. CAPTURA Y EXPORTACIÓN REAL DE LEADS / PROSPECTOS
 # ==============================================================================
 class LeadCreateRequest(BaseModel):
