@@ -74,7 +74,9 @@ from database import (
     authenticate_user,
     get_user_by_token,
     logout_user,
-    get_tenant_by_whatsapp
+    get_tenant_by_whatsapp,
+    get_subscription_status,
+    update_subscription_status
 )
 
 class RegisterRequest(BaseModel):
@@ -469,13 +471,14 @@ def api_register_user(req: RegisterRequest):
             currency="USD"
         )
 
-    # Crear el usuario encriptado
+    # Crear el usuario encriptado (por defecto inactivo hasta que pague su plan)
     user = create_user(
         email=email_clean,
         password=req.password,
         full_name=req.full_name.strip() or req.business_name.strip(),
         tenant_id=tenant_id,
-        role="admin"
+        role="admin",
+        subscription_status="inactive"
     )
     if not user:
         raise HTTPException(status_code=400, detail="Este correo electrónico ya se encuentra registrado")
@@ -485,7 +488,8 @@ def api_register_user(req: RegisterRequest):
         "message": "Cuenta creada con éxito",
         "token": user["token"],
         "user": user,
-        "tenant_id": tenant_id
+        "tenant_id": tenant_id,
+        "subscription_status": "inactive"
     }
 
 
@@ -498,27 +502,31 @@ def api_login_user(req: LoginRequest):
         raise HTTPException(status_code=401, detail="Correo o contraseña incorrectos")
 
     tenant = get_tenant_by_id(user["tenant_id"]) or {}
+    sub_status = user.get("subscription_status") or get_subscription_status(user["tenant_id"])
     return {
         "status": "success",
         "message": "Inicio de sesión exitoso",
         "token": user["token"],
         "user": user,
         "tenant_id": user["tenant_id"],
+        "subscription_status": sub_status,
         "business_name": tenant.get("business_name", user["tenant_id"])
     }
 
 
 @app.get("/api/auth/me")
 def api_get_current_user(request: Request):
-    """Devuelve los datos del usuario en sesión activa."""
+    """Devuelve los datos del usuario en sesión activa con su estado de suscripción."""
     user = get_auth_user(request)
     if not user:
         return {"authenticated": False}
     tenant = get_tenant_by_id(user["tenant_id"]) or {}
+    sub_status = user.get("subscription_status") or get_subscription_status(user["tenant_id"])
     return {
         "authenticated": True,
         "user": user,
         "tenant_id": user["tenant_id"],
+        "subscription_status": sub_status,
         "business_name": tenant.get("business_name", user["tenant_id"])
     }
 
@@ -531,6 +539,86 @@ def api_logout_user(request: Request):
         token = auth_header.replace("Bearer ", "").strip()
         logout_user(token)
     return {"status": "success", "message": "Sesión cerrada correctamente"}
+
+
+# ==============================================================================
+# GESTIÓN DE SUSCRIPCIONES, STRIPE CHECKOUT & PAYWALL
+# ==============================================================================
+
+class ManualActivateRequest(BaseModel):
+    tenant_id: str
+    status: str = "active"
+
+
+@app.post("/api/subscription/create-checkout-session")
+def api_create_subscription_checkout(request: Request):
+    """Crea una sesión de Checkout en Stripe para activar la suscripción del bot ($49 USD/mes)."""
+    user = get_auth_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="No autorizado")
+
+    tenant_id = user["tenant_id"]
+    tenant = get_tenant_by_id(tenant_id) or {}
+    business_name = tenant.get("business_name", tenant_id)
+
+    stripe_key = os.environ.get("STRIPE_SECRET_KEY", "")
+    if stripe_key and stripe_key.startswith("sk_"):
+        try:
+            import stripe
+            stripe.api_key = stripe_key
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                line_items=[{
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {
+                            "name": f"Klyven Studio - Chatbot IA para {business_name}",
+                            "description": "Membresía mensual: Chatbot IA 24/7 web & WhatsApp, prospectos y agenda",
+                        },
+                        "unit_amount": 4900,
+                        "recurring": {"interval": "month"}
+                    },
+                    "quantity": 1,
+                }],
+                mode="subscription",
+                success_url=f"/portal?activated=true&tenant={tenant_id}",
+                cancel_url=f"/portal?cancelled=true",
+                client_reference_id=tenant_id,
+                customer_email=user["email"],
+                metadata={
+                    "tenant_id": tenant_id,
+                    "user_email": user["email"],
+                    "business_name": business_name,
+                    "type": "bot_subscription"
+                }
+            )
+            return {"status": "success", "checkout_url": session.url}
+        except Exception as e:
+            print(f"[Stripe Checkout Error] {e}")
+
+    # Fallback si no hay clave real de Stripe configurada aún:
+    return {
+        "status": "manual_checkout",
+        "checkout_url": None,
+        "message": "Para pagos automáticos con tarjeta configura STRIPE_SECRET_KEY. Puedes solicitar pago por WhatsApp o transferencia."
+    }
+
+
+@app.post("/api/subscription/activate-manual")
+def api_activate_subscription_manual(request: Request, payload: ManualActivateRequest):
+    """Permite al Superadministrador activar o desactivar una cuenta cliente manualmente."""
+    user = get_auth_user(request)
+    if not user or user.get("role") != "superadmin":
+        raise HTTPException(status_code=403, detail="Solo el superadministrador puede activar cuentas manualmente")
+
+    target_tenant = payload.tenant_id.strip().upper()
+    update_subscription_status(target_tenant, payload.status)
+    return {
+        "status": "success",
+        "tenant_id": target_tenant,
+        "subscription_status": payload.status,
+        "message": f"Estado de suscripción actualizado a {payload.status.upper()} para {target_tenant}"
+    }
 
 
 # ==============================================================================
@@ -1909,12 +1997,20 @@ async def stripe_webhook(request: Request):
 
     if event_type == "checkout.session.completed":
         session = payload.get("data", {}).get("object", {})
-        order_id = session.get("metadata", {}).get("order_id")
+        metadata = session.get("metadata", {})
+
+        # 1. Activación de suscripción de bot para el cliente
+        sub_tenant_id = metadata.get("tenant_id") or session.get("client_reference_id")
+        if sub_tenant_id:
+            update_subscription_status(sub_tenant_id, "active")
+
+        # 2. Confirmación de orden de reserva si aplica
+        order_id = metadata.get("order_id")
         if order_id:
             confirm_res = confirm_payment(order_id)
             if confirm_res["success"]:
                 assign_driver(order_id, confirm_res["order"].get("operational_data", {}), confirm_res["order"].get("tenant_name", ""))
-        return {"status": "payment_confirmed", "order_id": order_id}
+        return {"status": "payment_confirmed", "order_id": order_id, "tenant_activated": sub_tenant_id}
 
     return {"status": "event_received"}
 

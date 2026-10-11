@@ -180,6 +180,17 @@ def init_db():
         except Exception:
             pass
 
+    # Migración de subscription_status en users y tenants
+    for tbl in ["users", "tenants"]:
+        try:
+            cursor.execute(f"ALTER TABLE {tbl} ADD COLUMN subscription_status TEXT DEFAULT 'inactive'")
+        except Exception:
+            pass
+
+    # Asegurar que el superadmin y Klyven Studio siempre estén activos
+    cursor.execute("UPDATE users SET subscription_status = 'active' WHERE role = 'superadmin' OR email = 'andrew@klyvenstudio.com'")
+    cursor.execute("UPDATE tenants SET subscription_status = 'active' WHERE tenant_id = 'KLYVEN-STUDIO'")
+
     conn.commit()
     conn.close()
 
@@ -226,7 +237,8 @@ def create_user(
     password: str,
     full_name: str,
     tenant_id: str,
-    role: str = "admin"
+    role: str = "admin",
+    subscription_status: str = "inactive"
 ) -> Optional[Dict[str, Any]]:
     """Crea un usuario con contraseña cifrada y le genera un token inicial."""
     email_clean = email.strip().lower()
@@ -243,9 +255,9 @@ def create_user(
     token = generate_session_token()
 
     cursor.execute("""
-    INSERT INTO users (user_id, email, password_hash, salt, full_name, tenant_id, role, session_token, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (user_id, email_clean, pwd_hash, salt, full_name.strip(), tenant_id, role, token, now))
+    INSERT INTO users (user_id, email, password_hash, salt, full_name, tenant_id, role, session_token, subscription_status, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, email_clean, pwd_hash, salt, full_name.strip(), tenant_id, role, token, subscription_status, now))
     conn.commit()
     conn.close()
 
@@ -256,6 +268,7 @@ def create_user(
         "tenant_id": tenant_id,
         "role": role,
         "token": token,
+        "subscription_status": subscription_status,
         "created_at": now
     }
 
@@ -283,6 +296,7 @@ def authenticate_user(email: str, password: str) -> Optional[Dict[str, Any]]:
     conn.close()
 
     user["token"] = new_token
+    user["subscription_status"] = user.get("subscription_status") or ("active" if user.get("role") == "superadmin" else "inactive")
     user.pop("password_hash", None)
     user.pop("salt", None)
     return user
@@ -300,6 +314,7 @@ def get_user_by_token(token: str) -> Optional[Dict[str, Any]]:
     if not row:
         return None
     user = dict(row)
+    user["subscription_status"] = user.get("subscription_status") or ("active" if user.get("role") == "superadmin" else "inactive")
     user.pop("password_hash", None)
     user.pop("salt", None)
     return user
@@ -332,8 +347,36 @@ def seed_default_users():
             password="Klyven2026!",
             full_name="Andrew",
             tenant_id="KLYVEN-STUDIO",
-            role="superadmin"
+            role="superadmin",
+            subscription_status="active"
         )
+
+
+def get_subscription_status(tenant_id: str) -> str:
+    """Obtiene el estado de suscripción de un tenant ('active', 'inactive')."""
+    if not tenant_id:
+        return "inactive"
+    if tenant_id.upper() == "KLYVEN-STUDIO":
+        return "active"
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT subscription_status FROM tenants WHERE tenant_id = ?", (tenant_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if row and row["subscription_status"]:
+        return row["subscription_status"]
+    return "inactive"
+
+
+def update_subscription_status(tenant_id: str, status: str = "active") -> bool:
+    """Actualiza el estado de suscripción de un tenant y todos sus usuarios ('active', 'inactive')."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE tenants SET subscription_status = ? WHERE tenant_id = ?", (status, tenant_id))
+    cursor.execute("UPDATE users SET subscription_status = ? WHERE tenant_id = ?", (status, tenant_id))
+    conn.commit()
+    conn.close()
+    return True
 
 
 def get_tenant_by_whatsapp(phone_or_id: str) -> Optional[Dict[str, Any]]:

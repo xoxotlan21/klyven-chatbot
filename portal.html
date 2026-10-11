@@ -4494,6 +4494,72 @@
                 </div>
             </div>
 
+            <!-- 5. Modal Paywall de Activación / Cobro Obligatorio (Stripe + WhatsApp) -->
+            <div id="modal_paywall" class="custom-modal-overlay" style="display: none; z-index: 99998; background: rgba(15, 27, 49, 0.88); backdrop-filter: blur(12px);">
+                <div class="custom-modal-window" style="max-width: 520px; width: 94%; padding: 32px 28px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; font-size: 1.6rem; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(217, 119, 6, 0.35);">
+                        🔒
+                    </div>
+                    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0; letter-spacing: -0.4px;">
+                        Activa tu Chatbot con Inteligencia Artificial
+                    </h2>
+                    <p style="font-size: 0.86rem; color: var(--text-muted); margin: 0 auto 20px auto; max-width: 420px; line-height: 1.5;">
+                        Tu cuenta ha sido creada exitosamente. Para conectar el bot a tu sitio web, vincular WhatsApp y recibir clientes 24/7, activa tu membresía de negocio.
+                    </p>
+
+                    <!-- Tarjeta de Plan y Precio -->
+                    <div style="background: #F8FAFC; border: 2px solid #2563EB; border-radius: 14px; padding: 18px 20px; text-align: left; margin-bottom: 22px; position: relative;">
+                        <span style="position: absolute; top: -11px; right: 16px; background: #2563EB; color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 10px; border-radius: 12px; letter-spacing: 0.5px;">PLAN PROFESIONAL</span>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1.1rem; color: #0F1B31;">Klyven Studio IA Pro</div>
+                                <span style="font-size: 0.74rem; color: var(--text-muted);">Suscripción mensual todo incluido</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; font-weight: 900; color: #0F1B31;">$49 <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">USD / mes</span></div>
+                            </div>
+                        </div>
+
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; font-size: 0.82rem; color: #334155;">
+                            <li style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #10B981; font-weight: 800;">✓</span> Asistente IA activo 24/7 entrenado con tu negocio
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #10B981; font-weight: 800;">✓</span> Integración en 1 línea para tu sitio web + WhatsApp Cloud
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #10B981; font-weight: 800;">✓</span> Captura y exportación ilimitada de prospectos y reservas
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #10B981; font-weight: 800;">✓</span> Módulo de autoaprendizaje con preguntas sin resolver
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Botones de Acción (Stripe y WhatsApp) -->
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button id="btn_pay_stripe" type="button" onclick="startStripeCheckout()" class="btn-topbar-save" style="width: 100%; padding: 13px; font-size: 0.94rem; justify-content: center; font-weight: 700; border-radius: 10px; background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%); box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
+                            💳 Pagar y Activar Ahora con Tarjeta
+                        </button>
+                        
+                        <button id="btn_pay_whatsapp" type="button" onclick="contactWhatsAppForActivation()" style="width: 100%; padding: 11px; font-size: 0.86rem; justify-content: center; font-weight: 700; border-radius: 10px; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.15s ease;">
+                            <span>💬</span> Activar por WhatsApp o Transferencia
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 14px; font-size: 0.74rem; color: var(--text-muted);">
+                        Pagos cifrados y seguros procesados con Stripe • Cancela cuando quieras
+                    </div>
+
+                    <div style="margin-top: 14px; border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <span id="paywall_biz_label" style="font-size: 0.74rem; color: var(--text-muted);">Negocio: -</span>
+                        <button type="button" onclick="handleLogout()" style="background: none; border: none; color: #EF4444; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                            Cerrar sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div id="code_box" style="display: none;"></div>
 
         </main>
@@ -7033,7 +7099,18 @@
             const em = document.getElementById('sidebar_user_email');
             if (av) av.textContent = (user.full_name || 'U').charAt(0).toUpperCase();
             if (nm) nm.textContent = user.full_name || 'Usuario';
-            if (pl) pl.textContent = user.role === 'superadmin' ? 'SUPERADMIN' : 'PLAN PRO';
+            if (pl) {
+                if (user.role === 'superadmin') {
+                    pl.textContent = 'SUPERADMIN';
+                    pl.style.background = '#2563EB';
+                } else if (user.subscription_status === 'active') {
+                    pl.textContent = 'PLAN PRO';
+                    pl.style.background = '#10B981';
+                } else {
+                    pl.textContent = 'SIN PLAN';
+                    pl.style.background = '#F59E0B';
+                }
+            }
             if (em) em.textContent = user.email || '';
         }
 
@@ -7046,6 +7123,50 @@
         function hideAuthModal() {
             const modal = document.getElementById('modal_auth');
             if (modal) modal.style.display = 'none';
+        }
+
+        function showPaywall(bizName) {
+            const modal = document.getElementById('modal_paywall');
+            if (modal) {
+                modal.style.display = 'flex';
+                const lbl = document.getElementById('paywall_biz_label');
+                if (lbl && bizName) lbl.textContent = `Negocio: ${bizName}`;
+            }
+        }
+
+        function hidePaywall() {
+            const modal = document.getElementById('modal_paywall');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function startStripeCheckout() {
+            const btn = document.getElementById('btn_pay_stripe');
+            btn.disabled = true;
+            btn.textContent = 'Conectando con pasarela segura...';
+
+            try {
+                const resp = await fetch('/api/subscription/create-checkout-session', { method: 'POST' });
+                const data = await resp.json();
+                if (data && data.checkout_url) {
+                    window.location.href = data.checkout_url;
+                } else {
+                    alert('Para pagos y activación personalizada, contacta a soporte por WhatsApp. Te redirigiremos ahora.');
+                    contactWhatsAppForActivation();
+                }
+            } catch(e) {
+                alert('No se pudo conectar con la pasarela. Te redirigiremos a WhatsApp.');
+                contactWhatsAppForActivation();
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💳 Pagar y Activar Ahora con Tarjeta';
+            }
+        }
+
+        function contactWhatsAppForActivation() {
+            const biz = (currentUser && (currentUser.tenant_id || currentUser.full_name)) || 'Mi Negocio';
+            const email = (currentUser && currentUser.email) || '';
+            const msg = `Hola Andrew, acabo de registrar mi negocio en Klyven Studio para "${biz}" (${email}) y deseo activar mi membresía de Chatbot IA. ¿Me puedes compartir los datos para activar mi cuenta?`;
+            window.open(`https://wa.me/525541696850?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function switchAuthTab(tab) {
@@ -7189,6 +7310,16 @@
         async function loadInitialTenantData(explicitTenantId) {
             const user = await checkAuthSession();
             if (!user) return; // Esperar autenticación
+
+            // COMPROBACIÓN DE PAYWALL: Si no es superadmin y no está activo, bloquear acceso
+            const isSuper = user.role === 'superadmin';
+            const isSubscribed = user.subscription_status === 'active';
+
+            if (!isSuper && !isSubscribed) {
+                showPaywall(user.business_name || user.tenant_id);
+            } else {
+                hidePaywall();
+            }
 
             let tenantParam = explicitTenantId;
             if (!tenantParam) {
