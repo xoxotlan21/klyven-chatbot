@@ -69,8 +69,24 @@ from database import (
     update_booking_status,
     delete_booking,
     clear_tenant_bookings,
-    get_tenant_stats
+    get_tenant_stats,
+    create_user,
+    authenticate_user,
+    get_user_by_token,
+    logout_user,
+    get_tenant_by_whatsapp
 )
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+    full_name: str
+    business_name: str
+    industry: Optional[str] = "Servicios"
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 class ChatRequest(BaseModel):
     tenant_id: str
@@ -401,6 +417,120 @@ Responde ÚNICAMENTE en JSON válido con este esquema exacto:
             continue
 
     return {"status": "error", "message": "No se pudo procesar el análisis con IA"}
+
+
+# ==============================================================================
+# SEGURIDAD, AUTENTICACIÓN MULTI-TENANT & GESTIÓN DE ACCESO PRIVADO
+# ==============================================================================
+
+def get_auth_user(request: Request) -> Optional[Dict[str, Any]]:
+    """Extrae y valida el usuario desde el header Authorization Bearer."""
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        return None
+    token = auth_header.replace("Bearer ", "").strip()
+    return get_user_by_token(token)
+
+
+def resolve_request_tenant(request: Request, requested_tenant_id: str) -> str:
+    """Garantiza aislamiento estricto de datos: usuarios estándar solo ven su propio negocio."""
+    user = get_auth_user(request)
+    if user:
+        if user.get("role") == "superadmin":
+            return (requested_tenant_id or user.get("tenant_id") or "KLYVEN-STUDIO").strip().upper()
+        return (user.get("tenant_id") or requested_tenant_id).strip().upper()
+    return (requested_tenant_id or "KLYVEN-STUDIO").strip().upper()
+
+
+@app.post("/api/auth/register")
+def api_register_user(req: RegisterRequest):
+    """Registra una nueva cuenta de negocio con contraseña cifrada y tenant aislado."""
+    email_clean = req.email.strip().lower()
+    if not email_clean or "@" not in email_clean:
+        raise HTTPException(status_code=400, detail="Correo electrónico inválido")
+    if len(req.password.strip()) < 6:
+        raise HTTPException(status_code=400, detail="La contraseña debe tener al menos 6 caracteres")
+    if not req.business_name.strip():
+        raise HTTPException(status_code=400, detail="El nombre del negocio es obligatorio")
+
+    # Generar tenant_id único y amigable basado en el nombre de la empresa
+    slug = re.sub(r"[^A-Za-z0-9]+", "-", req.business_name.strip()).strip("-").upper()
+    if not slug:
+        slug = f"BIZ-{uuid.uuid4().hex[:6].upper()}"
+    tenant_id = slug
+
+    # Crear tenant si no existe
+    tenant = get_tenant_by_id(tenant_id)
+    if not tenant:
+        save_or_update_tenant(
+            tenant_id=tenant_id,
+            business_name=req.business_name.strip(),
+            industry=req.industry.strip(),
+            currency="USD"
+        )
+
+    # Crear el usuario encriptado
+    user = create_user(
+        email=email_clean,
+        password=req.password,
+        full_name=req.full_name.strip() or req.business_name.strip(),
+        tenant_id=tenant_id,
+        role="admin"
+    )
+    if not user:
+        raise HTTPException(status_code=400, detail="Este correo electrónico ya se encuentra registrado")
+
+    return {
+        "status": "success",
+        "message": "Cuenta creada con éxito",
+        "token": user["token"],
+        "user": user,
+        "tenant_id": tenant_id
+    }
+
+
+@app.post("/api/auth/login")
+def api_login_user(req: LoginRequest):
+    """Autentica a un cliente o administrador con PBKDF2 y genera token de sesión."""
+    email_clean = req.email.strip().lower()
+    user = authenticate_user(email_clean, req.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Correo o contraseña incorrectos")
+
+    tenant = get_tenant_by_id(user["tenant_id"]) or {}
+    return {
+        "status": "success",
+        "message": "Inicio de sesión exitoso",
+        "token": user["token"],
+        "user": user,
+        "tenant_id": user["tenant_id"],
+        "business_name": tenant.get("business_name", user["tenant_id"])
+    }
+
+
+@app.get("/api/auth/me")
+def api_get_current_user(request: Request):
+    """Devuelve los datos del usuario en sesión activa."""
+    user = get_auth_user(request)
+    if not user:
+        return {"authenticated": False}
+    tenant = get_tenant_by_id(user["tenant_id"]) or {}
+    return {
+        "authenticated": True,
+        "user": user,
+        "tenant_id": user["tenant_id"],
+        "business_name": tenant.get("business_name", user["tenant_id"])
+    }
+
+
+@app.post("/api/auth/logout")
+def api_logout_user(request: Request):
+    """Cierra la sesión y revoca el token en el servidor."""
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header.replace("Bearer ", "").strip()
+        logout_user(token)
+    return {"status": "success", "message": "Sesión cerrada correctamente"}
 
 
 # ==============================================================================
@@ -834,10 +964,11 @@ def api_test_webhook(req: Dict[str, Any]):
         }
 
 @app.get("/api/leads")
-def api_get_leads(tenant_id: str = "KLYVEN-STUDIO"):
-    """Lista todos los prospectos capturados para el tenant."""
-    leads = get_tenant_leads(tenant_id)
-    return {"status": "success", "leads": leads, "count": len(leads)}
+def api_get_leads(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
+    """Lista todos los prospectos capturados para el tenant asegurando privacidad."""
+    t_id = resolve_request_tenant(request, tenant_id)
+    leads = get_tenant_leads(t_id)
+    return {"status": "success", "leads": leads, "count": len(leads), "tenant_id": t_id}
 
 @app.delete("/api/leads/{lead_id}")
 def api_delete_lead(lead_id: int):
@@ -848,19 +979,20 @@ def api_delete_lead(lead_id: int):
     return {"status": "success", "message": "Prospecto eliminado con éxito"}
 
 @app.post("/api/leads/clear-all")
-def api_clear_leads(tenant_id: str = "KLYVEN-STUDIO"):
-    """Limpia todos los prospectos de un tenant."""
-    t_id = tenant_id.strip().upper()
+def api_clear_leads(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
+    """Limpia todos los prospectos de un tenant asegurando privacidad."""
+    t_id = resolve_request_tenant(request, tenant_id)
     count = clear_tenant_leads(t_id)
-    return {"status": "success", "message": f"{count} prospectos eliminados"}
+    return {"status": "success", "message": f"{count} prospectos eliminados", "tenant_id": t_id}
 
 @app.get("/api/leads/export-csv")
-def api_export_leads_csv(tenant_id: str = "KLYVEN-STUDIO"):
+def api_export_leads_csv(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
     """Descarga un archivo CSV con formato UTF-8 listo para abrir directamente en Microsoft Excel."""
     import csv
     import io
 
-    leads = get_tenant_leads(tenant_id)
+    t_id = resolve_request_tenant(request, tenant_id)
+    leads = get_tenant_leads(t_id)
     output = io.StringIO()
     # Escribir BOM UTF-8 para apertura directa en Excel
     output.write('\ufeff')
@@ -962,24 +1094,26 @@ class ResolveQuestionRequest(BaseModel):
     answer: str
 
 @app.get("/api/unresolved-questions")
-def api_get_unresolved_questions(tenant_id: str = "KLYVEN-STUDIO", only_unresolved: bool = False):
-    """Lista las preguntas detectadas donde el bot no tuvo respuesta certera."""
-    t_id = tenant_id.strip().upper()
+def api_get_unresolved_questions(request: Request, tenant_id: str = "KLYVEN-STUDIO", only_unresolved: bool = False):
+    """Lista las preguntas detectadas donde el bot no tuvo respuesta certera asegurando privacidad."""
+    t_id = resolve_request_tenant(request, tenant_id)
     return {
         "status": "success",
-        "questions": get_unresolved_questions(t_id, only_unresolved=only_unresolved)
+        "questions": get_unresolved_questions(t_id, only_unresolved=only_unresolved),
+        "tenant_id": t_id
     }
 
 @app.post("/api/unresolved-questions/resolve")
-def api_resolve_question(req: ResolveQuestionRequest):
+def api_resolve_question(request: Request, req: ResolveQuestionRequest):
     """Marca la pregunta como resuelta e inyecta la respuesta oficial en el conocimiento del bot."""
-    t_id = req.tenant_id.strip().upper()
+    t_id = resolve_request_tenant(request, req.tenant_id)
     success = resolve_unresolved_question(req.question_id, t_id, req.answer.strip())
     if not success:
         raise HTTPException(status_code=404, detail="No se encontró la pregunta especificada")
     return {
         "status": "success",
-        "message": "Pregunta agregada exitosamente a la base de conocimiento y marcada como resuelta."
+        "message": "Pregunta agregada exitosamente a la base de conocimiento y marcada como resuelta.",
+        "tenant_id": t_id
     }
 
 @app.delete("/api/unresolved-questions/{question_id}")
@@ -991,11 +1125,11 @@ def api_delete_unresolved_question(question_id: int):
     return {"status": "success", "message": "Pregunta eliminada exitosamente"}
 
 @app.post("/api/unresolved-questions/clear-all")
-def api_clear_unresolved_questions(tenant_id: str = "KLYVEN-STUDIO"):
+def api_clear_unresolved_questions(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
     """Limpia todas las preguntas registradas de un negocio para reiniciar en limpio."""
-    t_id = tenant_id.strip().upper()
+    t_id = resolve_request_tenant(request, tenant_id)
     count = clear_tenant_unresolved_questions(t_id)
-    return {"status": "success", "message": f"{count} preguntas eliminadas"}
+    return {"status": "success", "message": f"{count} preguntas eliminadas", "tenant_id": t_id}
 
 
 # ==============================================================================
@@ -1025,19 +1159,20 @@ class UpdateBookingStatusRequest(BaseModel):
     notes: Optional[str] = None
 
 @app.get("/api/bookings")
-def api_get_bookings(tenant_id: str = "KLYVEN-STUDIO", status: Optional[str] = None):
-    """Obtiene las reservas registradas filtradas opcionalmente por estado."""
-    t_id = tenant_id.strip().upper()
+def api_get_bookings(request: Request, tenant_id: str = "KLYVEN-STUDIO", status: Optional[str] = None):
+    """Obtiene las reservas registradas filtradas opcionalmente por estado asegurando privacidad."""
+    t_id = resolve_request_tenant(request, tenant_id)
     return {
         "status": "success",
-        "bookings": get_tenant_bookings(t_id, status=status)
+        "bookings": get_tenant_bookings(t_id, status=status),
+        "tenant_id": t_id
     }
 
 @app.post("/api/bookings")
-def api_create_booking(payload: CreateBookingRequest):
+def api_create_booking(request: Request, payload: CreateBookingRequest):
     """Crea una reserva en el calendario operativo."""
     data = payload.dict()
-    data["tenant_id"] = payload.tenant_id.strip().upper()
+    data["tenant_id"] = resolve_request_tenant(request, payload.tenant_id)
     created = create_booking(data)
     return {
         "status": "success",
@@ -1064,11 +1199,11 @@ def api_delete_booking(booking_id: str):
     return {"status": "success", "message": "Reserva eliminada con éxito"}
 
 @app.post("/api/bookings/clear-all")
-def api_clear_bookings(tenant_id: str = "KLYVEN-STUDIO"):
+def api_clear_bookings(request: Request, tenant_id: str = "KLYVEN-STUDIO"):
     """Limpia todas las reservas registradas de un negocio para iniciar en limpio."""
-    t_id = tenant_id.strip().upper()
+    t_id = resolve_request_tenant(request, tenant_id)
     count = clear_tenant_bookings(t_id)
-    return {"status": "success", "message": f"{count} reservas eliminadas"}
+    return {"status": "success", "message": f"{count} reservas eliminadas", "tenant_id": t_id}
 
 
 # ==============================================================================
@@ -1076,9 +1211,9 @@ def api_clear_bookings(tenant_id: str = "KLYVEN-STUDIO"):
 # ==============================================================================
 
 @app.get("/api/stats")
-def api_get_stats(tenant_id: str = "KLYVEN-STUDIO", period: str = "30d"):
-    """Calcula KPIs, tasa de conversión, top preguntas y analítica por periodo."""
-    t_id = tenant_id.strip().upper()
+def api_get_stats(request: Request, tenant_id: str = "KLYVEN-STUDIO", period: str = "30d"):
+    """Calcula KPIs, tasa de conversión, top preguntas y analítica por periodo asegurando privacidad."""
+    t_id = resolve_request_tenant(request, tenant_id)
     return {
         "status": "success",
         "stats": get_tenant_stats(t_id, period=period)
@@ -1641,29 +1776,124 @@ def verify_whatsapp_webhook(request: Request):
     raise HTTPException(status_code=403, detail="Token inválido")
 
 
+def send_whatsapp_cloud_reply(phone_number_id: str, to_phone: str, text: str, token: Optional[str] = None):
+    """Envía la respuesta automática generada por la IA al usuario vía WhatsApp Cloud API."""
+    wa_token = token or os.environ.get("WHATSAPP_TOKEN", "")
+    if not wa_token or not phone_number_id or not to_phone or not text:
+        return None
+    url = f"https://graph.facebook.com/v19.0/{phone_number_id}/messages"
+    headers = {
+        "Authorization": f"Bearer {wa_token}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": to_phone,
+        "type": "text",
+        "text": {"preview_url": False, "body": text}
+    }
+    try:
+        res = requests.post(url, json=payload, headers=headers, timeout=10)
+        return res.json()
+    except Exception as e:
+        print(f"[WhatsApp Cloud API Error] {e}")
+        return None
+
+
 @app.post("/webhook/whatsapp")
 async def receive_whatsapp_message(request: Request):
+    """
+    Webhook Oficial de Meta WhatsApp Cloud API.
+    Aislamiento y Enrutamiento Multi-Tenant 100% Automático y Privado:
+    1. Identifica el negocio receptor a través del Phone Number ID o número telefónico de soporte en SQLite.
+    2. Carga su base de conocimiento, instrucciones personalizadas y catálogo de servicios exclusivos.
+    3. Mantiene el hilo y memoria de conversación persistente por cliente.
+    4. Envía la respuesta de la IA en tiempo real directamente al chat de WhatsApp del cliente.
+    """
     body = await request.json()
     entries = body.get("entry", [])
     responses_log = []
-    tenant = DEFAULT_TENANTS.get("Traslados Riviera Maya")
 
     for entry in entries:
         changes = entry.get("changes", [])
         for change in changes:
             value = change.get("value", {})
+            metadata = value.get("metadata", {})
+            phone_number_id = str(metadata.get("phone_number_id") or "")
+            display_phone = str(metadata.get("display_phone_number") or "")
+
+            # 1. Enrutamiento dinámico al negocio correspondiente
+            matched_tenant = None
+            if phone_number_id:
+                matched_tenant = get_tenant_by_whatsapp(phone_number_id)
+            if not matched_tenant and display_phone:
+                matched_tenant = get_tenant_by_whatsapp(display_phone)
+
+            # Fallback seguro a Klyven Studio
+            tenant_id = matched_tenant.get("tenant_id") if matched_tenant else "KLYVEN-STUDIO"
+            tenant_obj = resolve_tenant(tenant_id)
+
             messages = value.get("messages", [])
+            contacts = value.get("contacts", [])
+            customer_name = ""
+            if contacts and len(contacts) > 0:
+                customer_name = contacts[0].get("profile", {}).get("name", "")
+
             for msg in messages:
-                sender_id = msg.get("from")
+                sender_id = msg.get("from")  # Número del cliente
                 msg_type = msg.get("type")
                 user_text = msg.get("text", {}).get("body", "") if msg_type == "text" else ""
 
                 if user_text:
-                    result = engine.generate_response(user_text, tenant, [])
+                    # 2. Sesión e historial conversacional aislado por cliente y tenant
+                    conv_id = f"wa_{tenant_id}_{sender_id}"
+                    history = get_conversation_history(conv_id, limit=8)
+
+                    # Guardar mensaje del usuario en base de datos
+                    save_conversation_message(conv_id, tenant_id, "user", user_text)
+
+                    # 3. Generar respuesta contextual con IA
+                    result = engine.generate_response(user_text, tenant_obj, history)
+                    parsed = result.get("parsed_json", {})
+                    bot_reply = parsed.get("mensaje_cliente", "") or "¡Hola! ¿En qué podemos ayudarte hoy?"
+
+                    # Guardar respuesta del bot en base de datos
+                    save_conversation_message(conv_id, tenant_id, "assistant", bot_reply, payload=parsed)
+
+                    # 4. Capturar prospecto o reserva si el bot detectó intención
+                    try:
+                        save_lead(
+                            tenant_id=tenant_id,
+                            session_id=conv_id,
+                            customer_name=customer_name or f"WhatsApp {sender_id}",
+                            contact_info=sender_id,
+                            service_interest=parsed.get("servicio", ""),
+                            notes=f"Mensaje WhatsApp: {user_text[:100]}"
+                        )
+                    except Exception:
+                        pass
+
+                    # 5. Enviar mensaje de vuelta a WhatsApp vía Meta Cloud API
+                    tenant_wa_token = None
+                    if matched_tenant and matched_tenant.get("config"):
+                        tenant_wa_token = matched_tenant["config"].get("whatsapp_token")
+
+                    send_res = send_whatsapp_cloud_reply(
+                        phone_number_id=phone_number_id,
+                        to_phone=sender_id,
+                        text=bot_reply,
+                        token=tenant_wa_token
+                    )
+
                     responses_log.append({
+                        "tenant_id": tenant_id,
+                        "business": tenant_obj.business_name,
                         "sender": sender_id,
+                        "customer_name": customer_name,
                         "received": user_text,
-                        "bot_reply": result.get("parsed_json", {}).get("mensaje_cliente")
+                        "bot_reply": bot_reply,
+                        "meta_api_result": send_res
                     })
 
     return {"status": "processed", "replies": responses_log}

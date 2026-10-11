@@ -6,6 +6,9 @@ Garantiza aislamiento estricto de datos por tenant (Multi-Tenant Privacy) y pers
 import sqlite3
 import json
 import uuid
+import hashlib
+import secrets
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -151,6 +154,25 @@ def init_db():
     );
     """)
 
+    # 8. Tabla de Usuarios y Autenticación Multi-Tenant
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        user_id TEXT PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        salt TEXT NOT NULL,
+        full_name TEXT NOT NULL,
+        tenant_id TEXT NOT NULL,
+        role TEXT DEFAULT 'admin',
+        session_token TEXT,
+        token_expires_at TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (tenant_id) REFERENCES tenants (tenant_id)
+    );
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_token ON users (session_token);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);")
+
     # Migración de columnas adicionales en leads si ya existía la tabla
     for col_name in ["session_id", "contact_info", "service_interest"]:
         try:
@@ -160,6 +182,197 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+    # Pre-sembrar usuario maestro si no existe
+    seed_default_users()
+
+
+
+# ==============================================================================
+# AUTENTICACIÓN, HASHING DE CONTRASEÑAS & GESTIÓN DE USUARIOS
+# ==============================================================================
+
+def hash_password(password: str, salt: Optional[str] = None) -> tuple:
+    """Hashea una contraseña utilizando PBKDF2-HMAC-SHA256 con 100,000 iteraciones y salt único."""
+    if not salt:
+        salt = secrets.token_hex(16)
+    hash_bytes = hashlib.pbkdf2_hmac(
+        'sha256',
+        password.encode('utf-8'),
+        salt.encode('utf-8'),
+        100000
+    )
+    return hash_bytes.hex(), salt
+
+
+def verify_password(password: str, stored_hash: str, salt: str) -> bool:
+    """Verifica si la contraseña ingresada coincide con el hash almacenado de forma segura."""
+    hash_bytes = hashlib.pbkdf2_hmac(
+        'sha256',
+        password.encode('utf-8'),
+        salt.encode('utf-8'),
+        100000
+    )
+    return hash_bytes.hex() == stored_hash
+
+
+def generate_session_token() -> str:
+    """Genera un token de sesión criptográficamente seguro."""
+    return secrets.token_urlsafe(32)
+
+
+def create_user(
+    email: str,
+    password: str,
+    full_name: str,
+    tenant_id: str,
+    role: str = "admin"
+) -> Optional[Dict[str, Any]]:
+    """Crea un usuario con contraseña cifrada y le genera un token inicial."""
+    email_clean = email.strip().lower()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT user_id FROM users WHERE LOWER(email) = ?", (email_clean,))
+    if cursor.fetchone():
+        conn.close()
+        return None
+
+    user_id = f"usr_{uuid.uuid4().hex[:12]}"
+    pwd_hash, salt = hash_password(password)
+    now = datetime.now().isoformat()
+    token = generate_session_token()
+
+    cursor.execute("""
+    INSERT INTO users (user_id, email, password_hash, salt, full_name, tenant_id, role, session_token, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, email_clean, pwd_hash, salt, full_name.strip(), tenant_id, role, token, now))
+    conn.commit()
+    conn.close()
+
+    return {
+        "user_id": user_id,
+        "email": email_clean,
+        "full_name": full_name.strip(),
+        "tenant_id": tenant_id,
+        "role": role,
+        "token": token,
+        "created_at": now
+    }
+
+
+def authenticate_user(email: str, password: str) -> Optional[Dict[str, Any]]:
+    """Autentica las credenciales de un usuario y rota su token de sesión de forma segura."""
+    email_clean = email.strip().lower()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE LOWER(email) = ?", (email_clean,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return None
+
+    user = dict(row)
+    if not verify_password(password, user["password_hash"], user["salt"]):
+        conn.close()
+        return None
+
+    # Asignar nuevo token seguro para la sesión
+    new_token = generate_session_token()
+    cursor.execute("UPDATE users SET session_token = ? WHERE user_id = ?", (new_token, user["user_id"]))
+    conn.commit()
+    conn.close()
+
+    user["token"] = new_token
+    user.pop("password_hash", None)
+    user.pop("salt", None)
+    return user
+
+
+def get_user_by_token(token: str) -> Optional[Dict[str, Any]]:
+    """Valida un Bearer token y devuelve los datos del usuario autenticado."""
+    if not token or not token.strip():
+        return None
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE session_token = ?", (token.strip(),))
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return None
+    user = dict(row)
+    user.pop("password_hash", None)
+    user.pop("salt", None)
+    return user
+
+
+def logout_user(token: str) -> bool:
+    """Invalida el token de sesión cerrando sesión en la base de datos."""
+    if not token or not token.strip():
+        return False
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET session_token = NULL WHERE session_token = ?", (token.strip(),))
+    affected = cursor.rowcount
+    conn.commit()
+    conn.close()
+    return affected > 0
+
+
+def seed_default_users():
+    """Crea el usuario maestro inicial para Klyven Studio si no existe en la base de datos."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) as count FROM users")
+    count = cursor.fetchone()["count"]
+    conn.close()
+
+    if count == 0:
+        create_user(
+            email="andrew@klyvenstudio.com",
+            password="Klyven2026!",
+            full_name="Andrew",
+            tenant_id="KLYVEN-STUDIO",
+            role="superadmin"
+        )
+
+
+def get_tenant_by_whatsapp(phone_or_id: str) -> Optional[Dict[str, Any]]:
+    """Busca y resuelve qué tenant es dueño de un número o ID de WhatsApp entrante."""
+    if not phone_or_id:
+        return None
+    
+    clean_target = re.sub(r"[^\d]", "", str(phone_or_id))
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM tenants")
+    rows = cursor.fetchall()
+    conn.close()
+
+    for r in rows:
+        data = dict(r)
+        # 1. Comparar con support_phone
+        sup_phone = re.sub(r"[^\d]", "", str(data.get("support_phone") or ""))
+        if clean_target and sup_phone and (clean_target.endswith(sup_phone) or sup_phone.endswith(clean_target)):
+            if data.get("config_json"):
+                try:
+                    data["config"] = json.loads(data["config_json"])
+                except Exception:
+                    data["config"] = {}
+            return data
+
+        # 2. Comparar con configuraciones dentro de config_json
+        if data.get("config_json"):
+            try:
+                cfg = json.loads(data["config_json"])
+                wa_id = str(cfg.get("whatsapp_phone_number_id") or cfg.get("whatsapp_number") or cfg.get("phone") or "")
+                clean_wa_id = re.sub(r"[^\d]", "", wa_id)
+                if clean_target and (phone_or_id == wa_id or (clean_wa_id and (clean_target.endswith(clean_wa_id) or clean_wa_id.endswith(clean_target)))):
+                    data["config"] = cfg
+                    return data
+            except Exception:
+                pass
+
+    return None
 
 
 
