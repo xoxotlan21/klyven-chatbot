@@ -2693,6 +2693,95 @@
                 gap: 28px;
             }
         }
+
+        /* ------------------------------------------------------------- */
+        /* NOTIFICACIONES TOAST ELEGANTES (SISTEMA GLOBAL KLYVEN)        */
+        /* ------------------------------------------------------------- */
+        .klyven-toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 440px;
+            width: calc(100vw - 48px);
+            pointer-events: none;
+        }
+
+        .klyven-toast {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid #E2E8F0;
+            border-left: 4px solid #4A78B0;
+            box-shadow: 0 16px 36px -4px rgba(15, 27, 49, 0.16), 0 2px 8px rgba(15, 27, 49, 0.04);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+        }
+
+        .klyven-toast.fade-out {
+            opacity: 0;
+            transform: translateX(40px) scale(0.96);
+        }
+
+        .klyven-toast-success { border-left-color: #10B981; }
+        .klyven-toast-error { border-left-color: #EF4444; }
+        .klyven-toast-warning { border-left-color: #F59E0B; }
+        .klyven-toast-info { border-left-color: #2563EB; }
+
+        .klyven-toast-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .klyven-toast-icon-success { background: #ECFDF5; }
+        .klyven-toast-icon-error { background: #FEF2F2; }
+        .klyven-toast-icon-warning { background: #FFFBEB; }
+        .klyven-toast-icon-info { background: #EFF6FF; }
+
+        .klyven-toast-close {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 1.25rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 4px;
+            border-radius: 6px;
+            transition: color 0.15s ease;
+            margin-left: 4px;
+            flex-shrink: 0;
+        }
+
+        .klyven-toast-close:hover {
+            color: #0F1B31;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(110%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -4887,6 +4976,77 @@
     <!-- LÓGICA DE NEGOCIO, CONEXIONES Y ESTADO EN JAVASCRIPT         -->
     <!-- ============================================================= -->
     <script>
+        // -----------------------------------------------------------------
+        // SISTEMA GLOBAL DE NOTIFICACIONES TOAST (CERO ALERTAS NATIVAS)
+        // -----------------------------------------------------------------
+        function showToast(message, type = 'info', duration = 4000) {
+            let container = document.getElementById('klyven_toast_container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'klyven_toast_container';
+                container.className = 'klyven-toast-container';
+                document.body.appendChild(container);
+            }
+
+            const icons = {
+                success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+                error: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
+                warning: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+                info: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>'
+            };
+
+            const titles = {
+                success: 'Éxito',
+                error: 'Atención',
+                warning: 'Aviso importante',
+                info: 'Notificación'
+            };
+
+            const t = icons[type] ? type : 'info';
+            const toast = document.createElement('div');
+            toast.className = `klyven-toast klyven-toast-${t}`;
+            toast.innerHTML = `
+                <div class="klyven-toast-icon-box klyven-toast-icon-${t}">
+                    ${icons[t]}
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 0.74rem; font-weight: 700; color: #59627E; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">
+                        ${titles[t]}
+                    </div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #020C21; line-height: 1.45; word-break: break-word;">
+                        ${message}
+                    </div>
+                </div>
+                <button type="button" class="klyven-toast-close" onclick="this.closest('.klyven-toast').remove()">
+                    &times;
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('fade-out');
+                    setTimeout(() => toast.remove(), 250);
+                }
+            }, duration);
+        }
+
+        // Reemplazar window.alert para que nunca más aparezca el diálogo nativo del navegador
+        window.alert = function(msg) {
+            let type = 'info';
+            const text = String(msg || '');
+            const lower = text.toLowerCase();
+            if (lower.includes('error') || lower.includes('falló') || lower.includes('no se pudo')) {
+                type = 'error';
+            } else if (lower.includes('éxito') || lower.includes('guardado') || lower.includes('copiado') || lower.includes('registrado') || lower.includes('aprendió')) {
+                type = 'success';
+            } else if (lower.includes('por favor') || lower.includes('requerido') || lower.includes('personalizada') || lower.includes('atención')) {
+                type = 'warning';
+            }
+            showToast(text, type);
+        };
+
         let currentTheme = 'glass';
         let currentHeaderStyle = 'brand';
         let currentBubbleStyle = 'pill';
@@ -7369,12 +7529,16 @@
                 if (data && data.checkout_url) {
                     window.location.href = data.checkout_url;
                 } else {
-                    alert('Para pagos y activación personalizada, contacta a soporte por WhatsApp. Te redirigiremos ahora.');
-                    contactWhatsAppForActivation();
+                    showToast('Para pagos y activación personalizada, contacta a soporte por WhatsApp. Abriendo WhatsApp...', 'info', 3500);
+                    setTimeout(() => {
+                        contactWhatsAppForActivation();
+                    }, 1000);
                 }
             } catch(e) {
-                alert('No se pudo conectar con la pasarela. Te redirigiremos a WhatsApp.');
-                contactWhatsAppForActivation();
+                showToast('No se pudo conectar con la pasarela. Abriendo WhatsApp para soporte...', 'warning', 3500);
+                setTimeout(() => {
+                    contactWhatsAppForActivation();
+                }, 1000);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<span style="display: flex; align-items: center; gap: 10px;">
