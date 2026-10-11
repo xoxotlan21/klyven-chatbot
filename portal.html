@@ -11,24 +11,67 @@
     <style>
         :root {
             --bg-page: #E6EDF6;
+            --bg-wallpaper: url('/assets/bg-light.png');
+            --surface-card: rgba(255, 255, 255, 0.95);
+            --surface-card-hover: #FFFFFF;
             --surface-white: #FFFFFF;
             --surface-translucent: rgba(255, 255, 255, 0.92);
-            --surface-glass: rgba(255, 255, 255, 0.78);
+            --surface-glass: rgba(255, 255, 255, 0.84);
+            --surface-nested: #F8FAFC;
+            --surface-input: #FFFFFF;
             --text-primary: #020C21;
             --text-secondary: #59627E;
             --text-muted: #8A94A6;
             --btn-primary: #0F1B31;
             --btn-primary-hover: #1A2D52;
+            --btn-primary-text: #FFFFFF;
+            --nav-active-bg: #0F1B31;
+            --nav-active-text: #FFFFFF;
             --accent-steel: #4A78B0;
             --accent-soft: rgba(74, 120, 176, 0.1);
-            --border-subtle: #E2E8F0;
+            --accent-icon-box: #EBF3FC;
+            --accent-icon-color: #2563EB;
+            --border-subtle: rgba(2, 12, 33, 0.08);
+            --border-subtle-strong: rgba(2, 12, 33, 0.15);
             --border-translucent: rgba(255, 255, 255, 0.8);
             --radius-card: 22px;
             --radius-control: 12px;
             --shadow-card: 0 4px 20px rgba(2, 12, 33, 0.04);
+            --shadow-card-hover: 0 8px 24px rgba(2, 12, 33, 0.08);
             --shadow-floating: 0 12px 36px rgba(2, 12, 33, 0.08);
             --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --brand-dynamic: #0F1B31;
+        }
+
+        body.dark-mode {
+            --bg-page: #020C21;
+            --bg-wallpaper: url('/assets/bg-dark.png');
+            --surface-card: rgba(15, 27, 49, 0.94);
+            --surface-card-hover: rgba(20, 36, 65, 0.98);
+            --surface-white: #0F1B31;
+            --surface-translucent: rgba(15, 27, 49, 0.92);
+            --surface-glass: rgba(15, 27, 49, 0.88);
+            --surface-nested: rgba(8, 16, 31, 0.65);
+            --surface-input: rgba(8, 16, 31, 0.85);
+            --text-primary: #F4F7FC;
+            --text-secondary: #B2BED2;
+            --text-muted: #73829C;
+            --btn-primary: #FFFFFF;
+            --btn-primary-hover: #E2E8F0;
+            --btn-primary-text: #020C21;
+            --nav-active-bg: #1E2D4A;
+            --nav-active-text: #FFFFFF;
+            --accent-steel: #4A78B0;
+            --accent-soft: rgba(74, 120, 176, 0.2);
+            --accent-icon-box: rgba(59, 130, 246, 0.18);
+            --accent-icon-color: #60A5FA;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-subtle-strong: rgba(255, 255, 255, 0.16);
+            --border-translucent: rgba(255, 255, 255, 0.12);
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+            --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.45);
+            --shadow-floating: 0 12px 36px rgba(0, 0, 0, 0.5);
+            --brand-dynamic: #FFFFFF;
         }
 
         * {
@@ -41,15 +84,17 @@
 
         body {
             background-color: var(--bg-page);
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.8) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(200, 218, 238, 0.6) 0%, transparent 50%);
+            background-image: var(--bg-wallpaper);
+            background-size: cover;
+            background-position: center;
             background-attachment: fixed;
+            background-repeat: no-repeat;
             color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             padding: 24px;
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
 
         /* ------------------------------------------------------------- */
@@ -68,31 +113,32 @@
         /* 1. NAVEGACIÓN LATERAL (SIDEBAR)                                */
         /* ------------------------------------------------------------- */
         .sidebar {
-            background: var(--surface-translucent);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--surface-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-card);
-            padding: 24px 16px;
+            padding: 22px 14px;
             box-shadow: var(--shadow-card);
             position: sticky;
             top: 24px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
+            max-height: calc(100vh - 48px);
         }
 
         .sidebar-brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 4px 8px;
+            padding: 4px 6px;
             text-decoration: none;
         }
 
         .sidebar-brand-logo {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -103,6 +149,7 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+            transition: filter 0.2s ease;
         }
 
         .sidebar-brand-text h1 {
@@ -114,139 +161,310 @@
         }
 
         .sidebar-brand-text p {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             color: var(--text-secondary);
             font-weight: 500;
+        }
+
+        /* Selector de Empresa Activa (Fiel al mockup) */
+        .tenant-switcher-container {
+            margin: 2px 0 6px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tenant-switcher-label {
+            font-size: 0.66rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            padding-left: 6px;
+            text-transform: uppercase;
+        }
+
+        .tenant-switcher-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(2, 12, 33, 0.03);
+            transition: border-color 0.15s ease;
+        }
+
+        .tenant-switcher-box:hover {
+            border-color: var(--border-subtle-strong);
+        }
+
+        .tenant-switcher-select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .tenant-switcher-select option {
+            background: var(--surface-card);
+            color: var(--text-primary);
+        }
+
+        /* Grupos y Lista de Navegación */
+        .sidebar-nav-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-nav-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav-scroll::-webkit-scrollbar-thumb {
+            background: rgba(2, 12, 33, 0.1);
+            border-radius: 4px;
+        }
+
+        .sidebar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .sidebar-group-title {
+            font-size: 0.66rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            padding: 4px 10px 2px 10px;
+            text-transform: uppercase;
         }
 
         .sidebar-nav-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 3px;
             list-style: none;
         }
 
         .sidebar-nav-btn {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 11px;
             width: 100%;
-            padding: 11px 14px;
+            padding: 9px 12px;
             border-radius: var(--radius-control);
             border: none;
             background: transparent;
             color: var(--text-secondary);
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 500;
             cursor: pointer;
             text-align: left;
-            transition: all 0.18s ease;
+            transition: all 0.16s ease;
         }
 
         .sidebar-nav-btn svg {
             flex-shrink: 0;
             color: var(--text-secondary);
-            transition: color 0.18s ease;
+            transition: color 0.16s ease;
         }
 
         .sidebar-nav-btn:hover {
-            background: rgba(235, 243, 252, 0.6);
-            color: #1849A9;
+            background: rgba(74, 120, 176, 0.08);
+            color: var(--text-primary);
         }
 
         .sidebar-nav-btn:hover svg {
-            color: #1849A9;
+            color: var(--text-primary);
         }
 
         .sidebar-nav-btn.active {
-            background: #EBF3FC;
-            color: #1849A9;
-            font-weight: 700;
+            background: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(15, 27, 49, 0.12);
         }
 
         .sidebar-nav-btn.active svg {
-            color: #1849A9;
+            color: var(--nav-active-text);
         }
 
-        .sidebar-sub-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding: 9px 12px;
+        .sidebar-badge {
+            margin-left: auto;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 1px 7px;
             border-radius: 10px;
-            border: none;
-            background: transparent;
+            line-height: 1.4;
+        }
+
+        .sidebar-badge.badge-blue {
+            background: #2563EB;
+            color: #FFFFFF;
+        }
+
+        .sidebar-badge.badge-orange {
+            background: #F59E0B;
+            color: #FFFFFF;
+        }
+
+        .sidebar-badge.badge-green {
+            background: #10B981;
+            color: #FFFFFF;
+        }
+
+        .sidebar-badge.badge-gray {
+            background: #E2E8F0;
             color: #475569;
-            font-size: 0.88rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
         }
 
-        .sidebar-sub-link:hover {
-            background: #F1F5F9;
-            color: #0F1B31;
+        body.dark-mode .sidebar-badge.badge-gray {
+            background: #334155;
+            color: #E2E8F0;
         }
 
-        .conv-item {
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: #F8FAFC;
-            border: 1px solid var(--border-subtle);
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .conv-item:hover {
-            background: #FFFFFF;
-            border-color: var(--accent-steel);
-        }
-
-        .conv-item.active {
-            background: #EBF3FC;
-            border-color: #3B82F6;
-        }
-
-        .sidebar-footer-card {
+        .sidebar-group-bottom {
             margin-top: auto;
-            padding: 14px 12px;
-            background: rgba(230, 237, 246, 0.5);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-control);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-subtle);
         }
 
-        .sidebar-footer-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            background: var(--surface-white);
+        /* Selector discreto de modo claro / oscuro */
+        .sidebar-theme-toggle-row {
+            padding: 2px 2px;
+        }
+
+        .sidebar-theme-btn {
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: var(--surface-nested);
             color: var(--text-secondary);
-        }
-
-        .sidebar-footer-info {
-            overflow: hidden;
-        }
-
-        .sidebar-footer-title {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .sidebar-theme-btn:hover {
+            background: var(--surface-card);
+            color: var(--text-primary);
+            border-color: var(--accent-steel);
+        }
+
+        .sidebar-profile-card {
+            padding: 12px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 1px 4px rgba(2, 12, 33, 0.03);
+        }
+
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-steel);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .profile-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .profile-name {
+            font-size: 0.84rem;
+            font-weight: 700;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .sidebar-footer-sub {
+        .profile-plan-badge {
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 6px;
+            background: #DCFCE7;
+            color: #16A34A;
+            text-transform: uppercase;
+        }
+
+        body.dark-mode .profile-plan-badge {
+            background: rgba(22, 163, 74, 0.25);
+            color: #4ADE80;
+        }
+
+        .profile-email {
             font-size: 0.72rem;
             color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-actions-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .profile-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: var(--surface-nested);
+            color: var(--text-secondary);
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .profile-action-btn:hover {
+            background: var(--surface-card);
+            color: var(--text-primary);
+        }
+
+        .profile-action-btn.logout:hover {
+            color: #EF4444;
+            border-color: rgba(239, 68, 68, 0.3);
         }
 
         /* ------------------------------------------------------------- */
@@ -1773,175 +1991,233 @@
             white-space: nowrap;
         }
 
-        /* Tarjeta de Estado de publicación */
+        /* Tarjeta de Estado de publicación (Bajo la vista previa) */
         .publish-status-card {
-            background: var(--surface-white);
+            background: var(--surface-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-card);
             padding: 16px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
             box-shadow: var(--shadow-card);
         }
 
-        .publish-status-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .publish-status-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: #F1F5F9;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .publish-status-text h4 {
-            font-size: 0.86rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .publish-status-text p {
-            font-size: 0.74rem;
-            color: var(--text-secondary);
-        }
-
-        .badge-status {
-            padding: 4px 10px;
+        .btn-talk-web {
+            background: var(--btn-primary);
+            color: var(--btn-primary-text);
+            border: none;
+            padding: 9px 16px;
             border-radius: 12px;
-            font-size: 0.74rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            background: #FEF3C7;
-            color: #92400E;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.12);
+            white-space: nowrap;
+        }
+
+        .btn-talk-web:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
         }
 
         .badge-status-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background: #D97706;
+            background: #10B981;
+            display: inline-block;
         }
 
         /* ------------------------------------------------------------- */
-        /* SECCIÓN INICIO: PANEL DE CONTROL (FIEL AL DISEÑO KLYVEN)      */
+        /* SECCIÓN INICIO: PANEL DE CONTROL (FIEL AL MOCKUP KLYVEN)      */
         /* ------------------------------------------------------------- */
-        .home-kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .home-kpi-card {
-            background: #FFFFFF;
+        .home-summary-card {
+            background: var(--surface-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-subtle);
-            border-radius: 18px;
-            padding: 18px 20px;
-            display: flex;
+            border-radius: 22px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: minmax(220px, 1.35fr) 1px 1fr 1px 1fr 1px 1fr;
             align-items: center;
-            justify-content: space-between;
+            gap: 18px;
+            box-shadow: var(--shadow-card);
             transition: all 0.2s ease;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.03);
         }
 
-        .home-kpi-card:hover {
-            border-color: #CBD5E1;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(15, 27, 49, 0.06);
-        }
-
-        .home-kpi-left {
+        .home-summary-col-main {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 14px;
         }
 
-        .home-kpi-badge {
-            width: 44px;
-            height: 44px;
+        .home-summary-status-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .home-summary-badge-green {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
+            background: #DCFCE7;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            margin-top: 2px;
         }
 
-        .home-kpi-badge.badge-green {
-            background: #DCFCE7;
-            color: #16A34A;
-        }
-
-        .home-kpi-badge.badge-blue {
-            background: #E0F2FE;
-            color: #0284C7;
-        }
-
-        .home-kpi-badge.badge-purple {
-            background: #F3E8FF;
-            color: #7C3AED;
-        }
-
-        .home-kpi-badge.badge-amber {
-            background: #FEF3C7;
-            color: #D97706;
+        body.dark-mode .home-summary-badge-green {
+            background: rgba(22, 163, 74, 0.25);
         }
 
         .home-pulsing-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #16A34A;
             display: inline-block;
             box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25);
         }
 
-        .home-kpi-texts {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .home-kpi-label {
-            font-size: 0.76rem;
+        .home-summary-label {
+            font-size: 0.74rem;
             color: var(--text-secondary);
             font-weight: 500;
+            display: block;
         }
 
-        .home-kpi-value {
-            font-size: 1.08rem;
-            font-weight: 700;
+        .home-summary-title {
+            font-size: 1.15rem;
+            font-weight: 800;
             color: var(--text-primary);
             margin: 2px 0;
+            letter-spacing: -0.2px;
         }
 
-        .home-kpi-sub {
+        .home-summary-sub {
             font-size: 0.76rem;
             color: var(--text-secondary);
+            margin: 0;
         }
 
-        .home-kpi-right {
-            color: #59627E;
+        .home-summary-domain-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 12px;
+            background: var(--surface-nested);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            width: fit-content;
+        }
+
+        .home-summary-domain-pill:hover {
+            border-color: var(--accent-steel);
+            background: var(--surface-card-hover);
+            transform: translateY(-1px);
+        }
+
+        .home-summary-domain-pill svg {
+            color: var(--accent-steel);
+            flex-shrink: 0;
+        }
+
+        .home-summary-divider {
+            width: 1px;
+            height: 60px;
+            background: var(--border-subtle);
+        }
+
+        .home-summary-col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 4px 6px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .home-summary-col:hover {
+            transform: translateY(-2px);
+        }
+
+        .home-summary-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--accent-icon-box);
+            color: var(--accent-icon-color);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
         }
 
+        .home-summary-metric h4 {
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0 0 3px 0;
+            letter-spacing: -0.2px;
+        }
+
+        .home-summary-metric p {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.35;
+        }
+
+        /* Bloque Completa tu configuración */
         .home-checklist-card {
-            background: #FFFFFF;
+            background: var(--surface-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 22px 24px;
-            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.03);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .home-progress-track {
+            background: var(--surface-nested);
+            height: 6px;
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 10px 0 16px 0;
+        }
+
+        .home-progress-fill {
+            height: 100%;
+            background: #2563EB;
+            border-radius: 99px;
+            transition: width 0.35s ease;
+        }
+
+        body.dark-mode .home-progress-fill {
+            background: #3B82F6;
+        }
+
+        .home-checklist-list {
             display: flex;
             flex-direction: column;
         }
@@ -1950,19 +2226,30 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 11px 12px;
-            border-radius: 12px;
+            padding: 14px 10px;
+            border-bottom: 1px solid var(--border-subtle);
             transition: background 0.15s ease;
             cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .home-checklist-row:last-child {
+            border-bottom: none;
         }
 
         .home-checklist-row:hover {
-            background: #F8FAFC;
+            background: rgba(74, 120, 176, 0.05);
+        }
+
+        .home-step-main {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
         .home-step-icon {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1976,80 +2263,157 @@
         }
 
         .home-step-icon.pending {
-            border: 2px solid #CBD5E1;
+            border: 2px solid #94A3B8;
             background: transparent;
+        }
+
+        .home-step-title {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            display: block;
+        }
+
+        .home-step-desc {
+            font-size: 0.77rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 1px;
+        }
+
+        .home-step-action-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.15s;
+        }
+
+        .home-checklist-row:hover .home-step-action-link {
+            color: var(--text-primary);
         }
 
         .btn-check-install {
             background: var(--btn-primary);
-            color: #FFFFFF;
+            color: var(--btn-primary-text);
             border: none;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 0.8rem;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.12);
         }
 
         .btn-check-install:hover {
-            background: var(--btn-primary-hover);
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        /* Bloque Accesos Rápidos */
+        .home-section-subtitle {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 6px 0 14px 0;
+            letter-spacing: -0.2px;
         }
 
         .home-quick-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
+            gap: 16px;
         }
 
         .home-quick-card {
-            background: #FFFFFF;
+            background: var(--surface-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 16px 18px;
+            border-radius: 20px;
+            padding: 20px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
             gap: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(15, 27, 49, 0.03);
+            box-shadow: var(--shadow-card);
         }
 
         .home-quick-card:hover {
-            border-color: #CBD5E1;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(15, 27, 49, 0.06);
+            border-color: var(--border-subtle-strong);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
         }
 
-        .home-quick-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+        .home-quick-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .home-quick-icon-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--accent-icon-box);
+            color: var(--accent-icon-color);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
         }
 
-        .home-quick-icon.badge-blue {
-            background: #E0F2FE;
-            color: #0284C7;
+        .home-quick-arrow {
+            color: var(--text-muted);
+            transition: transform 0.15s ease, color 0.15s ease;
         }
 
-        .home-quick-icon.badge-purple {
-            background: #F3E8FF;
-            color: #7C3AED;
+        .home-quick-card:hover .home-quick-arrow {
+            color: var(--text-primary);
+            transform: translateX(2px);
         }
 
-        @media (max-width: 960px) {
-            .home-kpi-grid {
+        .home-quick-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .home-quick-desc {
+            font-size: 0.77rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 1100px) {
+            .home-summary-card {
                 grid-template-columns: 1fr;
+                gap: 14px;
             }
+            .home-summary-divider {
+                display: none;
+            }
+            .home-summary-col {
+                flex-direction: row;
+                align-items: center;
+                gap: 14px;
+                padding: 10px 0;
+                border-top: 1px solid var(--border-subtle);
+            }
+        }
+
+        @media (max-width: 900px) {
             .home-quick-grid {
                 grid-template-columns: 1fr;
             }
         }
+
 
         /* ------------------------------------------------------------- */
         /* RESPONSIVE DESIGN                                             */
@@ -2915,99 +3279,133 @@
             <div class="tenant-switcher-container">
                 <span class="tenant-switcher-label">EMPRESA ACTIVA</span>
                 <div class="tenant-switcher-box">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-steel); flex-shrink: 0;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                     <select id="tenant_switcher" class="tenant-switcher-select" onchange="onSwitchTenantSelected(this.value)">
                         <option value="KLYVEN-STUDIO">Klyven Studio</option>
                         <option value="TRM">Traslados Riviera Maya</option>
                     </select>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); flex-shrink: 0;"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
             </div>
 
-            <nav style="flex: 1; overflow-y: auto; padding-right: 2px;">
-                <ul class="sidebar-nav-list">
-                    <li>
-                        <button class="sidebar-nav-btn active" data-sec="inicio" onclick="switchSection('inicio')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                            <span>Inicio</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="negocio" onclick="switchSection('negocio')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                            <span>Negocio</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="conocimiento" onclick="switchSection('conocimiento')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                            <span>Conocimiento</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="apariencia" onclick="switchSection('apariencia')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
-                            <span>Apariencia</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="comportamiento" onclick="switchSection('comportamiento')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-                            <span>Comportamiento</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="agenda" onclick="switchSection('agenda')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            <span>Agenda y reservas</span>
-                            <span id="sidebar_bookings_badge" style="margin-left:auto; background:#3B82F6; color:white; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px;">3</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="conversaciones" onclick="switchSection('conversaciones')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                            <span>Conversaciones</span>
-                            <span id="sidebar_unresolved_badge" style="margin-left:auto; background:#F59E0B; color:white; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px; display:inline-block;" title="Preguntas sin resolver">2</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="leads" onclick="switchSection('leads')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                            <span>Prospectos</span>
-                            <span id="sidebar_leads_badge" style="margin-left:auto; background:#10B981; color:white; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px; display:none;">0</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="estadisticas" onclick="switchSection('estadisticas')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                            <span>Estadísticas</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="integraciones" onclick="switchSection('integraciones')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                            <span>Integraciones</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="instalacion" onclick="switchSection('instalacion')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                            <span>Instalación</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="ayuda" onclick="switchSection('ayuda')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            <span>Ayuda y soporte</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="sidebar-nav-btn" data-sec="plan" onclick="switchSection('plan')">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-                            <span>Uso del plan</span>
-                        </button>
-                    </li>
-                </ul>
+            <nav class="sidebar-nav-scroll">
+                <!-- GRUPO 1: MI ASISTENTE -->
+                <div class="sidebar-group">
+                    <span class="sidebar-group-title">MI ASISTENTE</span>
+                    <ul class="sidebar-nav-list">
+                        <li>
+                            <button class="sidebar-nav-btn active" data-sec="inicio" onclick="switchSection('inicio')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                <span>Inicio</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="negocio" onclick="switchSection('negocio')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                <span>Negocio</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="conocimiento" onclick="switchSection('conocimiento')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                                <span>Conocimiento</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="apariencia" onclick="switchSection('apariencia')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
+                                <span>Apariencia</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="comportamiento" onclick="switchSection('comportamiento')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                                <span>Comportamiento</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- GRUPO 2: GESTIÓN -->
+                <div class="sidebar-group">
+                    <span class="sidebar-group-title">GESTIÓN</span>
+                    <ul class="sidebar-nav-list">
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="agenda" onclick="switchSection('agenda')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                <span>Agenda y reservas</span>
+                                <span id="sidebar_bookings_badge" class="sidebar-badge badge-blue">3</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="conversaciones" onclick="switchSection('conversaciones')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                <span>Conversaciones</span>
+                                <span id="sidebar_unresolved_badge" class="sidebar-badge badge-orange" style="display:inline-block;" title="Preguntas sin resolver">2</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="leads" onclick="switchSection('leads')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <span>Prospectos</span>
+                                <span id="sidebar_leads_badge" class="sidebar-badge badge-green" style="display:none;">0</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="estadisticas" onclick="switchSection('estadisticas')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                <span>Estadísticas</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- GRUPO 3: CONFIGURACIÓN -->
+                <div class="sidebar-group">
+                    <span class="sidebar-group-title">CONFIGURACIÓN</span>
+                    <ul class="sidebar-nav-list">
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="integraciones" onclick="switchSection('integraciones')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                <span>Integraciones</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="instalacion" onclick="switchSection('instalacion')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                <span>Instalación</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- SOPORTE Y CONFIGURACIÓN INFERIOR -->
+                <div class="sidebar-group sidebar-group-bottom">
+                    <ul class="sidebar-nav-list">
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="ayuda" onclick="switchSection('ayuda')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                                <span>Soporte</span>
+                                <span class="sidebar-badge badge-gray">2</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-nav-btn" data-sec="plan" onclick="switchSection('plan')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                                <span>Configuración</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </nav>
+
+            <!-- SELECTOR DISCRETO DE TEMA CLARO / OSCURO -->
+            <div class="sidebar-theme-toggle-row">
+                <button type="button" class="sidebar-theme-btn" id="portal_theme_toggle_btn" onclick="togglePortalTheme()">
+                    <span id="portal_theme_icon">🌙</span>
+                    <span id="portal_theme_text">Modo oscuro</span>
+                </button>
+            </div>
 
             <!-- PERFIL DE USUARIO AL PIE (SIN 'MI NEGOCIO' DUPLICADO) -->
             <div class="sidebar-profile-card" id="sidebar_profile_container">
@@ -3064,139 +3462,141 @@
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 14px;">
-                    <!-- Cuadrícula 2x2 de resumen del estado del chatbot -->
-                    <div class="home-kpi-grid">
-                        <!-- Tarjeta 1: Estado del chatbot -->
-                        <div class="home-kpi-card" onclick="switchSection('instalacion')">
-                            <div class="home-kpi-left">
-                                <div class="home-kpi-badge badge-green">
+                    <!-- TARJETA 1: RESUMEN HORIZONTAL CONTINUO DEL ASISTENTE (FIEL AL MOCKUP) -->
+                    <div class="home-summary-card">
+                        <!-- Columna 1: Estado y Dominio -->
+                        <div class="home-summary-col-main">
+                            <div class="home-summary-status-header">
+                                <div class="home-summary-badge-green">
                                     <span class="home-pulsing-dot" id="home_status_dot"></span>
                                 </div>
-                                <div class="home-kpi-texts">
-                                    <span class="home-kpi-label">Estado del chatbot</span>
-                                    <span class="home-kpi-value" id="home_status_val">Publicado</span>
-                                    <span class="home-kpi-sub" id="home_status_sub">Tu asistente está activo y disponible.</span>
+                                <div>
+                                    <span class="home-summary-label">Estado del chatbot</span>
+                                    <h3 class="home-summary-title" id="home_status_val">Publicado</h3>
+                                    <p class="home-summary-sub" id="home_status_sub">Tu asistente está activo y disponible.</p>
                                 </div>
                             </div>
-                            <div class="home-kpi-right">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            </div>
-                        </div>
-
-                        <!-- Tarjeta 2: Sitio web -->
-                        <div class="home-kpi-card" onclick="openConfiguredSite(event)">
-                            <div class="home-kpi-left">
-                                <div class="home-kpi-badge badge-blue">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                                </div>
-                                <div class="home-kpi-texts">
-                                    <span class="home-kpi-label">Sitio web</span>
-                                    <span class="home-kpi-value" id="home_site_domain">minegocio.com</span>
-                                    <span class="home-kpi-sub" id="home_site_sub">Conectado a tu dominio.</span>
-                                </div>
-                            </div>
-                            <div class="home-kpi-right">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            <div class="home-summary-domain-pill" onclick="openConfiguredSite(event)" title="Abrir sitio web conectado">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                <span id="home_site_domain">klyvenstudio.com</span>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
                             </div>
                         </div>
 
-                        <!-- Tarjeta 3: Información -->
-                        <div class="home-kpi-card" onclick="switchSection('conocimiento')">
-                            <div class="home-kpi-left">
-                                <div class="home-kpi-badge badge-purple">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                </div>
-                                <div class="home-kpi-texts">
-                                    <span class="home-kpi-label">Información</span>
-                                    <span class="home-kpi-value" id="home_services_count">3 servicios</span>
-                                    <span class="home-kpi-sub">Tu asistente conoce tus servicios.</span>
-                                </div>
+                        <!-- Divisor vertical -->
+                        <div class="home-summary-divider"></div>
+
+                        <!-- Columna 2: Servicios -->
+                        <div class="home-summary-col" onclick="switchSection('conocimiento')" title="Ver servicios en Conocimiento">
+                            <div class="home-summary-icon-box">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                             </div>
-                            <div class="home-kpi-right">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <div class="home-summary-metric">
+                                <h4 id="home_services_count">3 servicios</h4>
+                                <p id="home_services_sub">Tu asistente conoce tus servicios.</p>
                             </div>
                         </div>
 
-                        <!-- Tarjeta 4: Uso del plan -->
-                        <div class="home-kpi-card" onclick="switchSection('plan')">
-                            <div class="home-kpi-left">
-                                <div class="home-kpi-badge badge-amber">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                </div>
-                                <div class="home-kpi-texts">
-                                    <span class="home-kpi-label">Uso del plan</span>
-                                    <span class="home-kpi-value" id="home_plan_title">Sin actividad</span>
-                                    <span class="home-kpi-sub" id="home_plan_sub">Aún no hay conversaciones.</span>
-                                </div>
+                        <!-- Divisor vertical -->
+                        <div class="home-summary-divider"></div>
+
+                        <!-- Columna 3: Sesiones -->
+                        <div class="home-summary-col" onclick="switchSection('conversaciones')" title="Ver sesiones de chat">
+                            <div class="home-summary-icon-box">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                             </div>
-                            <div class="home-kpi-right">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <div class="home-summary-metric">
+                                <h4 id="home_plan_title">1 sesión</h4>
+                                <p id="home_plan_sub">2 mensajes registrados.</p>
+                            </div>
+                        </div>
+
+                        <!-- Divisor vertical -->
+                        <div class="home-summary-divider"></div>
+
+                        <!-- Columna 4: Mensajes -->
+                        <div class="home-summary-col" onclick="switchSection('conversaciones')" title="Ver actividad reciente">
+                            <div class="home-summary-icon-box">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            </div>
+                            <div class="home-summary-metric">
+                                <h4 id="home_messages_count">2 mensajes</h4>
+                                <p id="home_messages_sub">en la última sesión.</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bloque: Completa tu configuración -->
+                    <!-- TARJETA 2: COMPLETA TU CONFIGURACIÓN -->
                     <div class="home-checklist-card">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="font-size: 1.05rem; font-weight: 700; color: #020C21;">Completa tu configuración</h3>
-                            <span id="home_progress_counter" style="font-size: 0.82rem; font-weight: 600; color: #59627E;">3 de 4 pasos</span>
+                            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">Completa tu configuración</h3>
+                            <span id="home_progress_counter" style="font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);">3 de 4 pasos</span>
                         </div>
                         
-                        <div style="background: #E6EDF6; height: 6px; border-radius: 99px; overflow: hidden; margin: 12px 0 16px 0;">
-                            <div id="home_progress_bar" style="width: 75%; height: 100%; background: #0F1B31; border-radius: 99px; transition: width 0.3s ease;"></div>
+                        <div class="home-progress-track">
+                            <div id="home_progress_bar" class="home-progress-fill" style="width: 75%;"></div>
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <div class="home-checklist-list">
                             <!-- Paso 1: Datos del negocio -->
                             <div class="home-checklist-row" onclick="switchSection('negocio')">
-                                <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="home-step-main">
                                     <div class="home-step-icon done" id="home_step1_icon">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
-                                    <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600;">Datos del negocio</strong>
+                                    <div>
+                                        <strong class="home-step-title">Datos del negocio</strong>
+                                        <span class="home-step-desc" id="home_step1_status">Información básica completada.</span>
+                                    </div>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span id="home_step1_status" style="font-size: 0.78rem; color: #59627E;">Información básica completada</span>
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                <div class="home-step-action-link">
+                                    <span>Ver información</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </div>
                             </div>
 
                             <!-- Paso 2: Información del chatbot -->
                             <div class="home-checklist-row" onclick="switchSection('conocimiento')">
-                                <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="home-step-main">
                                     <div class="home-step-icon done" id="home_step2_icon">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
-                                    <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600;">Información del chatbot</strong>
+                                    <div>
+                                        <strong class="home-step-title">Información del chatbot</strong>
+                                        <span class="home-step-desc" id="home_step2_status">3 servicios añadidos.</span>
+                                    </div>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span id="home_step2_status" style="font-size: 0.78rem; color: #59627E;">3 servicios añadidos</span>
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                <div class="home-step-action-link">
+                                    <span>Ver servicios</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </div>
                             </div>
 
                             <!-- Paso 3: Apariencia personalizada -->
                             <div class="home-checklist-row" onclick="switchSection('apariencia')">
-                                <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="home-step-main">
                                     <div class="home-step-icon done" id="home_step3_icon">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     </div>
-                                    <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600;">Apariencia personalizada</strong>
+                                    <div>
+                                        <strong class="home-step-title">Apariencia personalizada</strong>
+                                        <span class="home-step-desc" id="home_step3_status">Diseño configurado.</span>
+                                    </div>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span id="home_step3_status" style="font-size: 0.78rem; color: #59627E;">Diseño configurado</span>
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                <div class="home-step-action-link">
+                                    <span>Ver diseño</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </div>
                             </div>
 
                             <!-- Paso 4: Probar en tu web -->
                             <div class="home-checklist-row" onclick="switchSection('instalacion')">
-                                <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                    <div class="home-step-icon pending" id="home_step4_icon" style="margin-top: 2px;">
+                                <div class="home-step-main">
+                                    <div class="home-step-icon pending" id="home_step4_icon">
                                     </div>
                                     <div>
-                                        <strong style="font-size: 0.88rem; color: #020C21; font-weight: 600; display: block;">Probar en tu web</strong>
-                                        <span style="font-size: 0.76rem; color: #59627E; display: block; margin-top: 2px;">Verifica que tu asistente funciona correctamente en tu sitio web.</span>
+                                        <strong class="home-step-title">Probar en tu web</strong>
+                                        <span class="home-step-desc" id="home_step4_status">Verifica que tu asistente funciona correctamente en tu sitio web.</span>
                                     </div>
                                 </div>
                                 <div>
@@ -3208,65 +3608,65 @@
                         </div>
                     </div>
 
-                    <!-- Bloque: Accesos rápidos -->
+                    <!-- TARJETA 3: ACCESOS RÁPIDOS -->
                     <div>
-                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #020C21; margin: 4px 0 12px 0;">Accesos rápidos</h3>
+                        <h3 class="home-section-subtitle">Accesos rápidos</h3>
                         <div class="home-quick-grid">
                             <!-- Acceso 1: Actualizar información -->
                             <div class="home-quick-card" onclick="switchSection('conocimiento')">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="home-quick-icon badge-blue">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                <div class="home-quick-header">
+                                    <div class="home-quick-icon-box">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                                     </div>
-                                    <div>
-                                        <strong style="font-size: 0.86rem; color: #020C21; display: block;">Actualizar información</strong>
-                                        <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;">Edita tus servicios y datos del negocio.</span>
+                                    <div class="home-quick-arrow">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                 </div>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                <strong class="home-quick-title">Actualizar información</strong>
+                                <p class="home-quick-desc">Edita los datos de tu negocio y mantén tu información al día.</p>
                             </div>
 
                             <!-- Acceso 2: Personalizar diseño -->
                             <div class="home-quick-card" onclick="switchSection('apariencia')">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="home-quick-icon badge-purple">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
+                                <div class="home-quick-header">
+                                    <div class="home-quick-icon-box">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path></svg>
                                     </div>
-                                    <div>
-                                        <strong style="font-size: 0.86rem; color: #020C21; display: block;">Personalizar diseño</strong>
-                                        <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;">Cambia los colores y la apariencia.</span>
+                                    <div class="home-quick-arrow">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                 </div>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                <strong class="home-quick-title">Personalizar diseño</strong>
+                                <p class="home-quick-desc">Ajusta la apariencia de tu asistente a tu marca.</p>
                             </div>
 
                             <!-- Acceso 3: Copiar código -->
                             <div class="home-quick-card" onclick="copyCode()">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="home-quick-icon badge-blue">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                <div class="home-quick-header">
+                                    <div class="home-quick-icon-box">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                                     </div>
-                                    <div>
-                                        <strong style="font-size: 0.86rem; color: #020C21; display: block;">Copiar código</strong>
-                                        <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;">Obtén el código para instalar en tu web.</span>
+                                    <div class="home-quick-arrow">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </div>
                                 </div>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                <strong class="home-quick-title">Copiar código</strong>
+                                <p class="home-quick-desc">Obtén el código de instalación para tu sitio web.</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Bloque: Conversaciones recientes -->
                     <div>
-                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #020C21; margin: 4px 0 12px 0;">Conversaciones recientes</h3>
+                        <h3 class="home-section-subtitle">Conversaciones recientes</h3>
                         <div class="card" style="padding: 22px 24px;">
                             <div id="home_conv_empty" style="display: flex; align-items: center; justify-content: center; gap: 14px; padding: 10px 0;">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; color: #94A3B8; flex-shrink: 0;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface-nested); display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-shrink: 0;">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                                 </div>
                                 <div>
-                                    <strong style="font-size: 0.9rem; color: #020C21; font-weight: 700; display: block;">Aún no hay conversaciones</strong>
-                                    <span style="font-size: 0.78rem; color: #59627E; display: block; margin-top: 2px;">Cuando alguien escriba desde tu web, aparecerá aquí.</span>
+                                    <strong style="font-size: 0.9rem; color: var(--text-primary); font-weight: 700; display: block;">Aún no hay conversaciones</strong>
+                                    <span style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-top: 2px;">Cuando alguien escriba desde tu web, aparecerá aquí.</span>
                                 </div>
                             </div>
                             <div id="home_conv_list" style="display: none; flex-direction: column; gap: 10px;"></div>
@@ -5070,10 +5470,17 @@
                 <div>
                     <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
                         <span class="badge-status-dot" id="publish_dot" style="background: #10B981; width: 7px; height: 7px; border-radius: 50%;"></span>
-                        <span style="font-size: 0.74rem; color: #59627E; font-weight: 500;">Estado de publicación</span>
+                        <span style="font-size: 0.74rem; color: var(--text-secondary); font-weight: 500;">Estado de publicación</span>
                     </div>
-                    <strong style="font-size: 0.95rem; color: #020C21; font-weight: 700; display: block;" id="badge_status_label">Publicado</strong>
-                    <span style="font-size: 0.74rem; color: #59627E; display: block; margin-top: 2px;" id="badge_status_sub">Tu asistente está activo en tu web.</span>
+                    <strong style="font-size: 0.95rem; color: var(--text-primary); font-weight: 700; display: block;" id="badge_status_label">Publicado</strong>
+                    <span style="font-size: 0.74rem; color: var(--text-secondary); display: block; margin-top: 2px;" id="badge_status_sub">Tu asistente está activo en tu web.</span>
+                </div>
+                <div>
+                    <button type="button" class="btn-talk-web" onclick="openConfiguredSite(event)" title="Abrir tu sitio web">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        <span>Hablemos de tu web</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                    </button>
                 </div>
             </div>
         </aside>
@@ -5084,6 +5491,53 @@
     <!-- LÓGICA DE NEGOCIO, CONEXIONES Y ESTADO EN JAVASCRIPT         -->
     <!-- ============================================================= -->
     <script>
+        // -----------------------------------------------------------------
+        // SISTEMA DE TEMA DEL PORTAL (MODO CLARO / OSCURO CON PERSISTENCIA)
+        // -----------------------------------------------------------------
+        function applyPortalTheme(theme) {
+            const isDark = (theme === 'dark');
+            document.body.classList.toggle('dark-mode', isDark);
+            
+            const btnText = document.getElementById('portal_theme_text');
+            const btnIcon = document.getElementById('portal_theme_icon');
+            if (btnText) btnText.innerText = isDark ? 'Modo claro' : 'Modo oscuro';
+            if (btnIcon) btnIcon.innerText = isDark ? '☀️' : '🌙';
+
+            // Actualizar logotipo del sidebar
+            const brandLogo = document.querySelector('.sidebar-brand-logo img');
+            if (brandLogo) {
+                if (isDark) {
+                    brandLogo.src = '/assets/logo-light.png';
+                } else {
+                    brandLogo.src = 'https://klyvenstudio.com/assets/logo-Ze6ecQUw.png';
+                    brandLogo.onerror = () => { brandLogo.src = '/assets/logo-dark.png'; };
+                }
+            }
+
+            localStorage.setItem('klyven_portal_theme', theme);
+        }
+
+        function togglePortalTheme() {
+            const current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+            const next = (current === 'dark') ? 'light' : 'dark';
+            applyPortalTheme(next);
+            if (typeof showToast === 'function') {
+                showToast(`Tema ${next === 'dark' ? 'oscuro' : 'claro'} activado`, 'info', 2000);
+            }
+        }
+
+        function initPortalTheme() {
+            const saved = localStorage.getItem('klyven_portal_theme');
+            if (saved) {
+                applyPortalTheme(saved);
+            } else {
+                applyPortalTheme('light');
+            }
+        }
+
+        // Inicializar tema de inmediato
+        initPortalTheme();
+
         // -----------------------------------------------------------------
         // SISTEMA GLOBAL DE NOTIFICACIONES TOAST (CERO ALERTAS NATIVAS)
         // -----------------------------------------------------------------
@@ -5409,12 +5863,21 @@
 
                 const planTitle = document.getElementById('home_plan_title');
                 const planSub = document.getElementById('home_plan_sub');
+                const msgsCount = document.getElementById('home_messages_count');
+                const msgsSub = document.getElementById('home_messages_sub');
                 const convEmpty = document.getElementById('home_conv_empty');
                 const convList = document.getElementById('home_conv_list');
 
                 if (convs.length > 0) {
                     if (planTitle) planTitle.innerText = `${convs.length} ${convs.length === 1 ? 'sesión' : 'sesiones'}`;
-                    if (planSub) planSub.innerText = `${convs[0].total_messages || 1} mensajes registrados.`;
+                    
+                    let totalMsgs = 0;
+                    convs.forEach(c => { totalMsgs += (c.total_messages || (c.messages ? c.messages.length : 1)); });
+                    if (planSub) planSub.innerText = `${totalMsgs} ${totalMsgs === 1 ? 'mensaje registrado.' : 'mensajes registrados.'}`;
+
+                    const lastSessionMsgs = convs[0].total_messages || (convs[0].messages ? convs[0].messages.length : 1);
+                    if (msgsCount) msgsCount.innerText = `${lastSessionMsgs} ${lastSessionMsgs === 1 ? 'mensaje' : 'mensajes'}`;
+                    if (msgsSub) msgsSub.innerText = 'en la última sesión.';
 
                     if (convEmpty) convEmpty.style.display = 'none';
                     if (convList) {
@@ -5443,8 +5906,10 @@
                         convList.appendChild(linkMore);
                     }
                 } else {
-                    if (planTitle) planTitle.innerText = 'Sin actividad';
-                    if (planSub) planSub.innerText = 'Aún no hay conversaciones.';
+                    if (planTitle) planTitle.innerText = '0 sesiones';
+                    if (planSub) planSub.innerText = '0 mensajes registrados.';
+                    if (msgsCount) msgsCount.innerText = '0 mensajes';
+                    if (msgsSub) msgsSub.innerText = 'en la última sesión.';
                     if (convEmpty) convEmpty.style.display = 'flex';
                     if (convList) convList.style.display = 'none';
                 }
